@@ -4,7 +4,9 @@ import { autoBuild, fpsTargets, tiers, type AutoBuildRequest, type Tier } from '
 import { evaluateBuild } from '../engine/simulation';
 import type { Build, FormFactor, Resolution, WorkloadId } from '../engine/types';
 import { partSummary } from './PartPicker';
-import { StatusPill } from './Results';
+import { brandOf, tierOf } from '../ui';
+import { BrandTag, ScoreRing, StatusPill, TierBadge } from './Badges';
+import { SlotIcon } from './Icons';
 
 interface Props {
   workloads: WorkloadId[];
@@ -71,8 +73,7 @@ export function AutoBuilder({ workloads, resolution, onOpen }: Props) {
         <header className="card-head">
           <h2 className="section-title">Recommended build</h2>
           <div className="score-block">
-            <span className="score-num">{Math.round(evaluation.overall)}</span>
-            <StatusPill tone={evaluation.tone} />
+            <ScoreRing score={evaluation.overall} tone={evaluation.tone} size={72} label="Harmony score" />
           </div>
         </header>
         {result.shortfalls.length > 0 && (
@@ -86,8 +87,21 @@ export function AutoBuilder({ workloads, resolution, onOpen }: Props) {
               const part = result.build[slot];
               return (
                 <tr key={slot}>
-                  <th scope="row">{slotLabels[slot]}</th>
-                  <td>{part ? <><b>{part.name}</b><div className="muted small">{partSummary(slot, part)}</div></> : <span className="muted">{slot === 'gpu' ? 'Not needed — integrated graphics' : '—'}</span>}</td>
+                  <th scope="row"><span className="th-inner"><SlotIcon slot={slot} size={18} />{slotLabels[slot]}</span></th>
+                  <td>
+                    {part ? (
+                      <>
+                        <b>{part.name}</b>
+                        <div className="muted small">{partSummary(slot, part)}</div>
+                        {(brandOf(slot, part) || tierOf(slot, part)) && (
+                          <div className="slot-badges">
+                            {brandOf(slot, part) && <BrandTag brand={brandOf(slot, part)!} />}
+                            {tierOf(slot, part) && <TierBadge level={tierOf(slot, part)!} />}
+                          </div>
+                        )}
+                      </>
+                    ) : <span className="muted">{slot === 'gpu' ? 'Not needed — integrated graphics' : '—'}</span>}
+                  </td>
                 </tr>
               );
             })}

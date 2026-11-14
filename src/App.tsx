@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { AutoBuilder } from './components/AutoBuilder';
 import { WorkloadControls } from './components/Controls';
 import { HowItWorks } from './components/HowItWorks';
-import { PartPicker } from './components/PartPicker';
+import { PartBrowser } from './components/PartBrowser';
+import { BuildList, partSummary } from './components/PartPicker';
+import { slotLabels, slotOrder } from './data';
+import { workloadById } from './engine/workloads';
 import { Results } from './components/Results';
 import { checkCompatibility } from './engine/compatibility';
 import { suggest } from './engine/recommend';
@@ -23,8 +26,8 @@ function initialState(): AppState {
 export default function App() {
   const [state, setState] = useState<AppState>(initialState);
   const [tab, setTab] = useState<Tab>('build');
-  const [onlyCompatible, setOnlyCompatible] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [browsing, setBrowsing] = useState<PartSlot | null>(null);
+  const [copied, setCopied] = useState<'' | 'link' | 'list'>('');
   const { build, workloads, resolution } = state;
 
   // Keep the URL in sync so a build can be shared by copying the link.
@@ -49,21 +52,37 @@ export default function App() {
       return { ...s, workloads: next.length ? next : s.workloads };
     });
 
-  const copyLink = async () => {
+  const copy = async (what: 'link' | 'list') => {
+    const text = what === 'link' ? window.location.href : partsListText();
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      await navigator.clipboard.writeText(text);
+      setCopied(what);
+      setTimeout(() => setCopied(''), 1800);
     } catch {
       /* clipboard unavailable */
     }
+  };
+
+  /** Plain-text build sheet for sending to someone. */
+  const partsListText = () => {
+    const lines = [`PC Harmony build — harmony score ${Math.round(evaluation.overall)}/100`, ''];
+    for (const slot of slotOrder) {
+      const part = build[slot];
+      lines.push(`${slotLabels[slot]}: ${part ? `${part.name} (${partSummary(slot, part)})` : slot === 'gpu' ? 'Integrated graphics' : '—'}`);
+    }
+    lines.push('', 'Verdicts:');
+    for (const r of evaluation.results) lines.push(`• ${workloadById[r.workload].name}: ${Math.round(r.score)}/100 — ${r.headline}`);
+    lines.push('', window.location.href);
+    return lines.join('\n');
   };
 
   return (
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="logo" aria-hidden="true">◎</span>
+          <span className="logo" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="36" height="36"><rect x="3" y="3" width="26" height="26" rx="7" className="logo-bg" /><path d="M9 20.5c2.2-5.5 4.4-8 7-8s4.8 2.5 7 8" className="logo-wave" /><circle cx="16" cy="12.5" r="2.2" className="logo-dot" /></svg>
+          </span>
           <div>
             <h1>PC Harmony</h1>
             <p className="muted small">Find PC parts that work together — without one holding the others back.</p>
@@ -91,17 +110,15 @@ export default function App() {
         <main className="layout">
           <aside className="card picker">
             <div className="picker-head">
-              <h2 className="section-title">Your parts</h2>
-              <label className="toggle small">
-                <input type="checkbox" checked={onlyCompatible} onChange={(e) => setOnlyCompatible(e.target.checked)} />
-                Only show compatible parts
-              </label>
+              <h2 className="section-title">Your build</h2>
+              <span className="muted small">Tap a part to search and compare</span>
             </div>
-            <PartPicker build={build} issues={issues} onlyCompatible={onlyCompatible} onChange={setPart} />
+            <BuildList build={build} issues={issues} onOpen={setBrowsing} onRemove={(slot) => setPart(slot, undefined)} />
             <div className="picker-actions">
+              <button type="button" className="btn btn--small" onClick={() => copy('list')}>{copied === 'list' ? 'Parts list copied ✓' : 'Copy parts list'}</button>
+              <button type="button" className="btn btn--ghost btn--small" onClick={() => copy('link')}>{copied === 'link' ? 'Link copied ✓' : 'Copy share link'}</button>
               <button type="button" className="btn btn--ghost btn--small" onClick={() => setState((s) => ({ ...s, build: exampleBuild() }))}>Load example</button>
               <button type="button" className="btn btn--ghost btn--small" onClick={() => setState((s) => ({ ...s, build: {} }))}>Clear all</button>
-              <button type="button" className="btn btn--ghost btn--small" onClick={copyLink}>{copied ? 'Link copied ✓' : 'Copy share link'}</button>
             </div>
           </aside>
           <Results
@@ -131,8 +148,30 @@ export default function App() {
 
       {tab === 'how' && <main><HowItWorks /></main>}
 
+      {browsing && (
+        <PartBrowser
+          slot={browsing}
+          build={build}
+          workloads={workloads}
+          resolution={resolution}
+          onPick={(part) => {
+            setPart(browsing, part);
+            setBrowsing(null);
+          }}
+          onClose={() => setBrowsing(null)}
+        />
+      )}
+
       <footer className="footer muted small">
-        Estimates from a simplified performance model using relative benchmark indices — guidance, not guarantees.
+        <div className="legend-strip" aria-label="Color key">
+          <span><i className="key key--good" />Balanced</span>
+          <span><i className="key key--warning" />Minor imbalance</span>
+          <span><i className="key key--serious" />Bottlenecked</span>
+          <span><i className="key key--critical" />Mismatched / won't fit</span>
+          <span><i className="key key--cpu" />CPU</span>
+          <span><i className="key key--gpu" />GPU</span>
+        </div>
+        <p>Estimates from a simplified performance model using relative benchmark indices: guidance, not guarantees. Prices not included.</p>
       </footer>
     </div>
   );

@@ -1,25 +1,13 @@
 import { slotLabels } from '../data';
 import { estimatePowerDraw, recommendedPsuWatts } from '../engine/compatibility';
 import type { Suggestion } from '../engine/recommend';
-import type { BuildEvaluation, Tone, WorkloadResult } from '../engine/simulation';
+import type { BuildEvaluation, WorkloadResult } from '../engine/simulation';
 import type { Build, Issue, PartSlot, Resolution } from '../engine/types';
 import { workloadById } from '../engine/workloads';
 import { FpsChart, TimeShareChart } from './Charts';
+import { ScoreRing, StatusPill, toneText } from './Badges';
+import { SlotIcon } from './Icons';
 
-const toneLabel: Record<Tone, { icon: string; text: string }> = {
-  good: { icon: '✓', text: 'Balanced' },
-  warning: { icon: '!', text: 'Minor imbalance' },
-  serious: { icon: '▲', text: 'Bottlenecked' },
-  critical: { icon: '✕', text: 'Badly mismatched' },
-};
-
-export function StatusPill({ tone, children }: { tone: Tone; children?: React.ReactNode }) {
-  return (
-    <span className={`pill pill--${tone}`}>
-      <span aria-hidden="true">{toneLabel[tone].icon}</span> {children ?? toneLabel[tone].text}
-    </span>
-  );
-}
 
 function IssueList({ issues }: { issues: Issue[] }) {
   if (!issues.length) return <p className="ok-line"><span className="pill pill--good">✓ Compatible</span> All selected parts work together.</p>;
@@ -30,6 +18,7 @@ function IssueList({ issues }: { issues: Issue[] }) {
       {[...issues].sort((a, b) => order[a.severity] - order[b.severity]).map((i, n) => (
         <li key={n} className={`issue issue--${i.severity}`}>
           <span className="issue-icon" aria-label={i.severity}>{icon[i.severity]}</span>
+          <span className="issue-part" aria-hidden="true"><SlotIcon slot={i.slots[0]} size={18} /></span>
           <span>
             <span className="issue-slots">{i.slots.map((s) => slotLabels[s as PartSlot].split(' (')[0]).join(' + ')}</span>
             {i.message}
@@ -43,18 +32,17 @@ function IssueList({ issues }: { issues: Issue[] }) {
 function WorkloadCard({ r, resolution }: { r: WorkloadResult; resolution: Resolution }) {
   const w = workloadById[r.workload];
   return (
-    <article className="card workload-card">
+    <article className={`card workload-card workload-card--${r.tone}`}>
       <header className="card-head">
         <div>
           <h3>{w.name}</h3>
           <p className="muted small">{w.description}</p>
         </div>
         <div className="score-block">
-          <span className="score-num">{Math.round(r.score)}</span>
-          <StatusPill tone={r.tone} />
+          <ScoreRing score={r.score} tone={r.tone} size={64} label={`${w.name} score`} />
         </div>
       </header>
-      <p className="headline">{r.headline}</p>
+      <p className={`headline headline--${r.tone}`}><StatusPill tone={r.tone} /> {r.headline}</p>
       <p className="detail">{r.detail}</p>
       {r.fps && <FpsChart points={r.fps} judged={resolution} />}
       {r.throughput && <TimeShareChart share={r.throughput.timeShare} weakest={r.throughput.weakest} />}
@@ -76,6 +64,8 @@ interface Props {
   onApply: (s: Suggestion) => void;
 }
 
+const kindOrder = { fix: 0, upgrade: 1, save: 2 } as const;
+
 export function Results({ build, evaluation, issues, suggestions, resolution, onApply }: Props) {
   const errors = issues.filter((i) => i.severity === 'error').length;
   const draw = estimatePowerDraw(build);
@@ -85,15 +75,19 @@ export function Results({ build, evaluation, issues, suggestions, resolution, on
   return (
     <div className="results">
       <section className="card summary" aria-label="Build summary">
-        <div className="hero">
-          <span className="hero-label">Harmony score</span>
-          <span className="hero-num">{Math.round(evaluation.overall)}<small>/100</small></span>
-          <StatusPill tone={errors ? 'critical' : evaluation.tone}>{errors ? `${errors} compatibility problem${errors > 1 ? 's' : ''}` : undefined}</StatusPill>
-        </div>
-        <div className="summary-facts">
-          <div><span className="muted small">Weakest fit</span><b>{worst ? workloadById[worst.workload].short : '—'}</b></div>
-          <div><span className="muted small">Peak power</span><b>~{draw} W</b></div>
-          <div><span className="muted small">Recommended PSU</span><b>{rec} W</b></div>
+        <ScoreRing score={errors ? Math.min(evaluation.overall, 30) : evaluation.overall} tone={errors ? 'critical' : evaluation.tone} label="Harmony score" />
+        <div className="summary-main">
+          <span className="eyebrow">Harmony score</span>
+          <p className="summary-verdict">
+            {errors
+              ? `${errors} compatibility problem${errors > 1 ? 's' : ''} to fix first`
+              : toneText[evaluation.tone] + (worst && evaluation.results.length > 1 ? ` · weakest fit: ${workloadById[worst.workload].short}` : '')}
+          </p>
+          <div className="summary-facts">
+            <div><span className="muted small">Peak power</span><b>~{draw} W</b></div>
+            <div><span className="muted small">Recommended PSU</span><b>{rec} W</b></div>
+            <div><span className="muted small">Workloads checked</span><b>{evaluation.results.length}</b></div>
+          </div>
         </div>
       </section>
 
@@ -106,10 +100,10 @@ export function Results({ build, evaluation, issues, suggestions, resolution, on
         <section className="card">
           <h2 className="section-title">Suggested changes</h2>
           <ul className="suggestions">
-            {suggestions.map((s) => (
+            {[...suggestions].sort((a, b) => kindOrder[a.kind] - kindOrder[b.kind]).map((s) => (
               <li key={s.id} className={`suggestion suggestion--${s.kind}`}>
                 <div>
-                  <span className="suggestion-kind">{s.kind === 'save' ? 'Save' : s.kind === 'fix' ? 'Fix' : 'Upgrade'}</span>
+                  <span className={`suggestion-kind suggestion-kind--${s.kind}`}>{s.kind === 'save' ? 'Save money' : s.kind === 'fix' ? 'Fix' : 'Upgrade'}</span>
                   <b>{s.title}</b>
                   <p className="small">{s.detail}</p>
                 </div>
