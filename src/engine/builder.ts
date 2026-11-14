@@ -236,3 +236,30 @@ export function autoBuild(req: AutoBuildRequest): AutoBuildResult {
   for (const e of errors) shortfalls.push(e.message);
   return { build, reasons, shortfalls };
 }
+
+/**
+ * Fills in the parts people don't usually want to choose (motherboard, cooler,
+ * power supply, case, and RAM/storage if missing) so they match the CPU, GPU
+ * and RAM that were picked. Parts already present are kept when they fit.
+ */
+export function completeBuild(picked: Build, tier: Tier = 'mid'): Build {
+  const build: Build = { ...picked };
+  const { cpu } = build;
+  if (!cpu) return build;
+  if (build.ram && !cpu.memTypes.includes(build.ram.type)) build.ram = undefined;
+
+  const mbOk = (m?: Motherboard) => m && m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && (!build.ram || build.ram.type === m.memType);
+  if (!mbOk(build.motherboard)) {
+    build.motherboard = pickMotherboard(cpu, { memType: build.ram?.type, minPcie: build.gpu?.pcieLanes === 8 ? 4 : 3, tier });
+  }
+  const mb = build.motherboard!;
+  if (!build.ram || build.ram.sticks > mb.memSlots) build.ram = pickRam(mb, cpu, 32);
+  if (!build.storage) build.storage = storages.find((s) => s.id === 'nvme4-1tb');
+
+  const coolerOk = build.cooler && build.cooler.ratedWatts >= cpu.power && (build.cooler.kind !== 'stock' || cpu.includesCooler);
+  if (!coolerOk) build.cooler = pickCooler(cpu, tier);
+  const caseOk = build.case && checkCompatibility(build).every((i) => i.severity !== 'error' || !i.slots.includes('case'));
+  if (!caseOk) build.case = pickCase(mb, build.gpu, build.cooler!) ?? cases[cases.length - 1];
+  if (!build.psu || build.psu.watts < recommendedPsuWatts(build) || (build.gpu?.needs12v2x6 && !build.psu.native12v2x6)) build.psu = pickPsu(build);
+  return build;
+}

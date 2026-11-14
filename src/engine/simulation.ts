@@ -1,6 +1,8 @@
 import { effectiveRamSpeed } from './compatibility';
 import type { Build, Cpu, Gpu, Resolution, StorageKind, WorkloadId } from './types';
-import { type Component, type GamingWorkload, type ThroughputWorkload, workloadById } from './workloads';
+import { type Component, type FpsModel, type GamingWorkload, type ThroughputWorkload, workloadById } from './workloads';
+
+export type { FpsModel };
 
 export const RESOLUTIONS: Resolution[] = ['1080p', '1440p', '4K'];
 
@@ -105,7 +107,7 @@ export interface FpsPoint {
   bottleneck: number;
 }
 
-export function simulateFps(build: Build, w: GamingWorkload, res: Resolution): FpsPoint {
+export function simulateFps(build: Build, w: FpsModel, res: Resolution): FpsPoint {
   const { cpu, gpu } = build;
   const ram = ramFactor(build, w.ramNeedGb).factor;
   let cpuFps = cpu ? cpu.gamingIndex * w.cpuFpsPerPoint * ram : 0;

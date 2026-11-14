@@ -26,7 +26,16 @@ export function HowItWorks() {
       </ul>
       <p><b>Creator, AI and everyday</b> workloads use a time-share model: the job's time is split between CPU, GPU, RAM and storage (e.g. video editing ≈ 50% CPU, 28% GPU, 14% RAM, 8% storage on a top-end PC). A weaker part stretches its share. The verdict compares the CPU's class to the GPU's class, and checks that RAM, storage and VRAM are simply <em>enough</em>.</p>
 
-      <h3>3. Harmony score</h3>
+      <h3>3. Your games</h3>
+      <p>For gaming, the results show ten of the most played and most benchmarked PC games (Counter-Strike 2, Valorant, Fortnite, Apex Legends, Call of Duty: Black Ops 6, Marvel Rivals, Cyberpunk 2077, Red Dead Redemption 2, Baldur's Gate 3 and Elden Ring) at each game's standard preset.</p>
+      <ul>
+        <li>Each game has its own CPU and GPU weighting, because esports titles lean on the CPU and story games on the GPU. Engine frame caps are applied (Apex 300 FPS, Elden Ring 60 FPS).</li>
+        <li>The 1% low is an estimate of the worst dips; CPU-limited games dip harder.</li>
+        <li>The frame rate is compared with your monitor's refresh rate: at or above it, the monitor is fully used; a little below it, variable refresh (G-Sync / FreeSync) keeps motion smooth.</li>
+        <li>The game factors are tuned against typical published averages (for example Cyberpunk 2077 at 4K High on an RTX 4090 ≈ 75 FPS), and automated tests keep those spot checks within about 20%.</li>
+      </ul>
+
+      <h3>4. Harmony score</h3>
       <p>Each workload gets a 0–100 balance score. The overall score leans toward your worst workload, so one bad fit isn't hidden by an average.</p>
 
       <h3>How accurate is it?</h3>

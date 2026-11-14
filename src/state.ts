@@ -1,11 +1,14 @@
 import { catalog, slotOrder } from './data';
 import type { Build, PartSlot, Resolution, WorkloadId } from './engine/types';
 import { workloads } from './engine/workloads';
+import { REFRESH_RATES } from './engine/games';
 
 export interface AppState {
   build: Build;
   workloads: WorkloadId[];
   resolution: Resolution;
+  /** Monitor refresh rate in Hz. */
+  refreshHz: number;
 }
 
 const validWorkloads = new Set(workloads.map((w) => w.id));
@@ -21,7 +24,7 @@ export const exampleBuild = (): Build => ({
   case: catalog.case.find((p) => p.id === 'case-mid'),
 });
 
-export const defaultState = (): AppState => ({ build: exampleBuild(), workloads: ['aaa'], resolution: '1440p' });
+export const defaultState = (): AppState => ({ build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144 });
 
 /** Encodes the state into a URL hash so a build can be shared as a link. */
 export function encodeState(s: AppState): string {
@@ -29,7 +32,7 @@ export function encodeState(s: AppState): string {
     .map((slot) => (s.build[slot] ? `${slot}:${s.build[slot]!.id}` : ''))
     .filter(Boolean)
     .join(',');
-  const params = new URLSearchParams({ b: parts, w: s.workloads.join(','), r: s.resolution });
+  const params = new URLSearchParams({ b: parts, w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz) });
   return params.toString();
 }
 
@@ -48,5 +51,6 @@ export function decodeState(hash: string): AppState | undefined {
   const w = (params.get('w') ?? '').split(',').filter((x): x is WorkloadId => validWorkloads.has(x as WorkloadId));
   const r = params.get('r');
   const resolution: Resolution = r === '1080p' || r === '1440p' || r === '4K' ? r : '1440p';
-  return { build, workloads: w.length ? w : ['aaa'], resolution };
+  const hz = Number(params.get('hz'));
+  return { build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144 };
 }

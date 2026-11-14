@@ -4,7 +4,12 @@
 
 A website that simulates how PC parts work together, so you can pick components where **no part bottlenecks the others**.
 
-- **Build & simulate**: choose a CPU, motherboard, RAM, GPU, storage, cooler, PSU and case. You get a live
+- **Guided start**: answer three short questions (what the PC is for, your monitor's resolution and refresh
+  rate, and which CPU, GPU, RAM and storage you want), or start from a Budget / Mainstream / High-end
+  suggestion. The motherboard, cooler, power supply and case are matched automatically.
+- **Your games**: estimated average and 1% low FPS for ten of the most played and benchmarked PC games at
+  their standard preset, compared with your monitor's refresh rate.
+- **Results**: choose a CPU, motherboard, RAM, GPU, storage, cooler, PSU and case. You get a live
   compatibility check, a bottleneck verdict for each workload, a frame-rate chart per resolution, and one-click
   suggested swaps (upgrade the weak part, save money on an overkill part, or fix an incompatibility).
 - **Auto-build**: choose your workloads and a performance tier (or an FPS target), and it proposes the *least

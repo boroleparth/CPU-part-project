@@ -11,12 +11,8 @@ interface BaseWorkload {
   ramNeedGb: number;
 }
 
-/**
- * Frame-rate workloads: the CPU sets a frame-rate ceiling that barely moves
- * with resolution, the GPU sets one that falls steeply with resolution.
- */
-export interface GamingWorkload extends BaseWorkload {
-  kind: 'gaming';
+/** Inputs to the frame-rate model, shared by workloads and individual games. */
+export interface FpsModel {
   /** Frames per second per CPU gamingIndex point. */
   cpuFpsPerPoint: number;
   /** Frames per second per GPU index point at 1080p. */
@@ -27,8 +23,18 @@ export interface GamingWorkload extends BaseWorkload {
   gpuMetric: 'raster' | 'rt';
   /** Minimum VRAM (GB) per resolution before textures start to stutter. */
   vramNeed: Record<Resolution, number>;
+  /** RAM capacity (GB) at which this stops being memory-limited. */
+  ramNeedGb: number;
   /** Extra CPU load (e.g. software encoding) applied to the CPU ceiling. */
   cpuOverhead?: boolean;
+}
+
+/**
+ * Frame-rate workloads: the CPU sets a frame-rate ceiling that barely moves
+ * with resolution, the GPU sets one that falls steeply with resolution.
+ */
+export interface GamingWorkload extends BaseWorkload, FpsModel {
+  kind: 'gaming';
 }
 
 /**
