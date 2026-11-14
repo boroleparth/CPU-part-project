@@ -58,13 +58,16 @@ export function strengthOf(slot: PartSlot, part: AnyPart): number {
   }
 }
 
-export const strengthLabel: Record<PartSlot, string> = {
-  cpu: 'Performance', gpu: 'Performance', motherboard: 'Power delivery', ram: 'Capacity',
-  storage: 'Speed', cooler: 'Cooling', psu: 'Wattage', case: 'Room inside',
-};
-
-export function powerOf(slot: PartSlot, part: AnyPart): number | undefined {
-  if (slot === 'cpu') return (part as Cpu).power;
-  if (slot === 'gpu') return (part as Gpu).power;
-  return undefined;
+/** Very short spec line for a part (one glance, not a datasheet). */
+export function partSummary(slot: PartSlot, part: AnyPart): string {
+  switch (slot) {
+    case 'cpu': { const c = part as Cpu; return `${c.cores} cores · ${c.socket}`; }
+    case 'gpu': { const g = part as Gpu; return `${g.vram} GB VRAM`; }
+    case 'motherboard': { const m = part as Motherboard; return `${m.socket} · ${m.formFactor} · ${m.memType}`; }
+    case 'ram': { const r = part as RamKit; return `${r.type} · ${r.speed} MT/s`; }
+    case 'storage': { const s = part as Storage; return `${s.kind} · ${s.capacityGb >= 1000 ? `${s.capacityGb / 1000} TB` : `${s.capacityGb} GB`}`; }
+    case 'cooler': return `Handles ~${(part as Cooler).ratedWatts} W`;
+    case 'psu': return (part as Psu).efficiency;
+    case 'case': return `Fits ${(part as Case).supports.join(' / ')}`;
+  }
 }

@@ -2,21 +2,17 @@
 
 **Live site: https://boroleparth.github.io/CPU-part-project/**
 
-A website that simulates how PC parts work together, so you can pick components where **no part bottlenecks the others**.
+A website that checks whether PC parts work well together, so no part bottlenecks the others.
 
-- **Guided start**: answer three short questions (what the PC is for, your monitor's resolution and refresh
-  rate, and which CPU, GPU, RAM and storage you want), or start from a Budget / Mainstream / High-end
-  suggestion. The motherboard, cooler, power supply and case are matched automatically.
-- **Your games**: estimated average and 1% low FPS for ten of the most played and benchmarked PC games at
-  their standard preset, compared with your monitor's refresh rate.
-- **Results**: choose a CPU, motherboard, RAM, GPU, storage, cooler, PSU and case. You get a live
-  compatibility check, a bottleneck verdict for each workload, a frame-rate chart per resolution, and one-click
-  suggested swaps (upgrade the weak part, save money on an overkill part, or fix an incompatibility).
-- **Auto-build**: choose your workloads and a performance tier (or an FPS target), and it proposes the *least
-  powerful* parts that reach that target without bottlenecking each other.
-- **Workloads** (pick any mix): AAA gaming, esports, ray-traced gaming, gaming + streaming, video editing,
-  3D rendering, local AI/LLMs, and everyday office/coding.
-- Builds are encoded in the URL, so you can share one by copying the link.
+It walks you through one page at a time:
+
+1. **Purpose**: gaming, esports, streaming, video editing, 3D, local AI or everyday use.
+2. **Monitor** (gaming only): resolution and refresh rate.
+3. **Parts**: CPU, graphics card, memory and storage. The motherboard, cooler, power supply and case are
+   matched automatically.
+4. **Verdict**: one score, one sentence, and how the CPU and GPU match.
+5. **Games** (gaming only): estimated FPS in ten popular games at standard settings, against your refresh rate.
+6. **Build**: every part with a status dot, one-tap changes, suggested fixes, and a parts list or link to share.
 
 ## Run it locally
 
