@@ -16,7 +16,7 @@ import { partSummary } from './ui';
 
 type PageId = 'purpose' | 'monitor' | 'parts' | 'verdict' | 'games' | 'build';
 const resultPages: PageId[] = ['verdict', 'games', 'build'];
-const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', verdict: 'Verdict', games: 'Games', build: 'Build' };
+const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', verdict: 'Analysis', games: 'Games', build: 'Build' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];

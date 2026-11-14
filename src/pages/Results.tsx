@@ -4,11 +4,12 @@ import { simulateGames } from '../engine/games';
 import type { Suggestion } from '../engine/recommend';
 import { componentLabelShort, type BuildEvaluation, type Tone, type WorkloadResult } from '../engine/simulation';
 import type { Build, Issue, PartSlot, Resolution } from '../engine/types';
-import { workloadById } from '../engine/workloads';
 import { ScoreRing, TierBadge, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
 import { partSummary, tierOf } from '../ui';
 import { purposeLabels } from './Setup';
+import { FpsChart, TimeShareChart } from '../components/Charts';
+import { estimatePowerDraw, recommendedPsuWatts } from '../engine/compatibility';
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 
@@ -25,8 +26,44 @@ export function shortVerdict(r: WorkloadResult, res: Resolution): { title: strin
   return { title: `${componentLabelShort(t.weakest)} is holding this back`, line: `~${pct(t.fixGain)} faster if it matched the rest` };
 }
 
-function Banner({ tone, children }: { tone: Tone; children: React.ReactNode }) {
-  return <div className={`banner banner--${tone}`}>{children}</div>;
+/** The detailed breakdown under the verdict: key facts, problems, then one card per use. */
+function Analysis({ build, evaluation, issues, resolution }: { build: Build; evaluation: BuildEvaluation; issues: Issue[]; resolution: Resolution }) {
+  const problems = issues.filter((i) => i.severity !== 'info');
+  const errors = problems.filter((i) => i.severity === 'error').length;
+  return (
+    <section className="analysis" aria-label="Detailed analysis">
+      <h2 className="section-label">Detailed analysis</h2>
+      <div className="facts">
+        <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
+        <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
+        <div className={`fact fact--${errors ? 'critical' : 'good'}`}><span>Compatibility</span><b>{errors ? `${errors} problem${errors > 1 ? 's' : ''}` : 'All fit'}</b></div>
+      </div>
+
+      {problems.length > 0 && (
+        <ul className="issue-list">
+          {problems.map((i, n) => <li key={n} className={`issue-item issue-item--${i.severity}`}>{i.message}</li>)}
+        </ul>
+      )}
+
+      {evaluation.results.map((r) => (
+        <article key={r.workload} className={`acard acard--${r.tone}`}>
+          <div className="acard-head">
+            <h3>{purposeLabels[r.workload]}</h3>
+            <span className={`score-chip score-chip--${r.tone}`}>{Math.round(r.score)}</span>
+          </div>
+          <p className="acard-headline">{r.headline}</p>
+          <p className="acard-detail">{r.detail}</p>
+          {r.fps && <FpsChart points={r.fps} judged={resolution} />}
+          {r.throughput && <TimeShareChart share={r.throughput.timeShare} weakest={r.throughput.weakest} />}
+          {r.notes.length > 0 && (
+            <ul className="acard-notes">
+              {r.notes.slice(0, 2).map((n, i) => <li key={i}>{n}</li>)}
+            </ul>
+          )}
+        </article>
+      ))}
+    </section>
+  );
 }
 
 export function VerdictPage({ build, evaluation, issues, resolution }: { build: Build; evaluation: BuildEvaluation; issues: Issue[]; resolution: Resolution }) {
@@ -60,19 +97,7 @@ export function VerdictPage({ build, evaluation, issues, resolution }: { build: 
         </div>
       )}
 
-      {evaluation.results.length > 1 && (
-        <ul className="uses">
-          {evaluation.results.map((r) => (
-            <li key={r.workload} className={`use use--${r.tone}`}>
-              <span className="use-name">{purposeLabels[r.workload] ?? workloadById[r.workload].short}</span>
-              <span className="use-status">{toneText[r.tone]}</span>
-              <span className="use-score">{Math.round(r.score)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {errors.length > 0 && <Banner tone="critical">Fix shown on the last page.</Banner>}
+      <Analysis build={build} evaluation={evaluation} issues={issues} resolution={resolution} />
     </>
   );
 }
