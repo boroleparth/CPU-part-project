@@ -1,0 +1,48 @@
+import { evaluateBuild, evaluateWorkload } from '../simulation';
+import { suggest } from '../recommend';
+import { recommendedPsuWatts } from '../compatibility';
+import type { Build } from '../types';
+import { board, cooler, cpu, goodBuild, gpu, psu, ram } from './helpers';
+
+const apply = (b: Build, changes: Build): Build => ({ ...b, ...changes });
+
+describe('suggest', () => {
+  it('offers a CPU upgrade that actually raises FPS when CPU-bound', () => {
+    const b: Build = { ...goodBuild(), cpu: cpu('r5-5600'), motherboard: board('am4-b550-atx'), ram: ram('ddr4-2x16-3600'), gpu: gpu('rtx4090'), psu: psu('psu-850'), cooler: cooler('tower-single') };
+    const e = evaluateBuild(b, ['aaa'], '1080p');
+    const s = suggest(b, e.results, '1080p').filter((x) => x.changes.cpu);
+    expect(s.length).toBeGreaterThan(0);
+    const before = e.results[0].judged!.fps;
+    for (const x of s) expect(evaluateWorkload(apply(b, x.changes), 'aaa', '1080p').judged!.fps).toBeGreaterThan(before * 1.1);
+    // Cross-platform suggestions bring a matching board and RAM.
+    const cross = s.find((x) => x.changes.cpu!.socket !== 'AM4');
+    if (cross) {
+      expect(cross.changes.motherboard?.socket).toBe(cross.changes.cpu!.socket);
+      expect(cross.changes.ram?.type).toBe(cross.changes.motherboard!.memType);
+    }
+  });
+
+  it('offers a GPU upgrade or a cheaper CPU when the CPU is overkill', () => {
+    const b: Build = { ...goodBuild(), cpu: cpu('r7-9800x3d'), gpu: gpu('rtx4060') };
+    const e = evaluateBuild(b, ['aaa'], '1440p');
+    const s = suggest(b, e.results, '1440p');
+    expect(s.some((x) => x.kind === 'upgrade' && x.changes.gpu)).toBe(true);
+    expect(s.some((x) => x.kind === 'save' && x.changes.cpu)).toBe(true);
+  });
+
+  it('offers a motherboard fix for a socket mismatch', () => {
+    const b: Build = { ...goodBuild(), cpu: cpu('i5-14600k') };
+    const s = suggest(b, evaluateBuild(b, ['aaa'], '1440p').results, '1440p');
+    const fix = s.find((x) => x.changes.motherboard);
+    expect(fix?.changes.motherboard?.socket).toBe('LGA1700');
+  });
+
+  it('upgraded GPU suggestions include a PSU sized for the new card', () => {
+    const b: Build = { ...goodBuild(), cpu: cpu('r7-9800x3d'), gpu: gpu('rtx4060'), psu: psu('psu-450') };
+    const s = suggest(b, evaluateBuild(b, ['aaa'], '1080p').results, '1080p').find((x) => x.changes.gpu);
+    expect(s).toBeDefined();
+    const after = apply(b, s!.changes);
+    expect(after.gpu!.power).toBeGreaterThan(b.gpu!.power);
+    expect(after.psu!.watts).toBeGreaterThanOrEqual(recommendedPsuWatts(after));
+  });
+});
