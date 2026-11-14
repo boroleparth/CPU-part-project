@@ -128,7 +128,7 @@ export default function App() {
   const browserBuild = browsing && (!isResult || mainSlots.includes(browsing)) ? onlyMain(build) : build;
 
   return (
-    <div className="app">
+    <div className={page === 'verdict' ? 'app app--wide' : 'app'}>
       <header className="topbar">
         <button type="button" className="brand" onClick={startOver} aria-label="PC Harmony, start over">
           <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" className="logo-bg" /><path d="M9 20.5c2.2-5.5 4.4-8 7-8s4.8 2.5 7 8" className="logo-wave" /><circle cx="16" cy="12.5" r="2.2" className="logo-dot" /></svg>

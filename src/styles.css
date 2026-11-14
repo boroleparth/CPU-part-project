@@ -377,3 +377,23 @@ button { -webkit-tap-highlight-color: transparent; }
 .bar { display: block; height: 100%; background: var(--cpu); opacity: 0.4; border-radius: 0 4px 4px 0; }
 .bar--weak { opacity: 1; }
 .bar-value { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Wide analysis page ---------- */
+.app--wide { max-width: 1180px; }
+.analysis-layout { display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: 32px; align-items: start; }
+.analysis-side { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; padding: 28px 24px; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.analysis-side .page-title { font-size: 1.9rem; }
+.analysis-side .match { grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr); }
+.analysis-side .match-part { padding: 14px 10px; box-shadow: none; background: var(--surface-2); border-color: transparent; }
+.analysis-side .fact { background: var(--surface-2); border-color: transparent; padding: 12px; }
+.analysis-side .fact b { font-size: 1rem; }
+.analysis-layout .analysis { margin-top: 0; gap: 20px; }
+.analysis-layout .section-label { margin-top: 4px; }
+.analysis-layout .acard { padding: 26px 28px; gap: 8px; }
+.analysis-layout .acard-head h3 { font-size: 1.35rem; }
+.analysis-layout .acard-headline { font-size: 1.08rem; }
+.analysis-layout .acard-detail { font-size: 0.98rem; }
+@media (max-width: 920px) {
+  .analysis-layout { grid-template-columns: 1fr; }
+  .analysis-side { position: static; }
+}

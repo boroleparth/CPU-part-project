@@ -27,24 +27,10 @@ export function shortVerdict(r: WorkloadResult, res: Resolution): { title: strin
 }
 
 /** The detailed breakdown under the verdict: key facts, problems, then one card per use. */
-function Analysis({ build, evaluation, issues, resolution }: { build: Build; evaluation: BuildEvaluation; issues: Issue[]; resolution: Resolution }) {
-  const problems = issues.filter((i) => i.severity !== 'info');
-  const errors = problems.filter((i) => i.severity === 'error').length;
+function Analysis({ evaluation, resolution }: { evaluation: BuildEvaluation; resolution: Resolution }) {
   return (
     <section className="analysis" aria-label="Detailed analysis">
       <h2 className="section-label">Detailed analysis</h2>
-      <div className="facts">
-        <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
-        <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
-        <div className={`fact fact--${errors ? 'critical' : 'good'}`}><span>Compatibility</span><b>{errors ? `${errors} problem${errors > 1 ? 's' : ''}` : 'All fit'}</b></div>
-      </div>
-
-      {problems.length > 0 && (
-        <ul className="issue-list">
-          {problems.map((i, n) => <li key={n} className={`issue-item issue-item--${i.severity}`}>{i.message}</li>)}
-        </ul>
-      )}
-
       {evaluation.results.map((r) => (
         <article key={r.workload} className={`acard acard--${r.tone}`}>
           <div className="acard-head">
@@ -72,33 +58,49 @@ export function VerdictPage({ build, evaluation, issues, resolution }: { build: 
   const main = worst ? shortVerdict(worst, resolution) : { title: 'Add parts to see a verdict', line: '' };
   const tone: Tone = errors.length ? 'critical' : evaluation.tone;
 
+  const problems = issues.filter((i) => i.severity !== 'info');
+
   return (
-    <>
-      <div className="verdict">
-        <ScoreRing score={errors.length ? Math.min(evaluation.overall, 30) : evaluation.overall} tone={tone} size={148} label="Harmony score" />
-        <span className={`verdict-tag verdict-tag--${tone}`}>{errors.length ? 'Parts don’t fit' : toneText[tone]}</span>
-        <h1 className="page-title">{errors.length ? `${errors.length} part${errors.length > 1 ? 's' : ''} won’t work together` : main.title}</h1>
-        {!errors.length && main.line && <p className="page-sub">{main.line}</p>}
-      </div>
-
-      {build.cpu && build.gpu && (
-        <div className="match">
-          <div className="match-part">
-            <span className="match-label">CPU</span>
-            <b>{build.cpu.name}</b>
-            <TierBadge level={tierOf('cpu', build.cpu)!} />
-          </div>
-          <span className={`match-link match-link--${tone}`} aria-hidden="true" />
-          <div className="match-part">
-            <span className="match-label">GPU</span>
-            <b>{build.gpu.name}</b>
-            <TierBadge level={tierOf('gpu', build.gpu)!} />
-          </div>
+    <div className="analysis-layout">
+      <aside className="analysis-side">
+        <div className="verdict">
+          <ScoreRing score={errors.length ? Math.min(evaluation.overall, 30) : evaluation.overall} tone={tone} size={140} label="Harmony score" />
+          <span className={`verdict-tag verdict-tag--${tone}`}>{errors.length ? 'Parts don’t fit' : toneText[tone]}</span>
+          <h1 className="page-title">{errors.length ? `${errors.length} part${errors.length > 1 ? 's' : ''} won’t work together` : main.title}</h1>
+          {!errors.length && main.line && <p className="page-sub">{main.line}</p>}
         </div>
-      )}
 
-      <Analysis build={build} evaluation={evaluation} issues={issues} resolution={resolution} />
-    </>
+        {build.cpu && build.gpu && (
+          <div className="match">
+            <div className="match-part">
+              <span className="match-label">CPU</span>
+              <b>{build.cpu.name}</b>
+              <TierBadge level={tierOf('cpu', build.cpu)!} />
+            </div>
+            <span className={`match-link match-link--${tone}`} aria-hidden="true" />
+            <div className="match-part">
+              <span className="match-label">GPU</span>
+              <b>{build.gpu.name}</b>
+              <TierBadge level={tierOf('gpu', build.gpu)!} />
+            </div>
+          </div>
+        )}
+
+        <div className="facts">
+          <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
+          <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
+          <div className={`fact fact--${errors.length ? 'critical' : 'good'}`}><span>Compatibility</span><b>{errors.length ? `${errors.length} problem${errors.length > 1 ? 's' : ''}` : 'All fit'}</b></div>
+        </div>
+
+        {problems.length > 0 && (
+          <ul className="issue-list">
+            {problems.map((i, n) => <li key={n} className={`issue-item issue-item--${i.severity}`}>{i.message}</li>)}
+          </ul>
+        )}
+      </aside>
+
+      <Analysis evaluation={evaluation} resolution={resolution} />
+    </div>
   );
 }
 
