@@ -52,13 +52,16 @@ export function ramFactor(build: Build, needGb = 16): { factor: number; notes: s
   return { factor: f, notes };
 }
 
-/** Penalty for x8 GPUs on PCIe 3.0 platforms (worse when VRAM is small). */
+/** Penalty for narrow-link GPUs (x8 / x4) on older PCIe generations, worse when VRAM is small. */
 export function pcieFactor(build: Build): number {
   const { gpu, cpu, motherboard } = build;
   if (!gpu) return 1;
   const gen = Math.min(cpu?.pcieGen ?? 5, motherboard?.pcieGen ?? 5, gpu.pcieGen);
-  if (gen >= 4 || gpu.pcieLanes === 16) return 1;
-  return gpu.vram <= 8 ? 0.88 : 0.94;
+  // Link bandwidth in "PCIe 3.0 lanes": x16 Gen3 = 16, x8 Gen4 = 16, x4 Gen4 = 8, x4 Gen3 = 4.
+  const effective = gpu.pcieLanes * 2 ** (gen - 3);
+  if (effective >= 16) return 1;
+  if (effective >= 8) return gpu.vram <= 8 ? 0.88 : 0.94;
+  return gpu.vram <= 4 ? 0.75 : 0.85;
 }
 
 const storageScore: Record<StorageKind, number> = {

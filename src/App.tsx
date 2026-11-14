@@ -26,7 +26,8 @@ function initial(): { state: AppState; page: PageId } {
   try {
     const decoded = decodeState(window.location.hash);
     if (decoded) {
-      return { state: decoded, page: 'dashboard' };
+      // Fill any parts the link doesn't include, so a partial link still opens a complete build.
+      return { state: { ...decoded, build: decoded.build.cpu ? completeBuild(decoded.build) : decoded.build }, page: 'dashboard' };
     }
   } catch {
     /* fall through */

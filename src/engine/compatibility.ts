@@ -44,6 +44,9 @@ export function checkCompatibility(build: Build): Issue[] {
       if (cpu.power > mb.vrmWatts) {
         issues.push(issue('warning', ['cpu', 'motherboard'], `The ${mb.chipset} board's power delivery (~${mb.vrmWatts} W) is weaker than the ${cpu.name} can draw (${cpu.power} W). Expect throttling under heavy all-core loads.`));
       }
+      if (mb.unsupported?.includes(cpu.generation)) {
+        issues.push(issue('error', ['cpu', 'motherboard'], `${mb.chipset} motherboards don't support ${cpu.generation} processors like the ${cpu.name}, even though the socket matches.`));
+      }
       if (mb.biosNoteFor?.includes(cpu.generation)) {
         issues.push(issue('info', ['cpu', 'motherboard'], `Older ${mb.chipset} boards may need a BIOS update before they boot a ${cpu.generation} CPU. Buy one marked "ready" or with BIOS flashback.`));
       }

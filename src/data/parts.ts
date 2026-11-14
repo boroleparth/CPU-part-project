@@ -11,10 +11,16 @@ export const motherboards: Motherboard[] = [
   { id: 'am5-b850-atx', name: 'B850 ATX', socket: 'AM5', chipset: 'B850', formFactor: 'ATX', memType: 'DDR5', memSlots: 4, maxMemGb: 192, maxMemSpeed: 8000, pcieGen: 5, vrmWatts: 220, m2Slots: 3 },
   { id: 'am5-x870e-atx', name: 'X870E ATX (high-end)', socket: 'AM5', chipset: 'X870E', formFactor: 'ATX', memType: 'DDR5', memSlots: 4, maxMemGb: 256, maxMemSpeed: 8000, pcieGen: 5, vrmWatts: 260, m2Slots: 4 },
   // AM4
-  { id: 'am4-b450-matx', name: 'B450 mATX (older)', socket: 'AM4', chipset: 'B450', formFactor: 'mATX', memType: 'DDR4', memSlots: 2, maxMemGb: 64, maxMemSpeed: 3600, pcieGen: 3, vrmWatts: 95, m2Slots: 1, biosNoteFor: ['Zen 3', 'Zen 3 (APU die)'] },
-  { id: 'am4-b550-matx', name: 'B550 mATX', socket: 'AM4', chipset: 'B550', formFactor: 'mATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4000, pcieGen: 4, vrmWatts: 130, m2Slots: 2 },
-  { id: 'am4-b550-atx', name: 'B550 ATX', socket: 'AM4', chipset: 'B550', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4400, pcieGen: 4, vrmWatts: 150, m2Slots: 2 },
+  { id: 'am4-b450-matx', name: 'B450 mATX (older)', socket: 'AM4', chipset: 'B450', formFactor: 'mATX', memType: 'DDR4', memSlots: 2, maxMemGb: 64, maxMemSpeed: 3600, pcieGen: 3, vrmWatts: 95, m2Slots: 1, biosNoteFor: ['Zen 3', 'Zen 3 (APU die)', 'Zen 3 APU'] },
+  { id: 'am4-b550-matx', name: 'B550 mATX', socket: 'AM4', chipset: 'B550', formFactor: 'mATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4000, pcieGen: 4, vrmWatts: 130, m2Slots: 2, unsupported: ['Zen+'] },
+  { id: 'am4-b550-atx', name: 'B550 ATX', socket: 'AM4', chipset: 'B550', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4400, pcieGen: 4, vrmWatts: 150, m2Slots: 2, unsupported: ['Zen+'] },
   { id: 'am4-x570-atx', name: 'X570 ATX', socket: 'AM4', chipset: 'X570', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4400, pcieGen: 4, vrmWatts: 170, m2Slots: 2 },
+  { id: 'am4-a520-matx', name: 'A520 mATX (entry)', socket: 'AM4', chipset: 'A520', formFactor: 'mATX', memType: 'DDR4', memSlots: 2, maxMemGb: 64, maxMemSpeed: 3600, pcieGen: 3, vrmWatts: 95, m2Slots: 1, unsupported: ['Zen+'] },
+  { id: 'am4-x470-atx', name: 'X470 ATX (older)', socket: 'AM4', chipset: 'X470', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 64, maxMemSpeed: 3600, pcieGen: 3, vrmWatts: 150, m2Slots: 2, biosNoteFor: ['Zen 3', 'Zen 3 (APU die)', 'Zen 3 APU'] },
+  // LGA1200 (Intel 10th / 11th gen, DDR4)
+  { id: 'lga1200-h510-matx', name: 'H510 mATX (entry)', socket: 'LGA1200', chipset: 'H510', formFactor: 'mATX', memType: 'DDR4', memSlots: 2, maxMemGb: 64, maxMemSpeed: 2933, pcieGen: 3, vrmWatts: 125, m2Slots: 1 },
+  { id: 'lga1200-b560-atx', name: 'B560 ATX', socket: 'LGA1200', chipset: 'B560', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 3600, pcieGen: 4, vrmWatts: 180, m2Slots: 2 },
+  { id: 'lga1200-z590-atx', name: 'Z590 ATX', socket: 'LGA1200', chipset: 'Z590', formFactor: 'ATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 4800, pcieGen: 4, vrmWatts: 250, m2Slots: 3 },
   // LGA1700
   { id: 'lga1700-h610-ddr4', name: 'H610 mATX DDR4 (entry)', socket: 'LGA1700', chipset: 'H610', formFactor: 'mATX', memType: 'DDR4', memSlots: 2, maxMemGb: 64, maxMemSpeed: 3200, pcieGen: 4, vrmWatts: 120, m2Slots: 1, biosNoteFor: ['Raptor Lake Refresh'] },
   { id: 'lga1700-b760-ddr4', name: 'B760 mATX DDR4', socket: 'LGA1700', chipset: 'B760', formFactor: 'mATX', memType: 'DDR4', memSlots: 4, maxMemGb: 128, maxMemSpeed: 3600, pcieGen: 4, vrmWatts: 170, m2Slots: 2 },

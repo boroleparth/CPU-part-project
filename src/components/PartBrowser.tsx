@@ -3,7 +3,7 @@ import { catalog } from '../data';
 import { checkCompatibility } from '../engine/compatibility';
 import { evaluateBuild, toneFor } from '../engine/simulation';
 import type { Build, PartSlot, Resolution, WorkloadId } from '../engine/types';
-import { brandNames, brandOf, partSummary, strengthOf, type AnyPart, type BrandKey } from '../ui';
+import { brandNames, brandOf, partSummary, seriesOf, seriesRank, strengthOf, type AnyPart, type BrandKey } from '../ui';
 import { SearchIcon, SlotIcon } from './Icons';
 
 const titles: Record<PartSlot, string> = {
@@ -17,8 +17,8 @@ const titles: Record<PartSlot, string> = {
   case: 'Case',
 };
 
-type SortKey = 'fit' | 'strong' | 'weak' | 'name';
-const sortLabels: Record<SortKey, string> = { fit: 'Best match', strong: 'Most powerful', weak: 'Least powerful', name: 'Name' };
+type SortKey = 'gen' | 'fit' | 'strong' | 'weak' | 'name';
+const sortLabels: Record<SortKey, string> = { gen: 'By generation', fit: 'Best match', strong: 'Most powerful', weak: 'Least powerful', name: 'Name' };
 
 interface Props {
   slot: PartSlot;
@@ -31,7 +31,8 @@ interface Props {
 
 export function PartBrowser({ slot, build, workloads, resolution, onPick, onClose }: Props) {
   const [query, setQuery] = useState('');
-  const [sort, setSort] = useState<SortKey>('fit');
+  const grouped = slot === 'cpu' || slot === 'gpu';
+  const [sort, setSort] = useState<SortKey>(grouped ? 'gen' : 'fit');
   const [brand, setBrand] = useState<BrandKey | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const current = build[slot];
@@ -54,7 +55,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
       .map((part) => {
         const trial: Build = { ...build, [slot]: part };
         const fits = !checkCompatibility(trial).some((i) => i.severity === 'error' && i.slots.includes(slot));
-        return { part, fits, fit: fits ? evaluateBuild(trial, workloads, resolution).overall : 0, strength: strengthOf(slot, part), brand: brandOf(slot, part) };
+        return { part, fits, fit: fits ? evaluateBuild(trial, workloads, resolution).overall : 0, strength: strengthOf(slot, part), brand: brandOf(slot, part), series: seriesOf(slot, part) ?? '' };
       })
       .filter((r) => r.fits || r.part === current);
   }, [slot, build, workloads, resolution, current]);
@@ -64,6 +65,8 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
     const q = query.trim().toLowerCase();
     const list = rows.filter((r) => (!brand || r.brand === brand) && (!q || r.part.name.toLowerCase().includes(q)));
     const by: Record<SortKey, (a: (typeof rows)[0], b: (typeof rows)[0]) => number> = {
+      // Newest generation first, strongest first inside each generation.
+      gen: (a, b) => seriesRank(slot, a.series) - seriesRank(slot, b.series) || b.strength - a.strength,
       // Highest score first; among equals, the least powerful part (no paying for overkill).
       fit: (a, b) => Math.round(b.fit) - Math.round(a.fit) || a.strength - b.strength,
       strong: (a, b) => b.strength - a.strength,
@@ -72,7 +75,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
     };
     return [...list].sort(by[sort]);
   }, [rows, query, brand, sort]);
-  const bestId = sort === 'fit' && !query && !brand ? visible[0]?.part.id : undefined;
+  const bestId = !query && !brand ? [...rows].sort((a, b) => Math.round(b.fit) - Math.round(a.fit) || a.strength - b.strength)[0]?.part.id : undefined;
 
   return (
     <div className="sheet-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -90,7 +93,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
           </label>
           <div className="tool-row">
             <select id="part-sort" aria-label="Sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
-              {(Object.keys(sortLabels) as SortKey[]).map((k) => <option key={k} value={k}>{sortLabels[k]}</option>)}
+              {(Object.keys(sortLabels) as SortKey[]).filter((k) => k !== 'gen' || grouped).map((k) => <option key={k} value={k}>{sortLabels[k]}</option>)}
             </select>
             {brands.length > 1 && brands.map((b) => (
               <button key={b} type="button" aria-pressed={brand === b} className={`fchip fchip--${b}${brand === b ? ' fchip--on' : ''}`} onClick={() => setBrand(brand === b ? null : b)}>
@@ -108,11 +111,13 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
               </button>
             </li>
           )}
-          {visible.map((r) => {
+          {visible.map((r, i) => {
+            const header = sort === 'gen' && (i === 0 || visible[i - 1].series !== r.series) ? r.series : null;
             const tone = r.fits ? toneFor(r.fit) : 'critical';
             const isCurrent = r.part === current;
             return (
               <li key={r.part.id}>
+                {header && <h3 className="series-head">{header}</h3>}
                 <button type="button" className={`prow${isCurrent ? ' prow--current' : ''}`} onClick={() => onPick(r.part)}>
                   <span className="prow-main">
                     <span className="prow-name">

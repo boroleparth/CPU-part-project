@@ -22,9 +22,9 @@ export function tierOf(slot: PartSlot, part: AnyPart): TierLevel | undefined {
       return band((part as Gpu).rasterIndex, [30, 50, 75]);
     case 'motherboard': {
       const chip = (part as Motherboard).chipset;
-      if (['A620', 'H610', 'B450'].includes(chip)) return 1;
-      if (['B550', 'B650', 'B760', 'B860'].includes(chip)) return 2;
-      if (['X570', 'B850', 'Z790'].includes(chip)) return 3;
+      if (['A620', 'H610', 'B450', 'A520', 'H510'].includes(chip)) return 1;
+      if (['B550', 'B650', 'B760', 'B860', 'B560', 'X470'].includes(chip)) return 2;
+      if (['X570', 'B850', 'Z790', 'Z590'].includes(chip)) return 3;
       return 4;
     }
     default:
@@ -70,4 +70,51 @@ export function partSummary(slot: PartSlot, part: AnyPart): string {
     case 'psu': return (part as Psu).efficiency;
     case 'case': return `Fits ${(part as Case).supports.join(' / ')}`;
   }
+}
+
+/** Generation / series a CPU or GPU belongs to, for grouping in lists (newest first). */
+const cpuSeries: [string, string][] = [
+  ['Zen 5', 'Ryzen 9000'],
+  ['Arrow Lake', 'Core Ultra 200S'],
+  ['Zen 4 APU', 'Ryzen 8000G'],
+  ['Zen 4', 'Ryzen 7000'],
+  ['Raptor Lake Refresh', 'Core 14th gen'],
+  ['Raptor Lake', 'Core 13th gen'],
+  ['Alder Lake', 'Core 12th gen'],
+  ['Zen 3 APU', 'Ryzen 5000G'],
+  ['Zen 3', 'Ryzen 5000'],
+  ['Zen 3 (APU die)', 'Ryzen 5000'],
+  ['Rocket Lake', 'Core 11th gen'],
+  ['Comet Lake', 'Core 10th gen'],
+  ['Zen 2', 'Ryzen 3000'],
+  ['Zen+', 'Ryzen 2000'],
+];
+const gpuSeries: [RegExp, string][] = [
+  [/RTX 50/, 'GeForce RTX 50 series'],
+  [/RX 9\d{3}/, 'Radeon RX 9000 series'],
+  [/Arc B/, 'Intel Arc B series'],
+  [/RTX 40/, 'GeForce RTX 40 series'],
+  [/RX 7\d{3}/, 'Radeon RX 7000 series'],
+  [/RTX 30/, 'GeForce RTX 30 series'],
+  [/RX 6\d{3}/, 'Radeon RX 6000 series'],
+  [/Arc A/, 'Intel Arc A series'],
+  [/RTX 20/, 'GeForce RTX 20 series'],
+  [/GTX 16/, 'GeForce GTX 16 series'],
+  [/RX 5\d{3}/, 'Radeon RX 5000 series'],
+  [/GTX 10/, 'GeForce GTX 10 series'],
+];
+const cpuSeriesOrder = [...new Set(cpuSeries.map(([, s]) => s))];
+const gpuSeriesOrder = gpuSeries.map(([, s]) => s);
+
+export function seriesOf(slot: PartSlot, part: AnyPart): string | undefined {
+  if (slot === 'cpu') return cpuSeries.find(([g]) => g === (part as Cpu).generation)?.[1] ?? (part as Cpu).generation;
+  if (slot === 'gpu') return gpuSeries.find(([re]) => re.test(part.name))?.[1] ?? 'Other';
+  return undefined;
+}
+
+/** Sort position of a series (lower = newer). */
+export function seriesRank(slot: PartSlot, series: string): number {
+  const order = slot === 'cpu' ? cpuSeriesOrder : gpuSeriesOrder;
+  const i = order.indexOf(series);
+  return i < 0 ? order.length : i;
 }

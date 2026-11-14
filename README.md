@@ -14,6 +14,8 @@ Three short questions, one per page:
 Then **Check my build** opens one results dashboard:
 
 - **Verdict**: score, one-line headline, how the CPU and GPU match, peak power, PSU needed, compatibility.
+- **What's limiting performance**: how busy each part is (CPU, GPU, VRAM, RAM, storage, power supply) for
+  each use, with the bottleneck marked.
 - **Suggestions**: fixes, upgrades and money-savers, each applied with one click.
 - **Detailed analysis**: per use, the explanation plus the CPU-vs-GPU frame-rate chart (games) or the job
   time-share bars (creator and AI work).
@@ -69,6 +71,14 @@ src/
     __tests__/         Vitest suite
   components/    React UI
 ```
+
+## Parts covered
+
+- **CPUs (58)**: Ryzen 2000 / 3000 / 5000 / 5000G / 7000 / 8000G / 9000, Intel Core 10th–14th gen and Core Ultra 200S.
+- **GPUs (75)**: GeForce GTX 10 / GTX 16 / RTX 20 / 30 / 40 / 50, Radeon RX 5000 / 6000 / 7000 / 9000, Intel Arc A and B.
+- Motherboard classes for AM4, AM5, LGA1200, LGA1700 and LGA1851, plus RAM kits, storage, coolers, PSUs and cases.
+
+The part picker groups CPUs and GPUs by generation, newest first.
 
 ## Adding or updating parts
 

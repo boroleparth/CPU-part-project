@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { games } from '../data/games';
+import { limitReport, type LimitItem } from '../engine/limits';
 import { slotOrder } from '../data';
 import { simulateGames } from '../engine/games';
 import type { Suggestion } from '../engine/recommend';
@@ -173,6 +175,52 @@ function BuildCard({ build, issues, chosen, gaming, onOpen }: { build: Build; is
   );
 }
 
+const loadTone = (i: LimitItem, ideal: boolean): Tone =>
+  i.status === 'over' ? 'critical' : i.status === 'limit' ? (ideal ? 'good' : 'serious') : 'good';
+
+/** "Which part is holding this back?": load on every part for one use, with the bottleneck marked. */
+function LimitsCard({ build, evaluation, resolution }: { build: Build; evaluation: BuildEvaluation; resolution: Resolution }) {
+  const worst = [...evaluation.results].sort((a, b) => a.score - b.score)[0];
+  const [picked, setPicked] = useState<string | null>(null);
+  const r = evaluation.results.find((x) => x.workload === picked) ?? worst;
+  if (!r) return null;
+  const rep = limitReport(build, r, resolution);
+  const tone: Tone = rep.bottleneck === null || rep.ideal ? 'good' : rep.items.some((i) => i.status === 'over') ? 'critical' : 'serious';
+  return (
+    <section className="panel panel--limits" aria-labelledby="limits-title">
+      <div className="panel-head">
+        <h2 id="limits-title">What's limiting performance</h2>
+        {evaluation.results.length > 1 && (
+          <div className="seg-tabs" role="tablist" aria-label="Use">
+            {evaluation.results.map((x) => (
+              <button key={x.workload} type="button" role="tab" aria-selected={x === r} className={x === r ? 'seg-tab seg-tab--on' : 'seg-tab'} onClick={() => setPicked(x.workload)}>
+                {purposeLabels[x.workload]}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className={`limit-headline limit-headline--${tone}`}>
+        {rep.bottleneck && !rep.ideal && <span className="limit-badge">Bottleneck: {rep.bottleneck}</span>}
+        {rep.headline}
+      </p>
+      <ul className="limit-list">
+        {rep.items.map((i) => {
+          const t = loadTone(i, rep.ideal);
+          const isNeck = i.part === rep.bottleneck && !rep.ideal;
+          return (
+            <li key={i.part} className={`limit-row${isNeck ? ' limit-row--neck' : ''}`}>
+              <span className="limit-part">{i.part}</span>
+              <span className="limit-track"><span className={`limit-fill limit-fill--${t}`} style={{ width: `${Math.min(100, Math.max(3, i.load * 100))}%` }} /></span>
+              <span className="limit-label">{i.label}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 const kindOrder = { fix: 0, upgrade: 1, save: 2 } as const;
 
 function SuggestionsCard({ suggestions, score, onApply }: { suggestions: Suggestion[]; score: number; onApply: (s: Suggestion) => void }) {
@@ -233,6 +281,7 @@ export function Dashboard(props: DashboardProps) {
         </div>
       </div>
       <div className="dash-main">
+        <LimitsCard build={build} evaluation={evaluation} resolution={resolution} />
         <SuggestionsCard suggestions={suggestions} score={issues.some((i) => i.severity === 'error') ? 0 : evaluation.overall} onApply={onApply} />
         <Analysis evaluation={evaluation} resolution={resolution} />
         {gaming && build.cpu && <GamesCard build={build} resolution={resolution} refreshHz={refreshHz} />}

@@ -57,7 +57,7 @@ export function targetFor(id: GamingId, req: AutoBuildRequest): number {
 
 /** Best motherboard for a CPU: right socket, VRM strong enough, preferred form factor and memory type. */
 export function pickMotherboard(cpu: Cpu, opts: { formFactor?: FormFactor | 'any'; memType?: MemType; minPcie?: number; tier?: Tier } = {}): Motherboard | undefined {
-  const all = motherboards.filter((m) => m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && m.pcieGen >= (opts.minPcie ?? 3));
+  const all = motherboards.filter((m) => m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && !m.unsupported?.includes(cpu.generation) && m.pcieGen >= (opts.minPcie ?? 3));
   const ff = opts.formFactor && opts.formFactor !== 'any' ? opts.formFactor : undefined;
   const memPref: MemType | undefined = opts.memType ?? (cpu.memTypes.includes('DDR5') && opts.tier !== 'entry' ? 'DDR5' : undefined);
   const score = (m: Motherboard) => {
@@ -68,7 +68,7 @@ export function pickMotherboard(cpu: Cpu, opts: { formFactor?: FormFactor | 'any
     if (memPref && m.memType !== memPref) s += 200;
     if (m.biosNoteFor?.includes(cpu.generation)) s += 30;
     // Higher tiers get a mainstream-or-better chipset (better VRM, more M.2 / USB).
-    if ((opts.tier === 'high' || opts.tier === 'enthusiast') && ['A620', 'H610', 'B450'].includes(m.chipset)) s += 300;
+    if ((opts.tier === 'high' || opts.tier === 'enthusiast') && ['A620', 'H610', 'B450', 'A520', 'H510'].includes(m.chipset)) s += 300;
     if (opts.tier === 'enthusiast' && !ff && m.formFactor !== 'ATX') s += 100;
     s += m.vrmWatts * 0.3; // otherwise prefer the simplest board that does the job
     return s;
@@ -206,7 +206,7 @@ export function autoBuild(req: AutoBuildRequest): AutoBuildResult {
       cpuNeeds.push((c) => c.cores >= 6);
     }
   }
-  if (req.tier !== 'entry') cpuNeeds.push((c) => c.socket !== 'AM4' || req.tier === 'mid');
+  if (req.tier !== 'entry') cpuNeeds.push((c) => (c.socket !== 'AM4' && c.socket !== 'LGA1200') || req.tier === 'mid');
   if (gpu && ids.some(isGaming)) cpuNeeds.push((c) => c.gamingIndex >= minCpuIndexForGpu(gpu!));
   const sortedCpus = [...cpuPool].sort((a, b) => cpuCost(a) - cpuCost(b));
   let cpu = sortedCpus.find((c) => cpuNeeds.every((n) => n(c)));
@@ -248,7 +248,7 @@ export function completeBuild(picked: Build, tier: Tier = 'mid'): Build {
   if (!cpu) return build;
   if (build.ram && !cpu.memTypes.includes(build.ram.type)) build.ram = undefined;
 
-  const mbOk = (m?: Motherboard) => m && m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && (!build.ram || build.ram.type === m.memType);
+  const mbOk = (m?: Motherboard) => m && m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && !m.unsupported?.includes(cpu.generation) && (!build.ram || build.ram.type === m.memType);
   if (!mbOk(build.motherboard)) {
     build.motherboard = pickMotherboard(cpu, { memType: build.ram?.type, minPcie: build.gpu?.pcieLanes === 8 ? 4 : 3, tier });
   }

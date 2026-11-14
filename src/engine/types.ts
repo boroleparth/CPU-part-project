@@ -1,6 +1,6 @@
 // Core data types for parts, builds and simulation results.
 
-export type Socket = 'AM4' | 'AM5' | 'LGA1700' | 'LGA1851';
+export type Socket = 'AM4' | 'AM5' | 'LGA1200' | 'LGA1700' | 'LGA1851';
 export type MemType = 'DDR4' | 'DDR5';
 export type FormFactor = 'ATX' | 'mATX' | 'ITX';
 export type PcieGen = 3 | 4 | 5;
@@ -42,7 +42,7 @@ export interface Gpu {
   bandwidth: number;
   power: number;
   lengthMm: number;
-  pcieLanes: 8 | 16;
+  pcieLanes: 4 | 8 | 16;
   pcieGen: PcieGen;
   /** NVIDIA CUDA ecosystem — best software support for AI and rendering. */
   cuda: boolean;
@@ -66,6 +66,8 @@ export interface Motherboard {
   m2Slots: number;
   /** Older boards that need a BIOS update for newer CPUs. */
   biosNoteFor?: string[];
+  /** CPU generations this chipset does not support at all (e.g. B550 with Ryzen 2000). */
+  unsupported?: string[];
 }
 
 export interface RamKit {
