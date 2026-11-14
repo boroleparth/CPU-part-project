@@ -81,19 +81,19 @@ export const workloads: Workload[] = [
     id: 'video', kind: 'throughput', name: 'Video editing', short: 'Video',
     description: '4K timeline editing, effects and exports (Premiere Pro, DaVinci Resolve).',
     shares: { cpuMulti: 0.5, gpu: 0.28, ram: 0.14, storage: 0.08 },
-    vramNeed: 8, ramNeedGb: 64,
+    vramNeed: 8, ramNeedGb: 32,
   },
   {
     id: 'render3d', kind: 'throughput', name: '3D rendering', short: '3D render',
     description: 'GPU rendering and viewport work in Blender, Cinema 4D, Unreal.',
     shares: { gpu: 0.68, cpuMulti: 0.17, ram: 0.1, storage: 0.05 },
-    vramNeed: 12, ramNeedGb: 64, nonCudaFactor: 0.65,
+    vramNeed: 12, ramNeedGb: 32, nonCudaFactor: 0.65,
   },
   {
     id: 'ai', kind: 'throughput', name: 'Local AI / LLMs', short: 'Local AI',
     description: 'Running language and image models locally (Ollama, LM Studio, Stable Diffusion).',
     shares: { gpuBandwidth: 0.82, ram: 0.1, cpuSingle: 0.04, storage: 0.04 },
-    vramNeed: 12, ramNeedGb: 64, nonCudaFactor: 0.8,
+    vramNeed: 12, ramNeedGb: 32, nonCudaFactor: 0.8,
   },
   {
     id: 'office', kind: 'throughput', name: 'Office, coding & browsing', short: 'Everyday',

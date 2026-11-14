@@ -160,8 +160,10 @@ export function componentStrength(build: Build, w: ThroughputWorkload, c: Compon
       return r;
     }
     case 'ram': {
-      const { factor } = ramFactor(build, w.ramNeedGb);
-      return clamp(factor, 0.05, 1);
+      // Channels/speed from the shared factor; capacity weighs more for big projects than for games.
+      const { factor } = ramFactor(build, 0);
+      const capacity = build.ram ? Math.min(1, build.ram.totalGb / w.ramNeedGb) : 0.5;
+      return clamp(factor * Math.pow(capacity, 0.7), 0.05, 1);
     }
     case 'storage':
       // Not chosen yet: assume a typical NVMe drive rather than flagging it.
