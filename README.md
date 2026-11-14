@@ -1,5 +1,7 @@
 # PC Harmony
 
+**Live site: https://boroleparth.github.io/CPU-part-project/**
+
 A website that simulates how PC parts work together, so you can pick components where **no part bottlenecks the others**.
 
 - **Build & simulate**: choose a CPU, motherboard, RAM, GPU, storage, cooler, PSU and case. You get a live
@@ -70,8 +72,9 @@ resolution and workload combination still produces a compatible build.
 
 ## Deploying
 
-`.github/workflows/deploy.yml` tests and builds every push and pull request, and publishes `main` to GitHub
-Pages. Enable it once in the repository settings under **Pages → Source → GitHub Actions**.
+**https://boroleparth.github.io/CPU-part-project/** is built from `main` by `.github/workflows/deploy.yml`,
+which runs the tests, builds the site and publishes it to GitHub Pages on every push to `main`. Pull requests run
+the tests and build without publishing.
 
 ## Roadmap
 
