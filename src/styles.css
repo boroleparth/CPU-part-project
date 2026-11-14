@@ -71,7 +71,7 @@ button, select, input { font: inherit; color: inherit; }
 .muted { color: var(--text-2); }
 .small { font-size: 0.85rem; }
 
-.app { max-width: 1240px; margin: 0 auto; padding: 16px; }
+.app { max-width: 1240px; margin: 0 auto; padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
 /* ---------- Header ---------- */
 .topbar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -232,7 +232,7 @@ th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--bord
 .footer { text-align: center; margin: 28px 0 8px; }
 
 @media (max-width: 520px) {
-  .app { padding: 16px 12px; }
+  .app { padding-block: 16px; }
   .form-grid { grid-template-columns: 1fr; }
   .bar-row { grid-template-columns: 96px 1fr 40px; }
 }
