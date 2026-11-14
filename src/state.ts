@@ -11,6 +11,8 @@ export interface AppState {
   refreshHz: number;
   /** Parts the person picked themselves; the rest were matched automatically. */
   chosen: PartSlot[];
+  /** Second build for side-by-side comparison, when comparing. */
+  compare?: Build;
 }
 
 const validWorkloads = new Set(workloads.map((w) => w.id));
@@ -28,13 +30,27 @@ export const exampleBuild = (): Build => ({
 
 export const defaultState = (): AppState => ({ build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144, chosen: [] });
 
-/** Encodes the state into a URL hash so a build can be shared as a link. */
-export function encodeState(s: AppState): string {
-  const parts = slotOrder
-    .map((slot) => (s.build[slot] ? `${slot}:${s.build[slot]!.id}` : ''))
+const encodeBuild = (b: Build) =>
+  slotOrder
+    .map((slot) => (b[slot] ? `${slot}:${b[slot]!.id}` : ''))
     .filter(Boolean)
     .join(',');
-  const params = new URLSearchParams({ b: parts, w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz), c: s.chosen.join(',') });
+
+function decodeBuild(raw: string): Build {
+  const build: Build = {};
+  for (const pair of raw.split(',')) {
+    const [slot, id] = pair.split(':') as [PartSlot, string];
+    const list = catalog[slot] as readonly { id: string }[] | undefined;
+    const part = list?.find((p) => p.id === id);
+    if (part) (build as Record<string, unknown>)[slot] = part;
+  }
+  return build;
+}
+
+/** Encodes the state into a URL hash so a build (or a comparison) can be shared as a link. */
+export function encodeState(s: AppState): string {
+  const params = new URLSearchParams({ b: encodeBuild(s.build), w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz), c: s.chosen.join(',') });
+  if (s.compare) params.set('x', encodeBuild(s.compare));
   return params.toString();
 }
 
@@ -43,17 +59,12 @@ export function decodeState(hash: string): AppState | undefined {
   if (!raw) return undefined;
   const params = new URLSearchParams(raw);
   if (!params.has('b')) return undefined;
-  const build: Build = {};
-  for (const pair of (params.get('b') ?? '').split(',')) {
-    const [slot, id] = pair.split(':') as [PartSlot, string];
-    const list = catalog[slot] as readonly { id: string }[] | undefined;
-    const part = list?.find((p) => p.id === id);
-    if (part) (build as Record<string, unknown>)[slot] = part;
-  }
+  const build = decodeBuild(params.get('b') ?? '');
+  const compare = params.has('x') ? decodeBuild(params.get('x') ?? '') : undefined;
   const w = (params.get('w') ?? '').split(',').filter((x): x is WorkloadId => validWorkloads.has(x as WorkloadId));
   const r = params.get('r');
   const resolution: Resolution = r === '1080p' || r === '1440p' || r === '4K' ? r : '1440p';
   const hz = Number(params.get('hz'));
   const chosen = (params.get('c') ?? '').split(',').filter((x): x is PartSlot => slotOrder.includes(x as PartSlot) && !!build[x as PartSlot]);
-  return { build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen };
+  return { build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen, compare };
 }

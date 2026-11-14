@@ -10,13 +10,14 @@ import { evaluateBuild } from './engine/simulation';
 import type { Build, PartSlot, WorkloadId } from './engine/types';
 import { workloadById } from './engine/workloads';
 import { Dashboard } from './pages/Results';
+import { ComparePage } from './pages/Compare';
 import { MonitorPage, PartsPage, PurposePage } from './pages/Setup';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
-type PageId = 'purpose' | 'monitor' | 'parts' | 'dashboard';
-const resultPages: PageId[] = ['dashboard'];
-const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results' };
+type PageId = 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
+const resultPages: PageId[] = ['dashboard', 'compare'];
+const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
@@ -27,7 +28,11 @@ function initial(): { state: AppState; page: PageId } {
     const decoded = decodeState(window.location.hash);
     if (decoded) {
       // Fill any parts the link doesn't include, so a partial link still opens a complete build.
-      return { state: { ...decoded, build: decoded.build.cpu ? completeBuild(decoded.build) : decoded.build }, page: 'dashboard' };
+      const fill = (b: Build) => (b.cpu ? completeBuild(b) : b);
+      return {
+        state: { ...decoded, build: fill(decoded.build), compare: decoded.compare && fill(decoded.compare) },
+        page: decoded.compare ? 'compare' : 'dashboard',
+      };
     }
   } catch {
     /* fall through */
@@ -40,6 +45,8 @@ export default function App() {
   const [state, setState] = useState<AppState>(boot.state);
   const [page, setPage] = useState<PageId>(boot.page);
   const [browsing, setBrowsing] = useState<PartSlot | null>(null);
+  /** Which build the part browser edits: the main one (A) or the comparison (B). */
+  const [browseSide, setBrowseSide] = useState<'a' | 'b'>('a');
   const [copied, setCopied] = useState<'' | 'link' | 'list'>('');
   const { build, workloads, resolution, refreshHz } = state;
   const gaming = workloads.some((id) => workloadById[id].kind === 'gaming');
@@ -89,6 +96,27 @@ export default function App() {
       return { ...s, build: b, chosen: chosen.filter((c) => b[c]) };
     });
 
+  const pickCompare = (slot: PartSlot, part: Build[PartSlot] | undefined) =>
+    setState((s) => {
+      let b: Build = { ...(s.compare ?? s.build), [slot]: part };
+      if (slot === 'cpu' && b.cpu && b.ram && !b.cpu.memTypes.includes(b.ram.type)) b.ram = undefined;
+      if (mainSlots.includes(slot)) b = completeBuild(b);
+      return { ...s, compare: b };
+    });
+
+  const openCompare = () => {
+    setState((s) => ({ ...s, compare: s.compare ?? { ...s.build } }));
+    go('compare');
+  };
+  const closeCompare = () => {
+    setState((s) => ({ ...s, compare: undefined }));
+    go('dashboard');
+  };
+  const openBrowser = (side: 'a' | 'b', slot: PartSlot) => {
+    setBrowseSide(side);
+    setBrowsing(slot);
+  };
+
   const partsListText = () => {
     const lines = [`PC Harmony build: ${Math.round(evaluation.overall)}/100`, ''];
     for (const slot of slotOrder) {
@@ -126,7 +154,10 @@ export default function App() {
 
   // In the parts step (and for the four main parts later) the browser ignores the auto-matched
   // board etc., so any CPU can be picked and the platform follows it.
-  const browserBuild = browsing && (!isResult || mainSlots.includes(browsing)) ? onlyMain(build) : build;
+  const target = browseSide === 'b' && state.compare ? state.compare : build;
+  let browserBuild = browsing && (!isResult || mainSlots.includes(browsing)) ? onlyMain(target) : target;
+  // When choosing a CPU, RAM is re-matched afterwards, so it must not hide CPUs of another memory type.
+  if (browsing === 'cpu') browserBuild = { ...browserBuild, ram: undefined };
 
   return (
     <div className={isResult ? 'app app--wide' : 'app'}>
@@ -137,7 +168,9 @@ export default function App() {
         </button>
         {isResult && (
           <span className="top-actions">
-            <button type="button" className="link-btn" onClick={() => go('purpose')}>Edit answers</button>
+            {page === 'dashboard' && <button type="button" className="btn btn--ghost btn--small" onClick={openCompare}>Compare with another build</button>}
+            {page === 'compare' && <button type="button" className="link-btn" onClick={closeCompare}>← Back to results</button>}
+            <button type="button" className={`link-btn${page === 'compare' ? ' hide-sm' : ''}`} onClick={() => go('purpose')}>Edit answers</button>
             <button type="button" className="link-btn" onClick={startOver}>Start over</button>
           </span>
         )}
@@ -164,7 +197,7 @@ export default function App() {
             onRefresh={(hz) => setState((s) => ({ ...s, refreshHz: hz }))}
           />
         )}
-        {page === 'parts' && <PartsPage build={build} onOpen={setBrowsing} />}
+        {page === 'parts' && <PartsPage build={build} onOpen={(slot) => openBrowser('a', slot)} />}
         {page === 'dashboard' && (
           <Dashboard
             build={build}
@@ -176,9 +209,25 @@ export default function App() {
             gaming={gaming}
             chosen={state.chosen}
             copied={copied}
-            onOpen={setBrowsing}
+            onOpen={(slot) => openBrowser('a', slot)}
             onApply={(s) => setState((st) => ({ ...st, build: { ...st.build, ...s.changes }, chosen: [...new Set([...st.chosen, ...(Object.keys(s.changes) as PartSlot[])])] }))}
             onCopy={copy}
+            onCompare={openCompare}
+          />
+        )}
+        {page === 'compare' && state.compare && (
+          <ComparePage
+            a={build}
+            b={state.compare}
+            workloads={workloads}
+            resolution={resolution}
+            refreshHz={refreshHz}
+            onOpen={openBrowser}
+            onSwap={() => setState((s) => ({ ...s, build: s.compare!, compare: s.build, chosen: mainSlots.filter((m) => s.compare![m]) }))}
+            onUseB={() => {
+              setState((s) => ({ ...s, build: s.compare!, compare: undefined, chosen: mainSlots.filter((m) => s.compare![m]) }));
+              go('dashboard');
+            }}
           />
         )}
       </main>
@@ -195,7 +244,8 @@ export default function App() {
           workloads={workloads}
           resolution={resolution}
           onPick={(part) => {
-            pick(browsing, part);
+            if (browseSide === 'b' && page === 'compare') pickCompare(browsing, part);
+            else pick(browsing, part);
             setBrowsing(null);
           }}
           onClose={() => setBrowsing(null)}

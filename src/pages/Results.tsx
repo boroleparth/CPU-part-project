@@ -265,11 +265,12 @@ export interface DashboardProps {
   onOpen: (slot: PartSlot) => void;
   onApply: (s: Suggestion) => void;
   onCopy: (what: 'link' | 'list') => void;
+  onCompare: () => void;
 }
 
 /** Everything after "Check my build", on one page. */
 export function Dashboard(props: DashboardProps) {
-  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, copied, onOpen, onApply, onCopy } = props;
+  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, copied, onOpen, onApply, onCopy, onCompare } = props;
   return (
     <div className="dashboard">
       <div className="dash-side">
@@ -278,6 +279,7 @@ export function Dashboard(props: DashboardProps) {
         <div className="share">
           <button type="button" className="btn" onClick={() => onCopy('list')}>{copied === 'list' ? 'Copied ✓' : 'Copy parts list'}</button>
           <button type="button" className="btn btn--ghost" onClick={() => onCopy('link')}>{copied === 'link' ? 'Copied ✓' : 'Copy link'}</button>
+          <button type="button" className="btn btn--ghost" onClick={onCompare}>Compare with another build</button>
         </div>
       </div>
       <div className="dash-main">

@@ -22,6 +22,12 @@ Then **Check my build** opens one results dashboard:
 - **Your games**: estimated FPS in ten popular games at standard settings, against your refresh rate.
 - **Your build**: every part with a status dot and one-tap changes, plus a parts list or link to share.
 
+**Compare with another build** opens a side-by-side view. Build B starts as a copy of your build; change any
+of its parts and see both scores, each use's score, the bottleneck, power, and FPS in every game with the
+difference. One build is recommended with a reason: a build with a real bottleneck (CPU, VRAM, RAM, power
+supply, storage) loses to one without; otherwise the one that is at least 5% faster wins; otherwise the better
+balanced one. Swap the builds, make B your build, or share the comparison as a link.
+
 ## Run it locally
 
 ```bash
