@@ -17,6 +17,7 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 export function shortVerdict(r: WorkloadResult, res: Resolution): { title: string; line: string } {
   if (r.judged) {
     const p = r.judged;
+    if (r.headline.startsWith('No graphics card')) return { title: 'No graphics card', line: 'Games need one. See the suggestion.' };
     if (p.limitedBy === 'cpu' && p.bottleneck >= 0.1) return { title: 'CPU is holding back the GPU', line: `${pct(p.bottleneck)} of the GPU sits idle at ${res}` };
     if (p.limitedBy === 'gpu' && p.bottleneck > 0.4) return { title: 'CPU has power to spare', line: `The GPU is the limit at ${res}` };
     return { title: 'CPU and GPU are well matched', line: `~${Math.round(p.fps)} FPS at ${res}` };
@@ -138,7 +139,7 @@ const slotNames: Record<PartSlot, string> = {
   storage: 'Storage', cooler: 'Cooler', psu: 'Power supply', case: 'Case',
 };
 
-function BuildCard({ build, issues, onOpen }: { build: Build; issues: Issue[]; onOpen: (slot: PartSlot) => void }) {
+function BuildCard({ build, issues, chosen, gaming, onOpen }: { build: Build; issues: Issue[]; chosen: PartSlot[]; gaming: boolean; onOpen: (slot: PartSlot) => void }) {
   return (
     <section className="panel panel--flush panel--build" aria-labelledby="build-title">
       <div className="panel-head">
@@ -149,16 +150,18 @@ function BuildCard({ build, issues, onOpen }: { build: Build; issues: Issue[]; o
         {slotOrder.map((slot) => {
           const part = build[slot];
           const own = issues.filter((i) => i.slots.includes(slot) && i.severity !== 'info');
-          const state: Tone = own.some((i) => i.severity === 'error') ? 'critical' : own.length ? 'warning' : 'good';
+          const noGpuForGames = slot === 'gpu' && !part && gaming;
+          const state: Tone = noGpuForGames || own.some((i) => i.severity === 'error') ? 'critical' : own.length ? 'warning' : 'good';
           return (
             <li key={slot}>
               <button type="button" className="build-row" onClick={() => onOpen(slot)} title={own.map((i) => i.message).join('\n') || undefined}>
                 <span className={`state-dot state-dot--${part || slot === 'gpu' ? state : 'warning'}`} aria-label={toneText[state]} />
                 <span className="build-icon"><SlotIcon slot={slot} size={20} /></span>
                 <span className="build-body">
-                  <span className="build-label">{slotNames[slot]}</span>
+                  <span className="build-label">{slotNames[slot]}{part && !chosen.includes(slot) && <span className="auto-tag">Auto-picked</span>}</span>
                   <b>{part ? part.name : slot === 'gpu' ? 'Integrated graphics' : 'Not chosen'}</b>
-                  {own[0] ? <span className={`build-issue build-issue--${state}`}>{own[0].message}</span> : part && <span className="build-spec">{partSummary(slot, part)}</span>}
+                  {noGpuForGames ? <span className="build-issue build-issue--critical">Too slow for games. Add a graphics card.</span>
+                    : own[0] ? <span className={`build-issue build-issue--${state}`}>{own[0].message}</span> : part && <span className="build-spec">{partSummary(slot, part)}</span>}
                 </span>
                 <span className="build-change">Change</span>
               </button>
@@ -172,7 +175,7 @@ function BuildCard({ build, issues, onOpen }: { build: Build; issues: Issue[]; o
 
 const kindOrder = { fix: 0, upgrade: 1, save: 2 } as const;
 
-function SuggestionsCard({ suggestions, onApply }: { suggestions: Suggestion[]; onApply: (s: Suggestion) => void }) {
+function SuggestionsCard({ suggestions, score, onApply }: { suggestions: Suggestion[]; score: number; onApply: (s: Suggestion) => void }) {
   const top = suggestions.filter((s) => Object.keys(s.changes).length).sort((a, b) => kindOrder[a.kind] - kindOrder[b.kind]).slice(0, 4);
   return (
     <section className="panel panel--suggest" aria-labelledby="improve-title">
@@ -192,8 +195,10 @@ function SuggestionsCard({ suggestions, onApply }: { suggestions: Suggestion[]; 
             </li>
           ))}
         </ul>
-      ) : (
+      ) : score >= 80 ? (
         <p className="all-good"><span className="state-dot state-dot--good" /> Nothing to change. This build is well balanced.</p>
+      ) : (
+        <p className="all-good"><span className="state-dot state-dot--warning" /> No single swap fixes this. Try a different processor or graphics card.</p>
       )}
     </section>
   );
@@ -207,6 +212,7 @@ export interface DashboardProps {
   resolution: Resolution;
   refreshHz: number;
   gaming: boolean;
+  chosen: PartSlot[];
   copied: '' | 'link' | 'list';
   onOpen: (slot: PartSlot) => void;
   onApply: (s: Suggestion) => void;
@@ -215,19 +221,19 @@ export interface DashboardProps {
 
 /** Everything after "Check my build", on one page. */
 export function Dashboard(props: DashboardProps) {
-  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, copied, onOpen, onApply, onCopy } = props;
+  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, copied, onOpen, onApply, onCopy } = props;
   return (
     <div className="dashboard">
       <div className="dash-side">
         <VerdictCard build={build} evaluation={evaluation} issues={issues} resolution={resolution} />
-        <BuildCard build={build} issues={issues} onOpen={onOpen} />
+        <BuildCard build={build} issues={issues} chosen={chosen} gaming={gaming} onOpen={onOpen} />
         <div className="share">
           <button type="button" className="btn" onClick={() => onCopy('list')}>{copied === 'list' ? 'Copied ✓' : 'Copy parts list'}</button>
           <button type="button" className="btn btn--ghost" onClick={() => onCopy('link')}>{copied === 'link' ? 'Copied ✓' : 'Copy link'}</button>
         </div>
       </div>
       <div className="dash-main">
-        <SuggestionsCard suggestions={suggestions} onApply={onApply} />
+        <SuggestionsCard suggestions={suggestions} score={issues.some((i) => i.severity === 'error') ? 0 : evaluation.overall} onApply={onApply} />
         <Analysis evaluation={evaluation} resolution={resolution} />
         {gaming && build.cpu && <GamesCard build={build} resolution={resolution} refreshHz={refreshHz} />}
       </div>

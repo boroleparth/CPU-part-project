@@ -39,6 +39,10 @@ function changesBetween(before: Build, after: Build): Build {
   return out;
 }
 
+function hasNoErrors(build: Build) {
+  return !checkCompatibility(build).some((i) => i.severity === 'error');
+}
+
 function hasErrors(build: Build) {
   return checkCompatibility(build).some((i) => i.severity === 'error');
 }
@@ -64,7 +68,29 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
   const out: Suggestion[] = [];
   const p = r.judged!;
   const name = workloadById[id].short;
-  if (!build.cpu || !build.gpu) return out;
+  if (!build.cpu) return out;
+
+  if (!build.gpu) {
+    // No graphics card: suggest the least powerful card that is a balanced match for this CPU.
+    const ok = (g: Gpu) => {
+      const r2 = evaluateWorkload(withSupportingParts({ ...build, gpu: g }), id, res);
+      return r2.score >= 90 && hasNoErrors(withSupportingParts({ ...build, gpu: g }));
+    };
+    const pool = [...gpus].sort((a, b) => gpuCost(a) - gpuCost(b));
+    const g = pool.find(ok) ?? pool.find((x) => evaluateWorkload({ ...build, gpu: x }, id, res).score >= 75);
+    if (g) {
+      const after = withSupportingParts({ ...build, gpu: g });
+      const q = evaluateWorkload(after, id, res).judged!;
+      out.push({
+        id: `add-gpu-${g.id}`,
+        kind: 'fix',
+        title: `Add a graphics card: ${g.name}`,
+        detail: `Matches the ${build.cpu.name}: ~${Math.round(p.fps)} → ~${Math.round(q.fps)} FPS in ${name} at ${res}.${after.psu !== build.psu && after.psu ? ` Includes a ${after.psu.watts} W PSU.` : ''}`,
+        changes: changesBetween(build, after),
+      });
+    }
+    return out;
+  }
 
   if (p.limitedBy === 'cpu' && p.bottleneck >= 0.1) {
     // Weakest CPU that removes the bottleneck: same socket first, then any platform.

@@ -1,6 +1,7 @@
 import { evaluateBuild, evaluateWorkload } from '../simulation';
 import { suggest } from '../recommend';
-import { recommendedPsuWatts } from '../compatibility';
+import { checkCompatibility, recommendedPsuWatts } from '../compatibility';
+import { completeBuild } from '../builder';
 import type { Build } from '../types';
 import { board, cooler, cpu, goodBuild, gpu, psu, ram } from './helpers';
 
@@ -44,5 +45,26 @@ describe('suggest', () => {
     const after = apply(b, s!.changes);
     expect(after.gpu!.power).toBeGreaterThan(b.gpu!.power);
     expect(after.psu!.watts).toBeGreaterThanOrEqual(recommendedPsuWatts(after));
+  });
+
+  it('suggests adding a matching graphics card when there is none (gaming)', () => {
+    // Regression: CPU only, gaming selected → used to say "nothing to change".
+    const b: Build = completeBuild({ cpu: cpu('r5-7600') });
+    for (const [id, res] of [['esports', '1440p'], ['aaa', '1080p'], ['aaa', '4K']] as const) {
+      const e = evaluateBuild(b, [id], res);
+      expect(e.results[0].score).toBeLessThan(40);
+      expect(e.results[0].headline).toMatch(/No graphics card/);
+      const s = suggest(b, e.results, res).find((x) => x.changes.gpu);
+      expect(s).toBeDefined();
+      const after = apply(b, s!.changes);
+      expect(evaluateWorkload(after, id, res).score).toBeGreaterThanOrEqual(75);
+      expect(checkCompatibility(after).filter((i) => i.severity === 'error')).toEqual([]);
+    }
+  });
+
+  it('suggests a graphics card for GPU-heavy creator work when there is none', () => {
+    const b: Build = completeBuild({ cpu: cpu('r7-7700x') });
+    const e = evaluateBuild(b, ['render3d'], '1440p');
+    expect(suggest(b, e.results, '1440p').some((x) => x.changes.gpu)).toBe(true);
   });
 });

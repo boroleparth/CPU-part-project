@@ -9,6 +9,8 @@ export interface AppState {
   resolution: Resolution;
   /** Monitor refresh rate in Hz. */
   refreshHz: number;
+  /** Parts the person picked themselves; the rest were matched automatically. */
+  chosen: PartSlot[];
 }
 
 const validWorkloads = new Set(workloads.map((w) => w.id));
@@ -24,7 +26,7 @@ export const exampleBuild = (): Build => ({
   case: catalog.case.find((p) => p.id === 'case-mid'),
 });
 
-export const defaultState = (): AppState => ({ build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144 });
+export const defaultState = (): AppState => ({ build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144, chosen: [] });
 
 /** Encodes the state into a URL hash so a build can be shared as a link. */
 export function encodeState(s: AppState): string {
@@ -32,7 +34,7 @@ export function encodeState(s: AppState): string {
     .map((slot) => (s.build[slot] ? `${slot}:${s.build[slot]!.id}` : ''))
     .filter(Boolean)
     .join(',');
-  const params = new URLSearchParams({ b: parts, w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz) });
+  const params = new URLSearchParams({ b: parts, w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz), c: s.chosen.join(',') });
   return params.toString();
 }
 
@@ -52,5 +54,6 @@ export function decodeState(hash: string): AppState | undefined {
   const r = params.get('r');
   const resolution: Resolution = r === '1080p' || r === '1440p' || r === '4K' ? r : '1440p';
   const hz = Number(params.get('hz'));
-  return { build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144 };
+  const chosen = (params.get('c') ?? '').split(',').filter((x): x is PartSlot => slotOrder.includes(x as PartSlot) && !!build[x as PartSlot]);
+  return { build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen };
 }

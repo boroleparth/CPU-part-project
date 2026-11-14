@@ -356,8 +356,17 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
   if (!build.cpu || (!build.gpu && !build.cpu.hasIgpu)) {
     return { workload: w.id, score: 0, tone: 'critical', headline: 'Pick a CPU and GPU', detail: 'The frame-rate model needs both a processor and graphics.', fps, judged, notes };
   }
-  const score = gamingBalanceScore(judged);
   const fpsTxt = `~${Math.round(judged.fps)} FPS at ${res}`;
+  if (!build.gpu) {
+    // The CPU's built-in graphics: technically "GPU-limited", but the real answer is "add a graphics card".
+    const score = Math.min(gamingBalanceScore(judged), 15);
+    return {
+      workload: w.id, score, tone: toneFor(score), fps, judged, notes,
+      headline: `No graphics card: ${fpsTxt}`,
+      detail: `The ${build.cpu.name}'s built-in graphics are far too slow for these games. Add a graphics card that matches the CPU.`,
+    };
+  }
+  const score = gamingBalanceScore(judged);
   let headline: string;
   let detail: string;
   if (judged.limitedBy === 'cpu') {

@@ -84,7 +84,8 @@ export default function App() {
       if (slot === 'cpu' && b.cpu && b.ram && !b.cpu.memTypes.includes(b.ram.type)) b.ram = undefined;
       // On the results pages, keep the build complete: re-match the supporting parts.
       if (isResult && mainSlots.includes(slot)) b = completeBuild(b);
-      return { ...s, build: b };
+      const chosen = part ? [...new Set([...s.chosen, slot])] : s.chosen.filter((c) => c !== slot);
+      return { ...s, build: b, chosen: chosen.filter((c) => b[c]) };
     });
 
   const partsListText = () => {
@@ -112,7 +113,7 @@ export default function App() {
   };
 
   const startOver = () => {
-    setState({ ...defaultState(), build: {}, workloads: [] });
+    setState({ ...defaultState(), build: {}, workloads: [], chosen: [] });
     try {
       window.history.replaceState(null, '', window.location.pathname);
     } catch {
@@ -172,9 +173,10 @@ export default function App() {
             resolution={resolution}
             refreshHz={refreshHz}
             gaming={gaming}
+            chosen={state.chosen}
             copied={copied}
             onOpen={setBrowsing}
-            onApply={(s) => setState((st) => ({ ...st, build: { ...st.build, ...s.changes } }))}
+            onApply={(s) => setState((st) => ({ ...st, build: { ...st.build, ...s.changes }, chosen: [...new Set([...st.chosen, ...(Object.keys(s.changes) as PartSlot[])])] }))}
             onCopy={copy}
           />
         )}

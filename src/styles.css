@@ -450,3 +450,5 @@ button { -webkit-tap-highlight-color: transparent; }
   .improve-row .btn { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
   .top-actions { gap: 12px; }
 }
+
+.auto-tag { margin-left: 8px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 1px 6px; border-radius: 5px; background: var(--surface-3); color: var(--text-2); }
