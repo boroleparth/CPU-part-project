@@ -4,15 +4,21 @@
 
 A website that checks whether PC parts work well together, so no part bottlenecks the others.
 
-It walks you through one page at a time:
+Three short questions, one per page:
 
 1. **Purpose**: gaming, esports, streaming, video editing, 3D, local AI or everyday use.
 2. **Monitor** (gaming only): resolution and refresh rate.
 3. **Parts**: CPU, graphics card, memory and storage. The motherboard, cooler, power supply and case are
    matched automatically.
-4. **Verdict**: one score, one sentence, and how the CPU and GPU match.
-5. **Games** (gaming only): estimated FPS in ten popular games at standard settings, against your refresh rate.
-6. **Build**: every part with a status dot, one-tap changes, suggested fixes, and a parts list or link to share.
+
+Then **Check my build** opens one results dashboard:
+
+- **Verdict**: score, one-line headline, how the CPU and GPU match, peak power, PSU needed, compatibility.
+- **Suggestions**: fixes, upgrades and money-savers, each applied with one click.
+- **Detailed analysis**: per use, the explanation plus the CPU-vs-GPU frame-rate chart (games) or the job
+  time-share bars (creator and AI work).
+- **Your games**: estimated FPS in ten popular games at standard settings, against your refresh rate.
+- **Your build**: every part with a status dot and one-tap changes, plus a parts list or link to share.
 
 ## Run it locally
 

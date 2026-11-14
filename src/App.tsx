@@ -9,14 +9,14 @@ import { suggest } from './engine/recommend';
 import { evaluateBuild } from './engine/simulation';
 import type { Build, PartSlot, WorkloadId } from './engine/types';
 import { workloadById } from './engine/workloads';
-import { BuildPage, GamesPage, VerdictPage } from './pages/Results';
+import { Dashboard } from './pages/Results';
 import { MonitorPage, PartsPage, PurposePage } from './pages/Setup';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
-type PageId = 'purpose' | 'monitor' | 'parts' | 'verdict' | 'games' | 'build';
-const resultPages: PageId[] = ['verdict', 'games', 'build'];
-const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', verdict: 'Analysis', games: 'Games', build: 'Build' };
+type PageId = 'purpose' | 'monitor' | 'parts' | 'dashboard';
+const resultPages: PageId[] = ['dashboard'];
+const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
@@ -26,8 +26,7 @@ function initial(): { state: AppState; page: PageId } {
   try {
     const decoded = decodeState(window.location.hash);
     if (decoded) {
-      const p = new URLSearchParams(window.location.hash.slice(1)).get('p') as PageId | null;
-      return { state: decoded, page: p && resultPages.includes(p) ? p : 'verdict' };
+      return { state: decoded, page: 'dashboard' };
     }
   } catch {
     /* fall through */
@@ -45,7 +44,7 @@ export default function App() {
   const gaming = workloads.some((id) => workloadById[id].kind === 'gaming');
 
   const pages = useMemo<PageId[]>(
-    () => (['purpose', gaming && 'monitor', 'parts', 'verdict', gaming && 'games', 'build'] as (PageId | false)[]).filter(Boolean) as PageId[],
+    () => (['purpose', gaming && 'monitor', 'parts', 'dashboard'] as (PageId | false)[]).filter(Boolean) as PageId[],
     [gaming],
   );
   const index = Math.max(0, pages.indexOf(page));
@@ -59,14 +58,14 @@ export default function App() {
   useEffect(() => {
     if (!isResult) return;
     try {
-      window.history.replaceState(null, '', `#${encodeState(state)}&p=${page}`);
+      window.history.replaceState(null, '', `#${encodeState(state)}`);
     } catch {
       /* sandboxed frames may block history access */
     }
   }, [state, page, isResult]);
 
   const go = (p: PageId) => {
-    if (p === 'verdict' && !resultPages.includes(page)) setState((s) => ({ ...s, build: completeBuild(s.build) }));
+    if (p === 'dashboard' && !resultPages.includes(page)) setState((s) => ({ ...s, build: completeBuild(s.build) }));
     setPage(p);
     window.scrollTo({ top: 0 });
   };
@@ -74,7 +73,7 @@ export default function App() {
   const back = () => pages[index - 1] && go(pages[index - 1]);
 
   const canNext = page === 'purpose' ? workloads.length > 0 : page === 'parts' ? !!build.cpu : true;
-  const nextLabel = page === 'parts' ? 'Check my build' : page === 'build' ? '' : isResult ? `Next: ${pageNames[pages[index + 1]]}` : 'Next';
+  const nextLabel = page === 'parts' ? 'Check my build' : isResult ? '' : 'Next';
 
   const toggleWorkload = (id: WorkloadId) =>
     setState((s) => ({ ...s, workloads: s.workloads.includes(id) ? s.workloads.filter((w) => w !== id) : [...s.workloads, id] }));
@@ -128,21 +127,30 @@ export default function App() {
   const browserBuild = browsing && (!isResult || mainSlots.includes(browsing)) ? onlyMain(build) : build;
 
   return (
-    <div className={page === 'verdict' ? 'app app--wide' : 'app'}>
+    <div className={isResult ? 'app app--wide' : 'app'}>
       <header className="topbar">
         <button type="button" className="brand" onClick={startOver} aria-label="PC Harmony, start over">
           <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" className="logo-bg" /><path d="M9 20.5c2.2-5.5 4.4-8 7-8s4.8 2.5 7 8" className="logo-wave" /><circle cx="16" cy="12.5" r="2.2" className="logo-dot" /></svg>
           <span>PC Harmony</span>
         </button>
-        {isResult && <button type="button" className="link-btn" onClick={startOver}>Start over</button>}
+        {isResult && (
+          <span className="top-actions">
+            <button type="button" className="link-btn" onClick={() => go('purpose')}>Edit answers</button>
+            <button type="button" className="link-btn" onClick={startOver}>Start over</button>
+          </span>
+        )}
       </header>
 
-      <nav className="progress" aria-label={`Step ${index + 1} of ${pages.length}: ${pageNames[page]}`}>
-        {pages.map((p, i) => (
-          <span key={p} className={`progress-seg${i < index ? ' done' : i === index ? ' on' : ''}${resultPages.includes(p) ? ' result' : ''}`} />
-        ))}
-      </nav>
-      <p className="progress-label">{pageNames[page]}</p>
+      {!isResult && (
+        <>
+          <nav className="progress" aria-label={`Step ${index + 1} of ${pages.length}: ${pageNames[page]}`}>
+            {pages.map((p, i) => (
+              <span key={p} className={`progress-seg${i < index ? ' done' : i === index ? ' on' : ''}${resultPages.includes(p) ? ' result' : ''}`} />
+            ))}
+          </nav>
+          <p className="progress-label">{pageNames[page]}</p>
+        </>
+      )}
 
       <main className="page" key={page}>
         {page === 'purpose' && <PurposePage selected={workloads} onToggle={toggleWorkload} />}
@@ -155,13 +163,15 @@ export default function App() {
           />
         )}
         {page === 'parts' && <PartsPage build={build} onOpen={setBrowsing} />}
-        {page === 'verdict' && <VerdictPage build={build} evaluation={evaluation} issues={issues} resolution={resolution} />}
-        {page === 'games' && <GamesPage build={build} resolution={resolution} refreshHz={refreshHz} />}
-        {page === 'build' && (
-          <BuildPage
+        {page === 'dashboard' && (
+          <Dashboard
             build={build}
+            evaluation={evaluation}
             issues={issues}
             suggestions={suggestions}
+            resolution={resolution}
+            refreshHz={refreshHz}
+            gaming={gaming}
             copied={copied}
             onOpen={setBrowsing}
             onApply={(s) => setState((st) => ({ ...st, build: { ...st.build, ...s.changes } }))}
@@ -170,10 +180,10 @@ export default function App() {
         )}
       </main>
 
-      <div className="page-nav">
+      {!isResult && <div className="page-nav">
         {index > 0 ? <button type="button" className="btn btn--ghost" onClick={back}>Back</button> : <span />}
         {nextLabel && <button type="button" className="btn btn--big" disabled={!canNext} onClick={next}>{nextLabel}</button>}
-      </div>
+      </div>}
 
       {browsing && (
         <PartBrowser
