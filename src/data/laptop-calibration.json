@@ -1,0 +1,215 @@
+{
+  "generated": "2026-11-15",
+  "source": "Notebookcheck GPU benchmark pages",
+  "method": "FPS ratio vs desktop reference cards in identical game/preset/resolution rows, GPU-bound rows only",
+  "gpus": {
+    "gtx1650m": {
+      "typical": 8.1,
+      "top": 8.5,
+      "low": 7.1,
+      "laptops": 32,
+      "rows": 1836,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1650-Laptop-GPU.416044.0.html"
+    },
+    "gtx1650tim": {
+      "typical": 9.3,
+      "top": 9.4,
+      "low": 9.1,
+      "laptops": 9,
+      "rows": 1526,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1650-Ti-Mobile-GPU-Benchmarks-and-Specs.452628.0.html"
+    },
+    "gtx1660tim": {
+      "typical": 13.4,
+      "top": 14.2,
+      "low": 12.8,
+      "laptops": 21,
+      "rows": 2005,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1660-Ti-Laptop-Graphics-Card.386426.0.html"
+    },
+    "rtx2060m": {
+      "typical": 14,
+      "top": 14.7,
+      "low": 12.6,
+      "laptops": 39,
+      "rows": 1066,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2060-Laptop-Graphics-Card.384946.0.html"
+    },
+    "rtx2070m": {
+      "typical": 17,
+      "top": 17.6,
+      "low": 15.7,
+      "laptops": 20,
+      "rows": 1102,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2070-Laptop-Graphics-Card.384936.0.html"
+    },
+    "rtx2070sm": {
+      "typical": 19.7,
+      "top": 20.4,
+      "low": 18.8,
+      "laptops": 9,
+      "rows": 750,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2070-Super-Mobile-GPU-Benchmarks-and-Specs.452604.0.html"
+    },
+    "rtx2080m": {
+      "typical": 21,
+      "top": 22.2,
+      "low": 19.1,
+      "laptops": 17,
+      "rows": 1121,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2080-Laptop-Graphics-Card.384931.0.html"
+    },
+    "rtx2080sm": {
+      "typical": 22.6,
+      "top": 24.8,
+      "low": 19.2,
+      "laptops": 4,
+      "rows": 754,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2080-Super-Mobile-GPU-Benchmarks-and-Specs.452534.0.html"
+    },
+    "rtx3050m": {
+      "typical": 10.3,
+      "top": 11.7,
+      "low": 8.9,
+      "laptops": 22,
+      "rows": 1779,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3050-Laptop-GPU-Benchmarks-and-Specs.513790.0.html"
+    },
+    "rtx3050tim": {
+      "typical": 11.5,
+      "top": 12.3,
+      "low": 10.1,
+      "laptops": 27,
+      "rows": 1704,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3050-Ti-Laptop-GPU-Benchmarks-and-Specs.527430.0.html"
+    },
+    "rtx3060m": {
+      "typical": 18,
+      "top": 20,
+      "low": 16.1,
+      "laptops": 49,
+      "rows": 2543,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3060-Laptop-GPU-Graphics-Card.497453.0.html"
+    },
+    "rtx3070m": {
+      "typical": 22.2,
+      "top": 24.4,
+      "low": 18.9,
+      "laptops": 1,
+      "rows": 912,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3070-Mobile-GPU-Benchmarks-and-Specs.497451.0.html"
+    },
+    "rtx3070tim": {
+      "typical": 23,
+      "top": 25,
+      "low": 20.7,
+      "laptops": 32,
+      "rows": 1758,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3070-Ti-Laptop-GPU-GPU-Benchmarks-and-Specs.588958.0.html"
+    },
+    "rtx3080m": {
+      "typical": 23.7,
+      "top": 25.5,
+      "low": 21.6,
+      "laptops": 39,
+      "rows": 3267,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3080-Mobile-GPU-Benchmarks-and-Specs.497450.0.html"
+    },
+    "rtx3080tim": {
+      "typical": 28.3,
+      "top": 30.4,
+      "low": 21.4,
+      "laptops": 34,
+      "rows": 2206,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3080-Ti-Laptop-GPU-GPU-Benchmarks-and-Specs.588451.0.html"
+    },
+    "rtx4050m": {
+      "typical": 17.3,
+      "top": 18.7,
+      "low": 13.3,
+      "laptops": 40,
+      "rows": 2378,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-4050-Laptop-GPU-Benchmarks-and-Specs.675695.0.html"
+    },
+    "rtx4060m": {
+      "typical": 21.8,
+      "top": 23.8,
+      "low": 18.7,
+      "laptops": 55,
+      "rows": 2186,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-4060-Laptop-GPU-Benchmarks-and-Specs.675692.0.html"
+    },
+    "rtx4070m": {
+      "typical": 26.5,
+      "top": 28.3,
+      "low": 23,
+      "laptops": 67,
+      "rows": 2811,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-4070-Laptop-GPU-Benchmarks-and-Specs.675690.0.html"
+    },
+    "rtx4080m": {
+      "typical": 36.5,
+      "top": 38.8,
+      "low": 31.7,
+      "laptops": 23,
+      "rows": 2591,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-4080-Laptop-GPU-Benchmarks-and-Specs.675174.0.html"
+    },
+    "rtx4090m": {
+      "typical": 42.7,
+      "top": 45.3,
+      "low": 37.4,
+      "laptops": 35,
+      "rows": 2592,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-4090-Laptop-GPU-Benchmarks-and-Specs.675091.0.html"
+    },
+    "rtx5050m": {
+      "typical": 20.3,
+      "top": 21,
+      "low": 18,
+      "laptops": 10,
+      "rows": 578,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5050-Laptop-Benchmarks-and-Specs.934804.0.html"
+    },
+    "rtx5060m": {
+      "typical": 24,
+      "top": 24.9,
+      "low": 21.5,
+      "laptops": 23,
+      "rows": 809,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5060-Laptop-Benchmarks-and-Specs.934941.0.html"
+    },
+    "rtx5070m": {
+      "typical": 27.5,
+      "top": 29.3,
+      "low": 24.7,
+      "laptops": 36,
+      "rows": 810,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5070-Laptop-Benchmarks-and-Specs.934942.0.html"
+    },
+    "rtx5070tim": {
+      "typical": 36.2,
+      "top": 38.4,
+      "low": 32.2,
+      "laptops": 18,
+      "rows": 988,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5070-Ti-Laptop-Benchmarks-and-Specs.934945.0.html"
+    },
+    "rtx5080m": {
+      "typical": 43.3,
+      "top": 46.9,
+      "low": 35.8,
+      "laptops": 19,
+      "rows": 986,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5080-Laptop-Benchmarks-and-Specs.934946.0.html"
+    },
+    "rtx5090m": {
+      "typical": 49.8,
+      "top": 53,
+      "low": 40.7,
+      "laptops": 29,
+      "rows": 1067,
+      "url": "https://www.notebookcheck.net/Nvidia-GeForce-RTX-5090-Laptop-Benchmarks-and-Specs.934947.0.html"
+    }
+  }
+}
