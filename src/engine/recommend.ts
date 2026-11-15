@@ -17,7 +17,8 @@ export interface Suggestion {
 /** Suggestions recommend parts you can still buy new. Older CPUs are only offered as drop-in upgrades for an older platform. */
 const buyableDesktopGpus = gpus.filter((g) => !isLegacyGpu(g));
 /** Laptop graphics are offered at their usual power version; the power suggestion covers the rest. */
-const buyableLaptopGpus = laptopGpus.filter((g) => g.typical && !isLegacyGpu(g));
+// RTX 30 laptops are end-of-line stock, so suggestions point at RTX 40 / 50 laptops.
+const buyableLaptopGpus = laptopGpus.filter((g) => g.typical && !isLegacyGpu(g) && !/RTX 30/.test(g.name));
 const gpuPool = (build: Build) => (isLaptopBuild(build) ? buyableLaptopGpus : buyableDesktopGpus);
 const cpuPool = (build: Build) =>
   isLaptopBuild(build)

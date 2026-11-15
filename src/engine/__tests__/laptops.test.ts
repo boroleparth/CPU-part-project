@@ -126,6 +126,33 @@ describe('checking a laptop', () => {
     expect(s.some((x) => x.changes.ram && x.changes.ram.sticks === 2 && x.changes.ram.type === 'DDR4')).toBe(true);
   });
 
+  it('lowers the gaming grade for one memory stick or under 16 GB, even when the GPU is the limit', () => {
+    const two = evaluateBuild({ ...myLaptop(130), ram: ram('ddr4-2x8-3200') }, ['esports'], '1080p').results[0].score;
+    const one = evaluateBuild({ ...myLaptop(130), ram: ram('ddr4-1x16-3200') }, ['esports'], '1080p').results[0].score;
+    const small = evaluateBuild({ ...myLaptop(130), ram: ram('ddr4-1x8-3200') }, ['esports'], '1080p').results[0].score;
+    expect(one).toBeLessThanOrEqual(85);
+    expect(one).toBeLessThan(two);
+    expect(small).toBeLessThanOrEqual(70);
+  });
+
+  it('lets integrated graphics use shared system memory instead of a fixed 2 GB', () => {
+    const igpu: Build = { cpu: laptopCpu('i5-13420h'), ram: ram('ddr5-2x8-4800'), storage: storage('nvme4-512') };
+    const cs2 = simulateGames(igpu, games, '1080p', 144).find((g) => g.game.id === 'cs2')!.fps;
+    expect(cs2).toBeGreaterThan(15);
+    // One stick starves integrated graphics.
+    const oneStick = simulateGames({ ...igpu, ram: ram('ddr5-1x16-4800') }, games, '1080p', 144).find((g) => g.game.id === 'cs2')!.fps;
+    expect(oneStick).toBeLessThan(cs2);
+    // A thin-and-light laptop is not graded a total failure at video editing.
+    const zenbook: Build = { cpu: laptopCpu('cu7-258v'), ram: ram('lpddr5x-32-8533'), storage: storage('nvme4-1tb') };
+    expect(evaluateBuild(zenbook, ['video'], '1080p').results[0].score).toBeGreaterThan(0);
+  });
+
+  it('suggests current laptops (RTX 40 / 50), not end-of-line RTX 30 ones', () => {
+    const b = myLaptop(95);
+    const s = suggest(b, evaluateBuild(b, ['aaa', 'esports'], '1080p').results, '1080p');
+    for (const x of s) if (x.changes.gpu && x.changes.gpu.family !== b.gpu!.family) expect(x.changes.gpu.name).not.toMatch(/RTX 30/);
+  });
+
   it('round-trips a laptop through the share link', () => {
     const state = { ...defaultState(), device: 'laptop' as const, build: myLaptop(), workloads: ['aaa' as const], chosen: [] };
     const back = decodeState(`#${encodeState(state)}`)!;

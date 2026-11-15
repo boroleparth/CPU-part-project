@@ -69,8 +69,32 @@ const storageScore: Record<StorageKind, number> = {
 };
 
 function gpuIndexFor(gpu: Gpu | undefined, build: Build, metric: 'raster' | 'rt'): number {
-  if (!gpu) return metric === 'rt' ? igpuIndex(build.cpu) * 0.4 : igpuIndex(build.cpu);
+  if (!gpu) {
+    // Integrated graphics read from system memory: one stick (single-channel) starves them.
+    const ig = igpuIndex(build.cpu) * (build.ram?.sticks === 1 ? 0.7 : 1);
+    return metric === 'rt' ? ig * 0.4 : ig;
+  }
   return metric === 'rt' ? gpu.rtIndex : gpu.rasterIndex;
+}
+
+/** Graphics memory: the card's VRAM, or for integrated graphics the share of system RAM they may use (up to half). */
+export function graphicsMemoryGb(build: Build): number {
+  if (build.gpu) return build.gpu.vram;
+  return build.ram ? Math.min(build.ram.totalGb / 2, 16) : 2;
+}
+
+/**
+ * Upper limit on a gaming score from system memory, which the CPU/GPU balance can't see when
+ * the GPU is the limit: one stick (single-channel) hurts 1% lows, and under 16 GB modern games stutter.
+ */
+export function ramGamingCap(build: Build): number {
+  const ram = build.ram;
+  if (!ram) return 100;
+  let cap = 100;
+  if (ram.sticks === 1) cap = 85;
+  if (ram.totalGb < 16) cap = Math.min(cap, 70);
+  if (ram.totalGb < 8) cap = Math.min(cap, 45);
+  return cap;
 }
 
 function vramFactor(vram: number, need: number): number {
@@ -116,7 +140,7 @@ export function simulateFps(build: Build, w: FpsModel, res: Resolution): FpsPoin
   let cpuFps = cpu ? cpu.gamingIndex * w.cpuFpsPerPoint * ram : 0;
   if (cpu && w.cpuOverhead) cpuFps *= streamingCpuFactor(cpu);
 
-  const vram = gpu ? gpu.vram : 2;
+  const vram = graphicsMemoryGb(build);
   let gpuFps = gpuIndexFor(gpu, build, w.gpuMetric) * w.gpuFpsPerPoint * w.resolutionScale[res];
   gpuFps *= vramFactor(vram, w.vramNeed[res]) * pcieFactor(build);
 
@@ -154,7 +178,7 @@ export function componentStrength(build: Build, w: ThroughputWorkload, c: Compon
     case 'gpu': {
       let r = gpuIndexFor(gpu, build, 'raster') / 100;
       if (gpu && !gpu.cuda && w.nonCudaFactor) r *= w.nonCudaFactor;
-      if (w.vramNeed) r *= vramFactor(gpu?.vram ?? 2, w.vramNeed);
+      if (w.vramNeed) r *= vramFactor(graphicsMemoryGb(build), w.vramNeed);
       return r;
     }
     case 'gpuBandwidth': {
@@ -256,8 +280,8 @@ export function simulateThroughput(build: Build, w: ThroughputWorkload): Through
     }
   }
   // VRAM shortfalls show up as a weakened GPU strength; surface them too.
-  if (w.vramNeed && (build.gpu?.vram ?? 0) < w.vramNeed) {
-    const d = vramFactor(build.gpu?.vram ?? 2, w.vramNeed);
+  if (w.vramNeed && graphicsMemoryGb(build) < w.vramNeed) {
+    const d = vramFactor(graphicsMemoryGb(build), w.vramNeed);
     if (d < deficiency) {
       deficiency = d;
       weakest = gpuG?.main ?? 'gpu';
@@ -376,7 +400,7 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
       detail: `The ${build.cpu.name}'s built-in graphics are far too slow for these games. Add a graphics card that matches the CPU.`,
     };
   }
-  const score = gamingBalanceScore(judged);
+  const score = Math.min(gamingBalanceScore(judged), ramGamingCap(build));
   let headline: string;
   let detail: string;
   if (judged.limitedBy === 'cpu') {
@@ -403,8 +427,8 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
 function evaluateThroughput(build: Build, w: ThroughputWorkload): WorkloadResult {
   const t = simulateThroughput(build, w);
   const notes = [...ramFactor(build, w.ramNeedGb).notes];
-  if (w.vramNeed && (build.gpu?.vram ?? 0) < w.vramNeed) {
-    notes.push(`${w.name} benefits from at least ${w.vramNeed} GB of VRAM; ${build.gpu ? `${build.gpu.vram} GB` : 'integrated graphics'} will limit scene/model size.`);
+  if (w.vramNeed && graphicsMemoryGb(build) < w.vramNeed) {
+    notes.push(`${w.name} benefits from at least ${w.vramNeed} GB of VRAM; ${build.gpu ? `${build.gpu.vram} GB` : `integrated graphics (~${graphicsMemoryGb(build)} GB shared)`} will limit scene/model size.`);
   }
   if (w.nonCudaFactor && build.gpu && !build.gpu.cuda) {
     notes.push(`Much ${w.id === 'ai' ? 'AI' : 'rendering'} software is best optimised for NVIDIA CUDA; ${build.gpu.brand} cards work but are less efficient here.`);

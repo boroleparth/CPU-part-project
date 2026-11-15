@@ -1,5 +1,5 @@
 import { estimatePowerDraw } from './compatibility';
-import type { WorkloadResult } from './simulation';
+import { graphicsMemoryGb, type WorkloadResult } from './simulation';
 import type { Build, Resolution } from './types';
 import { workloadById } from './workloads';
 
@@ -51,8 +51,8 @@ export function limitReport(build: Build, r: WorkloadResult, res: Resolution): L
     if (cpu > 0) items.push({ part: 'CPU', load: cpu, label: `${pct(cpu)} of job time`, status: limiting && weakPart === 'CPU' ? 'limit' : 'ok' });
     if (gpu > 0) items.push({ part: 'GPU', load: gpu, label: `${pct(gpu)} of job time`, status: limiting && weakPart === 'GPU' ? 'limit' : 'ok' });
     if (w.kind === 'throughput' && w.vramNeed) {
-      const have = build.gpu?.vram ?? 0;
-      items.push({ part: 'VRAM', load: have ? w.vramNeed / have : 2, label: `${w.vramNeed} GB needed of ${have} GB`, status: have < w.vramNeed ? 'over' : 'ok' });
+      const have = graphicsMemoryGb(build);
+      items.push({ part: 'VRAM', load: have ? w.vramNeed / have : 2, label: `${w.vramNeed} GB needed of ${have} GB${build.gpu ? '' : ' shared'}`, status: have < w.vramNeed ? 'over' : 'ok' });
     }
   }
 
