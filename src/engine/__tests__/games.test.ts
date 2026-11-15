@@ -11,20 +11,25 @@ const build = (c: string, g: string, r: string): Build => completeBuild({ cpu: c
 const highEnd = build('r7-9800x3d', 'rtx4090', 'ddr5-2x16-6000');
 const midRange = build('r5-7600', 'rtx4070s', 'ddr5-2x16-6000');
 const budget = build('r5-5600', 'rtx4060', 'ddr4-2x16-3600');
+const zen3TiBuild = build('r9-5950x', 'rtx3060ti', 'ddr4-2x16-3600');
 
 /**
- * Spot checks against typical published averages for the stated preset.
+ * Spot checks against published averages for the stated preset.
  * The bands are generous (about ±20%): they catch a broken model, not 5% drift.
+ * Cyberpunk and RDR2 points are Notebookcheck measurements: RTX 4090 + Ryzen 7 9800X3D 1080p High
+ * 232 FPS; RTX 4090 1440p / 4K Ultra medians 153 / 76 (High runs ~8% faster); RTX 4060 1080p High
+ * 92 FPS; RTX 3060 Ti + Ryzen 9 5950X RDR2 1080p High 108 FPS.
  */
 const reference: [string, Build, string, '1080p' | '1440p' | '4K', number][] = [
-  ['9800X3D + 4090', highEnd, 'cyberpunk', '4K', 75],
-  ['9800X3D + 4090', highEnd, 'cyberpunk', '1440p', 140],
+  ['9800X3D + 4090', highEnd, 'cyberpunk', '1080p', 232],
+  ['9800X3D + 4090', highEnd, 'cyberpunk', '4K', 82],
+  ['9800X3D + 4090', highEnd, 'cyberpunk', '1440p', 165],
   ['9800X3D + 4090', highEnd, 'cs2', '1080p', 600],
-  ['7600 + 4070 Super', midRange, 'cyberpunk', '1440p', 85],
+  ['7600 + 4070 Super', midRange, 'cyberpunk', '1440p', 95],
   ['7600 + 4070 Super', midRange, 'fortnite', '1080p', 170],
-  ['7600 + 4070 Super', midRange, 'rdr2', '1440p', 88],
+  ['5950X + 3060 Ti', zen3TiBuild, 'rdr2', '1080p', 108],
   ['5600 + 4060', budget, 'cod', '1080p', 95],
-  ['5600 + 4060', budget, 'cyberpunk', '1080p', 70],
+  ['5600 + 4060', budget, 'cyberpunk', '1080p', 88],
   ['5600 + 4060', budget, 'rivals', '1080p', 70],
 ];
 
@@ -51,8 +56,9 @@ describe('per-game estimates', () => {
 
   it('ranks esports titles far above heavy story games on the same PC', () => {
     const r = Object.fromEntries(simulateGames(midRange, games, '1440p', 144).map((x) => [x.game.id, x.fps]));
-    expect(r.valorant).toBeGreaterThan(r.cyberpunk * 3);
-    expect(r.cs2).toBeGreaterThan(r.cyberpunk * 2.5);
+    // Notebookcheck, RTX 4090 at 1080p: CS2 339 FPS vs Cyberpunk 199 (~1.7x).
+    expect(r.valorant).toBeGreaterThan(r.cyberpunk * 2.5);
+    expect(r.cs2).toBeGreaterThan(r.cyberpunk * 1.6);
   });
 
   it('has 1% lows below the average', () => {

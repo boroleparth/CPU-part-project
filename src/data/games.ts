@@ -13,8 +13,10 @@ export interface Game extends FpsModel {
 }
 
 // Ten of the most played and most benchmarked PC games. Per-game factors are
-// tuned so the model lands near typical published averages for each preset
-// (e.g. RTX 4070 Super + Ryzen 7 9800X3D). Estimates, not measurements.
+// tuned so the model lands near published averages for each preset.
+// CS2, Call of Duty, Cyberpunk, RDR2 and Baldur's Gate 3 are fitted to Notebookcheck's
+// measured FPS at 1080p (15-163 laptops and desktops each; scripts/fit-game-profiles.ts).
+// The others have too few measurements there and stay estimates.
 //   cpuFpsPerPoint × CPU gamingIndex  → CPU frame-rate ceiling
 //   gpuFpsPerPoint × GPU rasterIndex × resolution scale → GPU ceiling at 1080p/1440p/4K
 const vram = (a: number, b: number, c: number) => ({ '1080p': a, '1440p': b, '4K': c });
@@ -22,7 +24,7 @@ const vram = (a: number, b: number, c: number) => ({ '1080p': a, '1440p': b, '4K
 export const games: Game[] = [
   {
     id: 'cs2', name: 'Counter-Strike 2', kind: 'competitive', preset: 'High',
-    cpuFpsPerPoint: 6.5, gpuFpsPerPoint: 9.5, resolutionScale: { '1080p': 1, '1440p': 0.74, '4K': 0.46 },
+    cpuFpsPerPoint: 5.7, gpuFpsPerPoint: 8.2, resolutionScale: { '1080p': 1, '1440p': 0.74, '4K': 0.46 },
     gpuMetric: 'raster', vramNeed: vram(6, 8, 8), ramNeedGb: 16,
     note: 'Very CPU-heavy at high frame rates; large-cache CPUs shine.',
   },
@@ -45,7 +47,7 @@ export const games: Game[] = [
   },
   {
     id: 'cod', name: 'Call of Duty: Black Ops 6', kind: 'competitive', preset: 'Balanced / High',
-    cpuFpsPerPoint: 2.6, gpuFpsPerPoint: 3.6, resolutionScale: { '1080p': 1, '1440p': 0.72, '4K': 0.42 },
+    cpuFpsPerPoint: 2.4, gpuFpsPerPoint: 3.6, resolutionScale: { '1080p': 1, '1440p': 0.72, '4K': 0.42 },
     gpuMetric: 'raster', vramNeed: vram(8, 10, 12), ramNeedGb: 16,
   },
   {
@@ -55,19 +57,19 @@ export const games: Game[] = [
   },
   {
     id: 'cyberpunk', name: 'Cyberpunk 2077', kind: 'story', preset: 'High (no ray tracing)',
-    cpuFpsPerPoint: 1.9, gpuFpsPerPoint: 2.6, resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.37 },
+    cpuFpsPerPoint: 2.5, gpuFpsPerPoint: 3.75, resolutionScale: { '1080p': 1, '1440p': 0.62, '4K': 0.28 },
     gpuMetric: 'raster', vramNeed: vram(8, 10, 12), ramNeedGb: 16,
   },
   {
     id: 'rdr2', name: 'Red Dead Redemption 2', kind: 'story', preset: 'High',
-    cpuFpsPerPoint: 2.0, gpuFpsPerPoint: 2.45, resolutionScale: { '1080p': 1, '1440p': 0.76, '4K': 0.48 },
+    cpuFpsPerPoint: 2.0, gpuFpsPerPoint: 3.9, resolutionScale: { '1080p': 1, '1440p': 0.8, '4K': 0.53 },
     gpuMetric: 'raster', vramNeed: vram(6, 8, 10), ramNeedGb: 16,
   },
   {
-    id: 'bg3', name: "Baldur's Gate 3", kind: 'story', preset: 'Ultra (Act 3 city)',
-    cpuFpsPerPoint: 1.4, gpuFpsPerPoint: 3.1, resolutionScale: { '1080p': 1, '1440p': 0.72, '4K': 0.42 },
+    id: 'bg3', name: "Baldur's Gate 3", kind: 'story', preset: 'Ultra',
+    cpuFpsPerPoint: 2.65, gpuFpsPerPoint: 4.1, resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.38 },
     gpuMetric: 'raster', vramNeed: vram(8, 8, 10), ramNeedGb: 16,
-    note: 'Busy late-game areas are limited by the CPU.',
+    note: 'Busy late-game city areas (Act 3) are limited by the CPU and run well below this.',
   },
   {
     id: 'eldenring', name: 'Elden Ring', kind: 'story', preset: 'High',

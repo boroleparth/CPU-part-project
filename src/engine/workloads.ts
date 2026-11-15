@@ -58,8 +58,10 @@ export const workloads: Workload[] = [
   {
     id: 'aaa', kind: 'gaming', name: 'AAA gaming', short: 'AAA',
     description: 'Story and open-world games at high settings (Cyberpunk, Starfield, Black Myth).',
-    cpuFpsPerPoint: 2.0, gpuFpsPerPoint: 2.6,
-    resolutionScale: { '1080p': 1, '1440p': 0.68, '4K': 0.38 },
+    // x1.4 from the measured story games (Cyberpunk, RDR2, Baldur's Gate 3 on Notebookcheck);
+    // resolution scaling is their average.
+    cpuFpsPerPoint: 2.8, gpuFpsPerPoint: 3.65,
+    resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.39 },
     gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32,
   },
   {
@@ -79,8 +81,8 @@ export const workloads: Workload[] = [
   {
     id: 'streaming', kind: 'gaming', name: 'Gaming + streaming', short: 'Streaming',
     description: 'Playing AAA games while streaming/recording with OBS and a browser open.',
-    cpuFpsPerPoint: 2.0, gpuFpsPerPoint: 2.45,
-    resolutionScale: { '1080p': 1, '1440p': 0.68, '4K': 0.38 },
+    cpuFpsPerPoint: 2.8, gpuFpsPerPoint: 3.45,
+    resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.39 },
     gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32, cpuOverhead: true,
   },
   {

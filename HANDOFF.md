@@ -32,7 +32,7 @@ for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers,
 **Laptops:** 53 Intel laptop CPUs (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U,
 200V, 200H/HX) and 26 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop), each in 2–5 power versions
 (`src/data/laptops.ts`); plus SO-DIMM / LPDDR5X memory and 256/512 GB drives.
-**249 tests**, all passing.
+**253 tests**, all passing.
 
 ## Key architectural decisions
 
@@ -140,10 +140,11 @@ npm test
    sourcing laptop CPUs: they are already in the import script, so re-running `npm run bench:import` on the
    saved PassMark pages replaces the estimates. Laptop GPUs stay estimated (scores vary by power).
    Possible later: laptop model presets ("ASUS TUF F15 2021") that fill all four specs at once.
-5. **Game profiles vs Notebookcheck (decision pending):** Notebookcheck's built-in-benchmark FPS differ from
-   our game profiles (desktop RTX 4060, 1080p: Cyberpunk 92 vs our 65, BG3 97 vs 77, CoD 78 vs 90). Ours were
-   tuned to heavier in-game scenes. Option: refit `gpuFpsPerPoint` per game to Notebookcheck's laptop data.
-   Desktop cross-check also found the desktop RTX 5070 ~15% underrated and RTX 3070 ~9% overrated.
+5. **Game profiles (refitted to Notebookcheck):** CS2, Call of Duty, Cyberpunk, RDR2 and Baldur's Gate 3 are
+   fitted to measured FPS at 1080p (15–163 laptops and desktops each, `scripts/fit-game-profiles.ts`), and the
+   generic AAA / streaming profiles scaled ×1.4 to match. Measured ÷ model is now 0.87–1.04 for those games.
+   Valorant, Apex, Marvel Rivals (≤9 measurements) and Fortnite (none) are still estimates; accuracy report:
+   `npm run bench:accuracy`. Desktop RTX 5070 ~8% low, RTX 3070 / 4090 ~9–11% high (not yet corrected).
 6. **Accuracy parameters to add (agreed list):**
    1. memory pressure (Windows + background apps + game RAM, VRAM overflow into RAM): GPU shows 60–80% busy,
       not 100%, and FPS / stutter get worse;
