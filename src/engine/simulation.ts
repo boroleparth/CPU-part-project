@@ -362,6 +362,8 @@ export interface WorkloadResult {
   throughput?: ThroughputResult;
   ai?: AiEstimate;
   notes: string[];
+  /** A part that is simply too small for this use and caps its grade (gaming). */
+  shortfall?: { part: 'VRAM' | 'RAM'; have: number; need: number };
 }
 
 export function toneFor(score: number): Tone {
@@ -400,10 +402,26 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
       detail: `The ${build.cpu.name}'s built-in graphics are far too slow for these games. Add a graphics card that matches the CPU.`,
     };
   }
-  const score = Math.min(gamingBalanceScore(judged), ramGamingCap(build));
+  // Too little graphics memory or RAM caps the grade: the overflow spills into slower memory,
+  // so the GPU waits (low GPU usage), RAM fills up and frame times stutter, whatever the balance.
+  const balance = Math.min(gamingBalanceScore(judged), ramGamingCap(build));
+  const vramHave = graphicsMemoryGb(build);
+  const vramNeed = w.vramNeed[res];
+  const vramCap = shortfallCap(vramHave / vramNeed, [75, 60, 40]);
+  const ramHave = build.ram?.totalGb ?? 16;
+  const ramCap = shortfallCap(ramHave / w.ramNeedGb, [90, 85, 60]);
+  const score = Math.min(balance, vramCap, ramCap);
+  const shortfall: WorkloadResult['shortfall'] =
+    score < balance ? (vramCap <= ramCap ? { part: 'VRAM', have: vramHave, need: vramNeed } : { part: 'RAM', have: ramHave, need: w.ramNeedGb }) : undefined;
   let headline: string;
   let detail: string;
-  if (judged.limitedBy === 'cpu') {
+  if (shortfall) {
+    const what = shortfall.part === 'VRAM' ? 'graphics memory (VRAM)' : 'RAM';
+    headline = `Not enough ${what}: ${shortfall.have} GB of ~${shortfall.need} GB`;
+    detail = shortfall.part === 'VRAM'
+      ? `${fpsTxt} on paper, but games that need more than ${shortfall.have} GB spill into system RAM: the GPU waits (low GPU usage), RAM fills up and you get stutter unless you lower texture quality.`
+      : `${fpsTxt} on paper, but with the game, Windows and background apps ${shortfall.have} GB fills up, so expect stutter and slow alt-tabbing.`;
+  } else if (judged.limitedBy === 'cpu') {
     if (judged.bottleneck < 0.1) {
       headline = `Balanced: ${fpsTxt}`;
       detail = 'CPU and GPU are evenly matched. The CPU is only marginally the limit.';
@@ -421,7 +439,13 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
       detail = `GPU-limited (the ideal state) with ${pct(headroom)} CPU headroom for heavy scenes.`;
     }
   }
-  return { workload: w.id, score, tone: toneFor(score), headline, detail, fps, judged, notes };
+  return { workload: w.id, score, tone: toneFor(score), headline, detail, fps, judged, notes, shortfall };
+}
+
+/** Grade cap for a part that is too small: have/need ratio >= 1 no cap, >= 0.75, >= 0.5, below. */
+function shortfallCap(ratio: number, caps: [number, number, number]): number {
+  if (ratio >= 1) return 100;
+  return ratio >= 0.75 ? caps[0] : ratio >= 0.5 ? caps[1] : caps[2];
 }
 
 function evaluateThroughput(build: Build, w: ThroughputWorkload): WorkloadResult {

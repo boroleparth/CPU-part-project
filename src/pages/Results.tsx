@@ -11,6 +11,7 @@ import { SlotIcon } from '../components/Icons';
 import { PowerPicker } from '../components/PowerPicker';
 import { partSummary, tierOf } from '../ui';
 import { purposeLabels } from './Setup';
+import { workloadById } from '../engine/workloads';
 import { FpsChart, TimeShareChart } from '../components/Charts';
 import { estimatePowerDraw, recommendedPsuWatts } from '../engine/compatibility';
 
@@ -21,6 +22,7 @@ export function shortVerdict(r: WorkloadResult, res: Resolution): { title: strin
   if (r.judged) {
     const p = r.judged;
     if (r.headline.startsWith('No graphics card')) return { title: 'No graphics card', line: 'Games need one. See the suggestion.' };
+    if (r.shortfall) return { title: r.shortfall.part === 'VRAM' ? 'Graphics memory is too small' : 'Not enough RAM', line: `${r.shortfall.have} GB of ~${r.shortfall.need} GB needed at ${res}` };
     if (p.limitedBy === 'cpu' && p.bottleneck >= 0.1) return { title: 'CPU is holding back the GPU', line: `${pct(p.bottleneck)} of the GPU sits idle at ${res}` };
     if (p.limitedBy === 'gpu' && p.bottleneck > 0.4) return { title: 'CPU has power to spare', line: `The GPU is the limit at ${res}` };
     return { title: 'CPU and GPU are well matched', line: `~${Math.round(p.fps)} FPS at ${res}` };
@@ -92,7 +94,7 @@ function VerdictCard({ build, evaluation, issues, resolution, laptop }: { build:
         <div className="facts">
           {laptop ? <>
             <div className="fact"><span>Graphics power</span><b>{build.gpu?.tgp ? `${build.gpu.tgp} W` : 'Integrated'}</b></div>
-            <div className={`fact fact--${build.ram && build.ram.sticks < 2 ? 'warning' : 'good'}`}><span>Memory</span><b>{build.ram ? `${build.ram.totalGb} GB${build.ram.sticks < 2 ? ', 1 stick' : ''}` : '—'}</b></div>
+            <div className={`fact fact--${build.ram && (build.ram.sticks < 2 || build.ram.totalGb < Math.max(0, ...evaluation.results.map((r) => workloadById[r.workload].ramNeedGb))) ? 'warning' : 'good'}`}><span>Memory</span><b>{build.ram ? `${build.ram.totalGb} GB${build.ram.sticks < 2 ? ', 1 stick' : ''}` : '—'}</b></div>
           </> : <>
             <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
             <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
@@ -137,7 +139,7 @@ function GamesCard({ build, resolution, refreshHz }: { build: Build; resolution:
           </div>
         ))}
       </div>
-      <p className="fineprint">Estimates. Real results vary by scene, patch and driver.</p>
+      <p className="fineprint">Estimates. Real results vary by scene, patch and driver.{build.cpu?.laptop && ' Laptops: assumes plugged in, Performance / Turbo mode and the game running on the NVIDIA GPU. Older laptops also lose speed to heat; cleaning the fans helps.'}</p>
     </section>
   );
 }

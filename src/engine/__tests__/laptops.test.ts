@@ -126,6 +126,15 @@ describe('checking a laptop', () => {
     expect(s.some((x) => x.changes.ram && x.changes.ram.sticks === 2 && x.changes.ram.type === 'DDR4')).toBe(true);
   });
 
+  it('grades a 6 GB graphics card down for AAA and says why (it spills into RAM, GPU usage drops)', () => {
+    const r = evaluateBuild(myLaptop(), ['aaa'], '1080p').results[0];
+    expect(r.score).toBeLessThanOrEqual(80);
+    expect(r.shortfall).toEqual({ part: 'VRAM', have: 6, need: 8 });
+    expect(r.headline).toMatch(/graphics memory/i);
+    // Esports games need far less graphics memory: no penalty there.
+    expect(evaluateBuild(myLaptop(), ['esports'], '1080p').results[0].shortfall).toBeUndefined();
+  });
+
   it('lowers the gaming grade for one memory stick or under 16 GB, even when the GPU is the limit', () => {
     const two = evaluateBuild({ ...myLaptop(130), ram: ram('ddr4-2x8-3200') }, ['esports'], '1080p').results[0].score;
     const one = evaluateBuild({ ...myLaptop(130), ram: ram('ddr4-1x16-3200') }, ['esports'], '1080p').results[0].score;
