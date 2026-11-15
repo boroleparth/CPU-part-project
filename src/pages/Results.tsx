@@ -6,7 +6,7 @@ import { simulateGames } from '../engine/games';
 import type { Suggestion } from '../engine/recommend';
 import { componentLabelShort, type BuildEvaluation, type Tone, type WorkloadResult } from '../engine/simulation';
 import type { Build, Issue, PartSlot, Resolution } from '../engine/types';
-import { ScoreRing, TierBadge, toneText } from '../components/Badges';
+import { ScoreRing, SourceLine, TierBadge, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
 import { partSummary, tierOf } from '../ui';
 import { purposeLabels } from './Setup';
@@ -167,6 +167,7 @@ function BuildCard({ build, issues, chosen, gaming, onOpen }: { build: Build; is
                 </span>
                 <span className="build-change">Change</span>
               </button>
+              {part && <SourceLine slot={slot} part={part} />}
             </li>
           );
         })}

@@ -148,7 +148,7 @@ export function componentStrength(build: Build, w: ThroughputWorkload, c: Compon
   const { cpu, gpu, storage } = build;
   switch (c) {
     case 'cpuSingle':
-      return cpu ? cpu.gamingIndex / 100 : 0;
+      return cpu ? (cpu.singleIndex ?? cpu.gamingIndex) / 100 : 0;
     case 'cpuMulti':
       return cpu ? cpu.multiIndex / 100 : 0;
     case 'gpu': {
@@ -159,7 +159,8 @@ export function componentStrength(build: Build, w: ThroughputWorkload, c: Compon
     }
     case 'gpuBandwidth': {
       if (!gpu) return 0.03;
-      let r = gpu.bandwidth / 1792;
+      // Measured llama.cpp speed where we have it, otherwise memory bandwidth (RTX 5090 = 1).
+      let r = gpu.aiIndex !== undefined ? gpu.aiIndex / 100 : gpu.bandwidth / 1792;
       if (!gpu.cuda && w.nonCudaFactor) r *= w.nonCudaFactor;
       if (w.vramNeed) r *= vramFactor(gpu.vram, w.vramNeed);
       return r;
@@ -297,6 +298,9 @@ export interface AiEstimate {
   onGpu: boolean;
 }
 
+/** Size of the llama.cpp benchmark model (Llama 2 7B Q4_0, 3.56 GiB) in GB. */
+const llamaBenchModelGb = 3.83;
+
 export function estimateAi(build: Build): AiEstimate {
   const { gpu, ram } = build;
   const modelGb8B = 4.9;
@@ -306,9 +310,12 @@ export function estimateAi(build: Build): AiEstimate {
     return { maxModelB: Math.max(0, ((ram?.totalGb ?? 16) * 0.6 - 2) / 0.6), tokensPerSec8B: (bw * 0.6) / modelGb8B, onGpu: false };
   }
   const efficiency = gpu.cuda ? 0.7 : 0.58;
+  // A measured llama.cpp result (Llama 2 7B Q4_0, 3.83 GB) scales to the 8B model by file size.
+  const measured = gpu.source?.aiIndex?.raw;
+  const tokens = measured !== undefined ? (measured * llamaBenchModelGb) / modelGb8B : (gpu.bandwidth * efficiency) / modelGb8B;
   return {
     maxModelB: Math.max(0, (gpu.vram - 1.5) / 0.62),
-    tokensPerSec8B: gpu.vram >= 6 ? (gpu.bandwidth * efficiency) / modelGb8B : 0,
+    tokensPerSec8B: gpu.vram >= 6 ? tokens : 0,
     onGpu: true,
   };
 }

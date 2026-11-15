@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "bench:import": "vite-node scripts/import-benchmarks.ts --"
   },
   "dependencies": {
     "react": "^19.1.0",

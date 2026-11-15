@@ -7,6 +7,7 @@ import { benchLine, brandNames, brandOf, partSummary, seriesOf, seriesRank, stre
 import { isLegacyCpu, isLegacyGpu } from '../data';
 import type { Cpu, Gpu } from '../engine/types';
 import { SearchIcon, SlotIcon } from './Icons';
+import { SourceLine } from './Badges';
 
 const titles: Record<PartSlot, string> = {
   cpu: 'Processor',
@@ -139,6 +140,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
                   </span>
                   {!scoreless && <span className={`score-chip score-chip--${tone}`} title="Score with this part">{r.fits ? Math.round(r.fit) : '✕'}</span>}
                 </button>
+                <SourceLine slot={slot} part={r.part} />
               </li>
             );
           })}

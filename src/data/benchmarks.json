@@ -1,0 +1,4687 @@
+{
+  "generated": "2026-11-15",
+  "sources": [
+    {
+      "metric": "multiIndex",
+      "dataset": "PassMark CPU Mark",
+      "date": "2026-11-15",
+      "pages": [
+        {
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "file": "data/sources/2026-11-15/passmark-cpu-list-amd.html"
+        },
+        {
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "file": "data/sources/2026-11-15/passmark-cpu-list-intel.html"
+        }
+      ],
+      "entries": 4544,
+      "matched": 191,
+      "fastest": "Ryzen 9 9950X3D"
+    },
+    {
+      "metric": "singleIndex",
+      "dataset": "PassMark single-thread",
+      "date": "2026-11-15",
+      "pages": [
+        {
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "file": "data/sources/2026-11-15/passmark-single-thread.html"
+        }
+      ],
+      "entries": 5938,
+      "matched": 191,
+      "fastest": "Core Ultra 9 285K"
+    },
+    {
+      "metric": "aiIndex",
+      "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+      "date": "2026-11-15",
+      "pages": [
+        {
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "file": "data/sources/2026-11-15/llamacpp-vulkan-discussion-10879.html"
+        }
+      ],
+      "entries": 130,
+      "matched": 53,
+      "fastest": "GeForce RTX 5090"
+    }
+  ],
+  "cpus": {
+    "r9-9950x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 70111,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4737,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 100,
+      "singleIndex": 93
+    },
+    "r7-9800x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 39911,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4420,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 57,
+      "singleIndex": 87
+    },
+    "r9-9950x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 65681,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4726,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 94,
+      "singleIndex": 93
+    },
+    "r9-9900x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 54277,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4670,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 77,
+      "singleIndex": 92
+    },
+    "r7-9700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 36914,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4642,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 53,
+      "singleIndex": 91
+    },
+    "r5-9600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 30011,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4569,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 43,
+      "singleIndex": 90
+    },
+    "r7-7800x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 34280,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3759,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 49,
+      "singleIndex": 74
+    },
+    "r9-7950x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 62116,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4251,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 89,
+      "singleIndex": 84
+    },
+    "r7-7700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 35472,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4175,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 51,
+      "singleIndex": 82
+    },
+    "r5-7600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 28254,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4127,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 40,
+      "singleIndex": 81
+    },
+    "r5-7600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 26964,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3907,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 38,
+      "singleIndex": 77
+    },
+    "r5-8600g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 25165,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3875,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 36,
+      "singleIndex": 76
+    },
+    "r7-5800x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 28289,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3234,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 40,
+      "singleIndex": 64
+    },
+    "r7-5700x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 26307,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2969,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 38,
+      "singleIndex": 58
+    },
+    "r7-5700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 26537,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3386,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 38,
+      "singleIndex": 67
+    },
+    "r5-5600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 21820,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3366,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 66
+    },
+    "r5-5600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 21490,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3254,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 64
+    },
+    "r5-5500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 19247,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3062,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 27,
+      "singleIndex": 60
+    },
+    "i9-14900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 58149,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4689,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 83,
+      "singleIndex": 92
+    },
+    "i7-14700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 51889,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4453,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 74,
+      "singleIndex": 88
+    },
+    "i5-14600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 38342,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4263,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 55,
+      "singleIndex": 84
+    },
+    "i5-14400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 25385,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3700,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 36,
+      "singleIndex": 73
+    },
+    "i5-13400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 24871,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3629,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 71
+    },
+    "i5-12400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19520,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3483,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 68
+    },
+    "i3-14100f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 15402,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3774,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 22,
+      "singleIndex": 74
+    },
+    "cu9-285k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 67231,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 5087,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 96,
+      "singleIndex": 100
+    },
+    "cu7-265k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 58568,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4929,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 84,
+      "singleIndex": 97
+    },
+    "cu5-245k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 42968,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4709,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 61,
+      "singleIndex": 93
+    },
+    "r9-7950x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 62307,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4144,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 89,
+      "singleIndex": 81
+    },
+    "r9-7900x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 51205,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4225,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 73,
+      "singleIndex": 83
+    },
+    "r7-7700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 34310,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4050,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 49,
+      "singleIndex": 80
+    },
+    "r5-7500f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 26487,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3822,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 38,
+      "singleIndex": 75
+    },
+    "r5-9600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 29280,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4379,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 42,
+      "singleIndex": 86
+    },
+    "r5-8500g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 21353,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3875,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 30,
+      "singleIndex": 76
+    },
+    "r9-5950x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 45232,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3477,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 65,
+      "singleIndex": 68
+    },
+    "r9-5900x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 38880,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3465,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 55,
+      "singleIndex": 68
+    },
+    "r7-5800x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 27653,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3449,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 39,
+      "singleIndex": 68
+    },
+    "r7-5700g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 24204,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3282,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 65
+    },
+    "r5-5600g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 19613,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3178,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 62
+    },
+    "r9-3900x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 32463,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2702,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 46,
+      "singleIndex": 53
+    },
+    "r7-3700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 22374,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2654,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 32,
+      "singleIndex": 52
+    },
+    "r5-3600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 17644,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2557,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 25,
+      "singleIndex": 50
+    },
+    "r7-2700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 17407,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2412,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 25,
+      "singleIndex": 47
+    },
+    "r5-2600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 13117,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2233,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 19,
+      "singleIndex": 44
+    },
+    "i9-13900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 58027,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4594,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 83,
+      "singleIndex": 90
+    },
+    "i7-13700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 45574,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4324,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 65,
+      "singleIndex": 85
+    },
+    "i5-13600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 37425,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4110,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 53,
+      "singleIndex": 81
+    },
+    "i9-12900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 41092,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4128,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 59,
+      "singleIndex": 81
+    },
+    "i7-12700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 34225,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4002,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 49,
+      "singleIndex": 79
+    },
+    "i5-12600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 27499,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3917,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 39,
+      "singleIndex": 77
+    },
+    "i3-12100f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 13949,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3431,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 67
+    },
+    "i9-11900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 24884,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3501,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 69
+    },
+    "i7-11700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 24303,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3385,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 67
+    },
+    "i5-11400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 16865,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2979,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 24,
+      "singleIndex": 59
+    },
+    "i9-10900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 22209,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3107,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 32,
+      "singleIndex": 61
+    },
+    "i7-10700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 18475,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3035,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 60
+    },
+    "i5-10400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 12094,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2541,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 17,
+      "singleIndex": 50
+    },
+    "i3-10100f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 8701,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2578,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 12,
+      "singleIndex": 51
+    },
+    "r9-9900x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 56053,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4628,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 80,
+      "singleIndex": 91
+    },
+    "r9-7900x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 50197,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4118,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 72,
+      "singleIndex": 81
+    },
+    "r9-7900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 48005,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4121,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 68,
+      "singleIndex": 81
+    },
+    "r5-7600x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 25845,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3605,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 37,
+      "singleIndex": 71
+    },
+    "r7-8700g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 31458,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3919,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 45,
+      "singleIndex": 77
+    },
+    "r7-8700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 30829,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3872,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 44,
+      "singleIndex": 76
+    },
+    "r5-8400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 24358,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3685,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 72
+    },
+    "r5-5600x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 21939,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3187,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 63
+    },
+    "r5-5500x3d": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 20266,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2931,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 29,
+      "singleIndex": 58
+    },
+    "r9-5900xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 43883,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3481,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 63,
+      "singleIndex": 68
+    },
+    "r7-5800xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 28021,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3533,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 40,
+      "singleIndex": 69
+    },
+    "r7-5800": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 25626,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3374,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 37,
+      "singleIndex": 66
+    },
+    "r7-5700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 24186,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3299,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 34,
+      "singleIndex": 65
+    },
+    "r5-5600xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 22265,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3468,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 32,
+      "singleIndex": 68
+    },
+    "r5-5600t": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 21822,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3314,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 65
+    },
+    "r5-5600gt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 20080,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3334,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 29,
+      "singleIndex": 66
+    },
+    "r5-5500gt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 19066,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3082,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 27,
+      "singleIndex": 61
+    },
+    "r5-4600g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 15922,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2647,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 23,
+      "singleIndex": 52
+    },
+    "r5-4500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 15923,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2584,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 23,
+      "singleIndex": 51
+    },
+    "r3-4100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 11032,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2531,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 16,
+      "singleIndex": 50
+    },
+    "r9-3950x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 38385,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2701,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 55,
+      "singleIndex": 53
+    },
+    "r9-3900xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 32447,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2743,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 46,
+      "singleIndex": 54
+    },
+    "r7-3800xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 23392,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2797,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 33,
+      "singleIndex": 55
+    },
+    "r7-3800x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 22942,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2709,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 33,
+      "singleIndex": 53
+    },
+    "r5-3600xt": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 18502,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2746,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 54
+    },
+    "r5-3600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 18110,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2645,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 52
+    },
+    "r3-3300x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 12579,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2669,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 18,
+      "singleIndex": 52
+    },
+    "r3-3100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 11504,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2410,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 16,
+      "singleIndex": 47
+    },
+    "r5-3400g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 9145,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2302,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 45
+    },
+    "r3-3200g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 6971,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2181,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 9.9,
+      "singleIndex": 43
+    },
+    "r5-2400g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 8706,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2139,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 12,
+      "singleIndex": 42
+    },
+    "r3-2200g": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 6698,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2035,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 9.6,
+      "singleIndex": 40
+    },
+    "r7-2700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 15577,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2169,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 22,
+      "singleIndex": 43
+    },
+    "r5-2600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 13857,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2377,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 47
+    },
+    "r7-1800x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 16264,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2196,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 23,
+      "singleIndex": 43
+    },
+    "r7-1700x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 15579,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2098,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 22,
+      "singleIndex": 41
+    },
+    "r7-1700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 14727,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 1996,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 21,
+      "singleIndex": 39
+    },
+    "r5-1600x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 12984,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2189,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 19,
+      "singleIndex": 43
+    },
+    "r5-1600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 12240,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2063,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 17,
+      "singleIndex": 41
+    },
+    "r5-1500x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 9062,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2107,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 41
+    },
+    "r5-1400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 7747,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 1890,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 11,
+      "singleIndex": 37
+    },
+    "r3-1300x": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 6926,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2122,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 9.9,
+      "singleIndex": 42
+    },
+    "r3-1200": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/amd",
+          "date": "2026-11-15",
+          "raw": 6270,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 1925,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 8.9,
+      "singleIndex": 38
+    },
+    "cu9-285": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 57844,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4902,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 83,
+      "singleIndex": 96
+    },
+    "cu7-265kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 58420,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4922,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 83,
+      "singleIndex": 97
+    },
+    "cu7-265": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 48275,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4605,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 69,
+      "singleIndex": 91
+    },
+    "cu7-265f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 49558,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4755,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 71,
+      "singleIndex": 93
+    },
+    "cu5-245kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 43042,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4718,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 61,
+      "singleIndex": 93
+    },
+    "cu5-245": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 39708,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4460,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 57,
+      "singleIndex": 88
+    },
+    "cu5-225": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30372,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4416,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 43,
+      "singleIndex": 87
+    },
+    "cu5-225f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30919,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4399,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 44,
+      "singleIndex": 86
+    },
+    "i9-14900ks": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 59808,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4805,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 85,
+      "singleIndex": 94
+    },
+    "i9-14900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 58036,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4688,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 83,
+      "singleIndex": 92
+    },
+    "i9-14900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 44431,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4317,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 63,
+      "singleIndex": 85
+    },
+    "i9-14900f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 46421,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4506,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 66,
+      "singleIndex": 89
+    },
+    "i7-14700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 51900,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4466,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 74,
+      "singleIndex": 88
+    },
+    "i7-14700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 40156,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4233,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 57,
+      "singleIndex": 83
+    },
+    "i7-14700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 41232,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4254,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 59,
+      "singleIndex": 84
+    },
+    "i5-14600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 38210,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4251,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 54,
+      "singleIndex": 84
+    },
+    "i5-14600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 35746,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4161,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 51,
+      "singleIndex": 82
+    },
+    "i5-14500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30440,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3923,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 43,
+      "singleIndex": 77
+    },
+    "i5-14400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 24963,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3740,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 36,
+      "singleIndex": 74
+    },
+    "i3-14100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 15092,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3761,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 22,
+      "singleIndex": 74
+    },
+    "i9-13900ks": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 60368,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4715,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 86,
+      "singleIndex": 93
+    },
+    "i9-13900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 57395,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4580,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 82,
+      "singleIndex": 90
+    },
+    "i9-13900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 44467,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4275,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 63,
+      "singleIndex": 84
+    },
+    "i9-13900f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 48081,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4396,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 69,
+      "singleIndex": 86
+    },
+    "i7-13700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 45491,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4329,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 65,
+      "singleIndex": 85
+    },
+    "i7-13700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 35796,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4090,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 51,
+      "singleIndex": 80
+    },
+    "i7-13700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 37693,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4115,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 54,
+      "singleIndex": 81
+    },
+    "i5-13600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 37290,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4110,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 53,
+      "singleIndex": 81
+    },
+    "i5-13600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30943,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4022,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 44,
+      "singleIndex": 79
+    },
+    "i5-13500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30626,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3846,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 44,
+      "singleIndex": 76
+    },
+    "i5-13400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 23895,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3588,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 34,
+      "singleIndex": 71
+    },
+    "i3-13100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14114,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3542,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 70
+    },
+    "i3-13100f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14651,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3598,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 21,
+      "singleIndex": 71
+    },
+    "i9-12900ks": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 43378,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4322,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 62,
+      "singleIndex": 85
+    },
+    "i9-12900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 40412,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4115,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 58,
+      "singleIndex": 81
+    },
+    "i9-12900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 33606,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4005,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 48,
+      "singleIndex": 79
+    },
+    "i9-12900f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 35710,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 4012,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 51,
+      "singleIndex": 79
+    },
+    "i7-12700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 33880,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3978,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 48,
+      "singleIndex": 78
+    },
+    "i7-12700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 29734,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3839,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 42,
+      "singleIndex": 75
+    },
+    "i7-12700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 30136,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3842,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 43,
+      "singleIndex": 76
+    },
+    "i5-12600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 27499,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3916,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 39,
+      "singleIndex": 77
+    },
+    "i5-12600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 21283,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3812,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 30,
+      "singleIndex": 75
+    },
+    "i5-12500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19678,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3645,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 72
+    },
+    "i5-12400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 18836,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3467,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 27,
+      "singleIndex": 68
+    },
+    "i3-12300": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14365,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3552,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 70
+    },
+    "i3-12100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 12540,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3246,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 18,
+      "singleIndex": 64
+    },
+    "i9-11900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 24505,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3515,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 35,
+      "singleIndex": 69
+    },
+    "i9-11900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 22338,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3371,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 32,
+      "singleIndex": 66
+    },
+    "i9-11900f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 22006,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3409,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 67
+    },
+    "i7-11700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 23736,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3358,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 34,
+      "singleIndex": 66
+    },
+    "i7-11700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 20560,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3253,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 29,
+      "singleIndex": 64
+    },
+    "i7-11700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 20745,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3251,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 30,
+      "singleIndex": 64
+    },
+    "i5-11600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19473,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3335,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 66
+    },
+    "i5-11600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19377,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3326,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 65
+    },
+    "i5-11600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 17959,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3281,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 64
+    },
+    "i5-11500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 17057,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3131,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 24,
+      "singleIndex": 62
+    },
+    "i5-11400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 16602,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2979,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 24,
+      "singleIndex": 59
+    },
+    "i9-10900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 22132,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3120,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 32,
+      "singleIndex": 61
+    },
+    "i9-10850k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 21855,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3065,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 31,
+      "singleIndex": 60
+    },
+    "i9-10900": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19009,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2978,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 27,
+      "singleIndex": 59
+    },
+    "i9-10900f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19649,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3020,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 59
+    },
+    "i7-10700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 18263,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3021,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 59
+    },
+    "i7-10700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 15961,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2879,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 23,
+      "singleIndex": 57
+    },
+    "i7-10700f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 16081,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2869,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 23,
+      "singleIndex": 56
+    },
+    "i5-10600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14238,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2910,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 57
+    },
+    "i5-10600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14097,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2905,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 57
+    },
+    "i5-10600": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 13524,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2908,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 19,
+      "singleIndex": 57
+    },
+    "i5-10500": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 12868,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2776,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 18,
+      "singleIndex": 55
+    },
+    "i5-10400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 11956,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2556,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 17,
+      "singleIndex": 50
+    },
+    "i3-10320": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 9966,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2825,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 14,
+      "singleIndex": 56
+    },
+    "i3-10300": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 9295,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2681,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 53
+    },
+    "i3-10100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 8476,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2587,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 12,
+      "singleIndex": 51
+    },
+    "i3-10105f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 8860,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2643,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 52
+    },
+    "pg-6400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 4063,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2426,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 5.8,
+      "singleIndex": 48
+    },
+    "i9-9900ks": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 19346,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 3024,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 28,
+      "singleIndex": 59
+    },
+    "i9-9900k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 18016,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2907,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 57
+    },
+    "i9-9900kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 17992,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2898,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 26,
+      "singleIndex": 57
+    },
+    "i7-9700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14398,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2856,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 21,
+      "singleIndex": 56
+    },
+    "i7-9700kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 14253,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2853,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 20,
+      "singleIndex": 56
+    },
+    "i7-9700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 13167,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2742,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 19,
+      "singleIndex": 54
+    },
+    "i5-9600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 10652,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2720,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 15,
+      "singleIndex": 53
+    },
+    "i5-9600kf": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 10631,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2708,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 15,
+      "singleIndex": 53
+    },
+    "i5-9400f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 9463,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2420,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 48
+    },
+    "i5-9400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 9349,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2412,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 47
+    },
+    "i3-9100f": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 6703,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2479,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 9.6,
+      "singleIndex": 49
+    },
+    "i7-8700k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 13554,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2713,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 19,
+      "singleIndex": 53
+    },
+    "i7-8700": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 12731,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2624,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 18,
+      "singleIndex": 52
+    },
+    "i5-8600k": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 10134,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2565,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 14,
+      "singleIndex": 50
+    },
+    "i5-8400": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 9235,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2363,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 13,
+      "singleIndex": 46
+    },
+    "i3-8100": {
+      "source": {
+        "multiIndex": {
+          "dataset": "PassMark CPU Mark",
+          "url": "https://www.cpubenchmark.net/cpu-list/",
+          "date": "2026-11-15",
+          "raw": 6053,
+          "unit": "points"
+        },
+        "singleIndex": {
+          "dataset": "PassMark single-thread",
+          "url": "https://www.cpubenchmark.net/singleThread.html",
+          "date": "2026-11-15",
+          "raw": 2185,
+          "unit": "points"
+        }
+      },
+      "multiIndex": 8.6,
+      "singleIndex": 43
+    }
+  },
+  "gpus": {
+    "rtx5090": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 263.63,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 100
+    },
+    "rtx4090": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 187.97,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 71
+    },
+    "rtx5080": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 185.1,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 70
+    },
+    "rtx4080s": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 147.13,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 56
+    },
+    "rtx5070ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 135.63,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 51
+    },
+    "rtx4070tis": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 129.45,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 49
+    },
+    "rtx4070s": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 108.74,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 41
+    },
+    "rtx4070": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 92.29,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 35
+    },
+    "rtx5060ti16": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 93.51,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 35
+    },
+    "rtx3060-12": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 75.94,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 29
+    },
+    "rx7900xtx": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 182.63,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 69
+    },
+    "rx9070xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 136.56,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 52
+    },
+    "rx7900xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 123.18,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 47
+    },
+    "rx9070": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 119.71,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 45
+    },
+    "rx7800xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 118.27,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 45
+    },
+    "rx9060xt16": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 71.07,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 27
+    },
+    "rx7600": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 58.03,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 22
+    },
+    "arc-b580": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 70.14,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 27
+    },
+    "arc-a750": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 42.66,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 16
+    },
+    "rtx5060ti8": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 93.51,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 35
+    },
+    "rtx4070ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 110.53,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 42
+    },
+    "rtx3090": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 164.05,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 62
+    },
+    "rtx3080": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 139.15,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 53
+    },
+    "rtx3070": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 78.71,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 30
+    },
+    "rtx3060ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 86.74,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 33
+    },
+    "rtx2080ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 97.58,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 37
+    },
+    "rtx2070s": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 64.64,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 25
+    },
+    "gtx1080ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 67.75,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 26
+    },
+    "gtx1070": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 41.48,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 16
+    },
+    "gtx1050ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 20.96,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 8
+    },
+    "rx7900gre": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 116.11,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 44
+    },
+    "rx7600xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 53.02,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 20
+    },
+    "rx6900xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 108,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 41
+    },
+    "rx6800xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 100.32,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 38
+    },
+    "rx6800": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 101.47,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 38
+    },
+    "rx6750xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 81.98,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 31
+    },
+    "rx6700xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 83.88,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 32
+    },
+    "rx6650xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 62.14,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 24
+    },
+    "rx6600xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 53.92,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 20
+    },
+    "rx6600": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 50.57,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 19
+    },
+    "rx6500xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 27.81,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 11
+    },
+    "rx5700xt": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 70.73,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 27
+    },
+    "arc-b570": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 49.64,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 19
+    },
+    "arc-a770": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 52.56,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 20
+    },
+    "gtx1070ti": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 42.86,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 16
+    },
+    "rx9060xt8": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 71.07,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 27
+    },
+    "radeon7": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 101.19,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 38
+    },
+    "vega64": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 63.43,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 24
+    },
+    "vega56": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 50.23,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 19
+    },
+    "rx580": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 39.32,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 15
+    },
+    "rx570": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 37.44,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 14
+    },
+    "rx480": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 34.71,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 13
+    },
+    "rx470": {
+      "source": {
+        "aiIndex": {
+          "dataset": "llama.cpp Vulkan scoreboard (Llama 2 7B Q4_0, tg128)",
+          "url": "https://github.com/ggml-org/llama.cpp/discussions/10879",
+          "date": "2026-11-15",
+          "raw": 40.11,
+          "unit": "tokens/s"
+        }
+      },
+      "aiIndex": 15
+    },
+    "rtx5070": {
+      "source": {},
+      "aiIndex": 48
+    },
+    "rtx4060ti8": {
+      "source": {},
+      "aiIndex": 20
+    },
+    "rtx5060": {
+      "source": {},
+      "aiIndex": 32
+    },
+    "rtx4060": {
+      "source": {},
+      "aiIndex": 19
+    },
+    "rx7700xt": {
+      "source": {},
+      "aiIndex": 31
+    },
+    "rtx4080": {
+      "source": {},
+      "aiIndex": 51
+    },
+    "rtx4060ti16": {
+      "source": {},
+      "aiIndex": 20
+    },
+    "rtx3090ti": {
+      "source": {},
+      "aiIndex": 72
+    },
+    "rtx3080ti": {
+      "source": {},
+      "aiIndex": 65
+    },
+    "rtx3070ti": {
+      "source": {},
+      "aiIndex": 43
+    },
+    "rtx3060-8": {
+      "source": {},
+      "aiIndex": 17
+    },
+    "rtx3050": {
+      "source": {},
+      "aiIndex": 16
+    },
+    "rtx2080s": {
+      "source": {},
+      "aiIndex": 35
+    },
+    "rtx2080": {
+      "source": {},
+      "aiIndex": 32
+    },
+    "rtx2070": {
+      "source": {},
+      "aiIndex": 32
+    },
+    "rtx2060s": {
+      "source": {},
+      "aiIndex": 32
+    },
+    "rtx2060": {
+      "source": {},
+      "aiIndex": 24
+    },
+    "gtx1660s": {
+      "source": {},
+      "aiIndex": 24
+    },
+    "gtx1660ti": {
+      "source": {},
+      "aiIndex": 20
+    },
+    "gtx1660": {
+      "source": {},
+      "aiIndex": 14
+    },
+    "gtx1650s": {
+      "source": {},
+      "aiIndex": 14
+    },
+    "gtx1650": {
+      "source": {},
+      "aiIndex": 9.1
+    },
+    "gtx1080": {
+      "source": {},
+      "aiIndex": 23
+    },
+    "gtx1060": {
+      "source": {},
+      "aiIndex": 14
+    },
+    "rx6950xt": {
+      "source": {},
+      "aiIndex": 41
+    },
+    "rx6700": {
+      "source": {},
+      "aiIndex": 23
+    },
+    "rx5700": {
+      "source": {},
+      "aiIndex": 32
+    },
+    "rx5600xt": {
+      "source": {},
+      "aiIndex": 20
+    },
+    "rx5500xt": {
+      "source": {},
+      "aiIndex": 16
+    },
+    "arc-a580": {
+      "source": {},
+      "aiIndex": 36
+    },
+    "arc-a380": {
+      "source": {},
+      "aiIndex": 13
+    },
+    "rtx5050": {
+      "source": {},
+      "aiIndex": 23
+    },
+    "rtx3080-12": {
+      "source": {},
+      "aiIndex": 65
+    },
+    "rtx3050-6": {
+      "source": {},
+      "aiIndex": 12
+    },
+    "rtx2060-12": {
+      "source": {},
+      "aiIndex": 24
+    },
+    "gtx1630": {
+      "source": {},
+      "aiIndex": 6.8
+    },
+    "gtx1060-3": {
+      "source": {},
+      "aiIndex": 14
+    },
+    "gtx1050": {
+      "source": {},
+      "aiIndex": 8
+    },
+    "gt1030": {
+      "source": {},
+      "aiIndex": 3.4
+    },
+    "rx6400": {
+      "source": {},
+      "aiIndex": 9.1
+    },
+    "rx5500xt4": {
+      "source": {},
+      "aiIndex": 16
+    },
+    "rx590": {
+      "source": {},
+      "aiIndex": 18
+    },
+    "rx560": {
+      "source": {},
+      "aiIndex": 8
+    },
+    "arc-a310": {
+      "source": {},
+      "aiIndex": 8.8
+    }
+  }
+}

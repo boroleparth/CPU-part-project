@@ -1,5 +1,6 @@
 // Presentation helpers: tiers, brands and sort metrics shared by the UI.
-import type { Build, Case, Cooler, Cpu, Gpu, Motherboard, PartSlot, Psu, RamKit, Storage } from './engine/types';
+import { cpuMetricLabels, gpuMetricLabels } from './data';
+import type { BenchSource, Build, Case, Cooler, Cpu, Gpu, Motherboard, PartSlot, Psu, RamKit, Storage } from './engine/types';
 
 export type AnyPart = NonNullable<Build[PartSlot]>;
 export type TierLevel = 1 | 2 | 3 | 4;
@@ -128,7 +129,48 @@ export function seriesRank(slot: PartSlot, series: string): number {
 
 /** Benchmark scores on the shared scale (fastest model = 100), for showing next to a part. */
 export function benchLine(slot: PartSlot, part: AnyPart): string | undefined {
-  if (slot === 'cpu') return `Games ${(part as Cpu).gamingIndex} · Multi-core ${(part as Cpu).multiIndex}`;
-  if (slot === 'gpu') return `Raster ${(part as Gpu).rasterIndex} · Ray tracing ${(part as Gpu).rtIndex}`;
+  if (slot === 'cpu') {
+    const c = part as Cpu;
+    return `Games ${c.gamingIndex} · Single-core ${c.singleIndex ?? c.gamingIndex} · Multi-core ${c.multiIndex}`;
+  }
+  if (slot === 'gpu') {
+    const g = part as Gpu;
+    return `Raster ${g.rasterIndex} · Ray tracing ${g.rtIndex}${g.aiIndex !== undefined ? ` · Local AI ${g.aiIndex}` : ''}`;
+  }
   return undefined;
+}
+
+export interface SourceGroup {
+  /** Publisher, e.g. "PassMark" or "llama.cpp". */
+  publisher: string;
+  date: string;
+  /** One "Verify" link per metric from this publisher. */
+  links: { label: string; url: string; title: string }[];
+}
+
+/** Where a CPU's or GPU's numbers come from: named sources, plus the metrics that are still estimates. */
+export function provenance(slot: PartSlot, part: AnyPart): { sourced: SourceGroup[]; estimated: string[] } | undefined {
+  if (slot !== 'cpu' && slot !== 'gpu') return undefined;
+  const labels: Record<string, string> = slot === 'cpu' ? cpuMetricLabels : gpuMetricLabels;
+  const sources = ((part as Cpu | Gpu).source ?? {}) as Record<string, BenchSource | undefined>;
+  const groups = new Map<string, SourceGroup>();
+  const estimated: string[] = [];
+  for (const [metric, label] of Object.entries(labels)) {
+    const s = sources[metric];
+    if (!s) {
+      estimated.push(label);
+      continue;
+    }
+    const publisher = s.dataset.split(' ')[0];
+    const g = groups.get(publisher) ?? { publisher, date: s.date, links: [] };
+    g.links.push({ label, url: s.url, title: `${s.dataset}: ${s.raw.toLocaleString('en-US')} ${s.unit ?? ''}`.trim() });
+    groups.set(publisher, g);
+  }
+  return { sourced: [...groups.values()], estimated };
+}
+
+/** "2026-11-15" -> "15 Nov 2026" */
+export function formatSourceDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return `${d} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][m - 1]} ${y}`;
 }

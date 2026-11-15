@@ -5,6 +5,22 @@ export type MemType = 'DDR4' | 'DDR5';
 export type FormFactor = 'ATX' | 'mATX' | 'ITX';
 export type PcieGen = 3 | 4 | 5;
 
+/** Where one benchmark number came from. Missing = the value is an estimate. */
+export interface BenchSource {
+  /** Dataset name, e.g. "PassMark CPU Mark". */
+  dataset: string;
+  url: string;
+  /** Date the source page was saved, YYYY-MM-DD. */
+  date: string;
+  /** Score as published, before scaling to our 0-100 index. */
+  raw: number;
+  /** Unit of the raw score, e.g. "points" or "tokens/s". */
+  unit?: string;
+}
+
+export type CpuMetric = 'gamingIndex' | 'multiIndex' | 'singleIndex';
+export type GpuMetric = 'rasterIndex' | 'rtIndex' | 'aiIndex';
+
 export interface Cpu {
   id: string;
   name: string;
@@ -16,6 +32,10 @@ export interface Cpu {
   gamingIndex: number;
   /** Relative multi-threaded performance, fastest = 100. */
   multiIndex: number;
+  /** Relative single-thread performance, fastest = 100. Falls back to gamingIndex when absent. */
+  singleIndex?: number;
+  /** Benchmark source per metric; a metric without one is an estimate. */
+  source?: Partial<Record<CpuMetric, BenchSource>>;
   /** Sustained/boost package power in watts (Intel: PL2). */
   power: number;
   memTypes: readonly MemType[];
@@ -39,6 +59,10 @@ export interface Gpu {
   rasterIndex: number;
   /** Relative ray-tracing performance, fastest = 100. */
   rtIndex: number;
+  /** Relative local-LLM token generation speed, fastest = 100. Falls back to memory bandwidth when absent. */
+  aiIndex?: number;
+  /** Benchmark source per metric; a metric without one is an estimate. */
+  source?: Partial<Record<GpuMetric, BenchSource>>;
   vram: number;
   /** Memory bandwidth in GB/s (drives local AI token speed). */
   bandwidth: number;

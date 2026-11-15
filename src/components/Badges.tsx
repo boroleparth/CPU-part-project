@@ -1,5 +1,6 @@
 import type { Tone } from '../engine/simulation';
-import { brandNames, tierNames, type BrandKey, type TierLevel } from '../ui';
+import type { PartSlot } from '../engine/types';
+import { brandNames, formatSourceDate, provenance, tierNames, type AnyPart, type BrandKey, type TierLevel } from '../ui';
 
 /** Ordinal tier: four pips, filled up to the level, plus the name. */
 export function TierBadge({ level }: { level: TierLevel }) {
@@ -40,6 +41,35 @@ export function ScoreRing({ score, tone, size = 112, label }: { score: number; t
         <circle cx="50" cy="50" r={r} className={`ring-value ring-value--${tone}`} strokeDasharray={`${(v / 100) * c} ${c}`} transform="rotate(-90 50 50)" />
       </svg>
       <span className="ring-num">{Math.round(v)}</span>
+    </div>
+  );
+}
+
+/**
+ * "Source: PassMark, 15 Nov 2026 · Verify →" per publisher, plus an "Estimated" badge for
+ * metrics with no source. Rendered outside the row button, so its links are real links.
+ */
+export function SourceLine({ slot, part }: { slot: PartSlot; part: AnyPart }) {
+  const p = provenance(slot, part);
+  if (!p) return null;
+  const allEstimated = !p.sourced.length;
+  return (
+    <div className="src-line">
+      {p.sourced.map((g) => (
+        <span key={g.publisher} className="src-item">
+          Source: {g.publisher}, {formatSourceDate(g.date)} ·{' '}
+          {g.links.map((l, i) => (
+            <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer" title={l.title}>
+              {g.links.length === 1 ? 'Verify' : i === 0 ? `Verify ${l.label.toLowerCase()}` : l.label.toLowerCase()} →
+            </a>
+          ))}
+        </span>
+      ))}
+      {!!p.estimated.length && (
+        <span className="tag tag--est" title="Estimated from aggregated public reviews, not from a named dataset; expect about 5–10% error">
+          {allEstimated ? 'Estimated' : `Estimated: ${p.estimated.join(', ')}`}
+        </span>
+      )}
     </div>
   );
 }

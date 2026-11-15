@@ -83,7 +83,13 @@ describe('relative ratings match known pairings', () => {
   it('gives K and KF (and F / non-F) models the same performance', () => {
     for (const [a, b] of [['i9-14900k', 'i9-14900kf'], ['i5-13600k', 'i5-13600kf'], ['i5-12400', 'i5-12400f'], ['i7-9700k', 'i7-9700kf']]) {
       expect(cpu(a).gamingIndex).toBe(cpu(b).gamingIndex);
-      expect(cpu(a).multiIndex).toBe(cpu(b).multiIndex);
+      // Multi- and single-core come from separate PassMark measurements of each model,
+      // so twins differ by sampling noise; allow 5% on the raw scores.
+      for (const m of ['multiIndex', 'singleIndex'] as const) {
+        const ra = cpu(a).source?.[m]?.raw ?? cpu(a)[m] ?? 0;
+        const rb = cpu(b).source?.[m]?.raw ?? cpu(b)[m] ?? 0;
+        expect(Math.abs(ra / rb - 1), `${a}/${b} ${m}`).toBeLessThan(0.05);
+      }
       expect(cpu(a).hasIgpu).not.toBe(cpu(b).hasIgpu);
     }
   });
