@@ -6,4 +6,3 @@ coverage
 *.tsbuildinfo
 # Raw benchmark pages are third-party content; only the extracted scores (src/data/benchmarks.json) are committed.
 data/sources/**/*.html
-data/sources/**/*.html.gz

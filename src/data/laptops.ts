@@ -6,8 +6,7 @@
 // rasterIndex / rtIndex on the desktop GPU scale (RTX 5090 = 100).
 // The PassMark numbers below are approximate typical results, to be replaced by sourced
 // values through scripts/import-benchmarks.ts (laptop CPUs are in the same PassMark lists).
-import type { BenchSource, Cpu, Gpu, MemType } from '../engine/types';
-import calibration from './laptop-calibration.json';
+import type { Cpu, Gpu, MemType } from '../engine/types';
 
 const MULTI_TOP = 70111;
 const SINGLE_TOP = 5087;
@@ -145,8 +144,6 @@ export const laptopCpus: Cpu[] = rows.map(([id, name, genKey, cls, cores, thread
  * slowest and fastest versions of the same chip.
  */
 export const tgpScale = (tgp: number, maxTgp: number) => Math.pow(Math.min(1, tgp / maxTgp), 0.4);
-/** Speed at one power limit relative to another (either direction). */
-const powerRatio = (tgp: number, ref: number) => Math.pow(tgp / ref, 0.4);
 
 /** [family id, chip name, raster at max power, RT/raster ratio, VRAM GB, bandwidth GB/s, PCIe gen, lanes, power versions (W), typical W] */
 type GpuRow = [string, string, number, number, number, number, 3 | 4 | 5, 8 | 16, number[], number];
@@ -180,23 +177,11 @@ const gpuRows: GpuRow[] = [
   ['rtx5090m', 'RTX 5090', 50, 0.95, 24, 896, 5, 16, [95, 135, 175], 175],
 ];
 
-interface Calibrated { typical: number; laptops: number; url: string }
-const measured = calibration.gpus as Record<string, Calibrated | undefined>;
-
-/**
- * Measured where Notebookcheck has the chip: its median tested laptop sets the speed of our
- * typical power version, and the other versions scale from it with tgpScale (which matches
- * their fastest 10% of laptops within a few percent). Otherwise the estimate above, at max power.
- */
 export const laptopGpus: Gpu[] = gpuRows.flatMap(([fid, chip, raster, rtRatio, vram, bandwidth, pcieGen, pcieLanes, tgps, typical]) => {
   const max = Math.max(...tgps);
-  const m = measured[fid];
-  const source = (r: number): Partial<Record<'rasterIndex', BenchSource>> | undefined =>
-    m && { rasterIndex: { dataset: `Notebookcheck game benchmarks (median of ${m.laptops} laptops)`, url: m.url, date: calibration.generated, raw: round(r), unit: 'index' } };
   return tgps.map((tgp): Gpu => {
-    const r = m ? m.typical * powerRatio(tgp, typical) : raster * tgpScale(tgp, max);
+    const r = raster * tgpScale(tgp, max);
     return {
-      source: source(r),
       id: `${fid}-${tgp}`,
       name: `GeForce ${chip} Laptop · ${tgp} W`,
       brand: 'NVIDIA', laptop: true, family: `${chip} Laptop`, tgp, typical: tgp === typical,
