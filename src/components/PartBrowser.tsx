@@ -3,7 +3,9 @@ import { catalog } from '../data';
 import { checkCompatibility } from '../engine/compatibility';
 import { evaluateBuild, toneFor } from '../engine/simulation';
 import type { Build, PartSlot, Resolution, WorkloadId } from '../engine/types';
-import { brandNames, brandOf, partSummary, seriesOf, seriesRank, strengthOf, type AnyPart, type BrandKey } from '../ui';
+import { benchLine, brandNames, brandOf, partSummary, seriesOf, seriesRank, strengthOf, type AnyPart, type BrandKey } from '../ui';
+import { isLegacyCpu, isLegacyGpu } from '../data';
+import type { Cpu, Gpu } from '../engine/types';
 import { SearchIcon, SlotIcon } from './Icons';
 
 const titles: Record<PartSlot, string> = {
@@ -75,7 +77,12 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
     };
     return [...list].sort(by[sort]);
   }, [rows, query, brand, sort]);
-  const bestId = !query && !brand ? [...rows].sort((a, b) => Math.round(b.fit) - Math.round(a.fit) || a.strength - b.strength)[0]?.part.id : undefined;
+  // A fit score needs something to pair with: no CPU score before a GPU is chosen, and vice versa.
+  const scoreless = (slot === 'cpu' && !build.gpu) || (slot === 'gpu' && !build.cpu);
+  // "Best match" points at a part you can still buy new, unless only older parts fit (old platform).
+  const legacy = (p: AnyPart) => (slot === 'cpu' && isLegacyCpu(p as Cpu)) || (slot === 'gpu' && isLegacyGpu(p as Gpu));
+  const bestPool = rows.some((r) => r.fits && !legacy(r.part)) ? rows.filter((r) => !legacy(r.part)) : rows;
+  const bestId = !scoreless && !query && !brand ? [...bestPool].sort((a, b) => Math.round(b.fit) - Math.round(a.fit) || a.strength - b.strength)[0]?.part.id : undefined;
 
   return (
     <div className="sheet-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -125,10 +132,12 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
                       <b>{r.part.name}</b>
                       {isCurrent && <span className="tag tag--current">Selected</span>}
                       {r.part.id === bestId && !isCurrent && <span className="tag tag--best">Best match</span>}
+                      {legacy(r.part) && <span className="tag tag--old" title="Older generation, mostly sold used">Older</span>}
                     </span>
                     <span className="prow-spec">{partSummary(slot, r.part)}</span>
+                    {benchLine(slot, r.part) && <span className="prow-bench" title="Benchmark scores; fastest model = 100">{benchLine(slot, r.part)}</span>}
                   </span>
-                  <span className={`score-chip score-chip--${tone}`} title="Score with this part">{r.fits ? Math.round(r.fit) : '✕'}</span>
+                  {!scoreless && <span className={`score-chip score-chip--${tone}`} title="Score with this part">{r.fits ? Math.round(r.fit) : '✕'}</span>}
                 </button>
               </li>
             );

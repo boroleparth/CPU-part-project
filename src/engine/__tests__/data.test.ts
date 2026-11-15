@@ -52,6 +52,12 @@ describe('relative ratings match known pairings', () => {
     ['gtx1080ti', 'rtx2070s'],
     ['rx5700xt', 'rtx2070'],
     ['gtx1660s', 'gtx1660ti'],
+    ['rx580', 'gtx1060'],
+    ['vega64', 'gtx1080'],
+    ['vega56', 'gtx1070ti'],
+    ['radeon7', 'rtx2080'],
+    ['rtx5050', 'rtx4060'],
+    ['rx9060xt8', 'rtx5060ti8'],
   ];
   for (const [a, b] of pairs) {
     it(`${gpu(a).name} ≈ ${gpu(b).name}`, () => expect(close(gpu(a).rasterIndex, gpu(b).rasterIndex)).toBe(true));
@@ -72,5 +78,43 @@ describe('relative ratings match known pairings', () => {
     const { pcieFactor } = await import('../simulation');
     expect(pcieFactor({ gpu: gpu('rx6500xt'), cpu: cpu('r5-2600'), motherboard: board('am4-b450-matx') })).toBeLessThan(0.8);
     expect(pcieFactor({ gpu: gpu('rx6500xt'), cpu: cpu('r5-7600'), motherboard: board('am5-b650-atx') })).toBeGreaterThan(0.85);
+  });
+
+  it('gives K and KF (and F / non-F) models the same performance', () => {
+    for (const [a, b] of [['i9-14900k', 'i9-14900kf'], ['i5-13600k', 'i5-13600kf'], ['i5-12400', 'i5-12400f'], ['i7-9700k', 'i7-9700kf']]) {
+      expect(cpu(a).gamingIndex).toBe(cpu(b).gamingIndex);
+      expect(cpu(a).multiIndex).toBe(cpu(b).multiIndex);
+      expect(cpu(a).hasIgpu).not.toBe(cpu(b).hasIgpu);
+    }
+  });
+
+  it('orders each CPU family across generations', () => {
+    const amd = ['r5-1600', 'r5-2600', 'r5-3600', 'r5-5600', 'r5-7600', 'r5-9600x'];
+    const intel = ['i5-8400', 'i5-9400f', 'i5-10400f', 'i5-11400f', 'i5-12400f', 'i5-13400f', 'i5-14400f'];
+    for (const chain of [amd, intel]) for (let i = 1; i < chain.length; i++) expect(cpu(chain[i]).gamingIndex).toBeGreaterThan(cpu(chain[i - 1]).gamingIndex);
+    expect(cpu('r5-5600x3d').gamingIndex).toBeGreaterThan(cpu('r5-5600x').gamingIndex);
+  });
+});
+
+describe('older platforms', () => {
+  it('rejects Ryzen 1000 on B550 / X570 / A520 and allows it on B450', () => {
+    const base = { cpu: cpu('r5-1600'), ram: ram('ddr4-2x16-3200'), gpu: gpu('rx580') };
+    for (const b of ['am4-b550-atx', 'am4-x570-atx', 'am4-a520-matx']) expect(errors({ ...base, motherboard: board(b) }).length, b).toBeGreaterThan(0);
+    expect(errors({ ...base, motherboard: board('am4-b450-matx') })).toEqual([]);
+  });
+
+  it('puts Intel 8th / 9th gen on an LGA1151 DDR4 board', () => {
+    for (const id of ['i5-8400', 'i7-9700k']) {
+      const b = completeBuild({ cpu: cpu(id), gpu: gpu('gtx1070') });
+      expect(b.motherboard!.socket).toBe('LGA1151');
+      expect(errors(b)).toEqual([]);
+    }
+  });
+
+  it('gives APUs real integrated graphics, stronger on newer chips', async () => {
+    const { igpuIndex } = await import('../simulation');
+    expect(igpuIndex(cpu('r7-8700g'))).toBeGreaterThan(igpuIndex(cpu('r5-5600g')));
+    expect(igpuIndex(cpu('r5-5600g'))).toBeGreaterThan(igpuIndex(cpu('r3-2200g')));
+    expect(igpuIndex(cpu('i5-12400f'))).toBe(0);
   });
 });

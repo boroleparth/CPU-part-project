@@ -1,6 +1,6 @@
 // Core data types for parts, builds and simulation results.
 
-export type Socket = 'AM4' | 'AM5' | 'LGA1200' | 'LGA1700' | 'LGA1851';
+export type Socket = 'AM4' | 'AM5' | 'LGA1151' | 'LGA1200' | 'LGA1700' | 'LGA1851';
 export type MemType = 'DDR4' | 'DDR5';
 export type FormFactor = 'ATX' | 'mATX' | 'ITX';
 export type PcieGen = 3 | 4 | 5;
@@ -26,6 +26,8 @@ export interface Cpu {
   includesCooler: boolean;
   /** Large-cache CPUs (X3D) are much less sensitive to RAM speed. */
   bigCache?: boolean;
+  /** Integrated graphics strength on the discrete-GPU raster scale (APUs only). */
+  igpuIndex?: number;
   generation: string;
 }
 

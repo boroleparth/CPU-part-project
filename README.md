@@ -80,11 +80,18 @@ src/
 
 ## Parts covered
 
-- **CPUs (58)**: Ryzen 2000 / 3000 / 5000 / 5000G / 7000 / 8000G / 9000, Intel Core 10th–14th gen and Core Ultra 200S.
-- **GPUs (75)**: GeForce GTX 10 / GTX 16 / RTX 20 / 30 / 40 / 50, Radeon RX 5000 / 6000 / 7000 / 9000, Intel Arc A and B.
-- Motherboard classes for AM4, AM5, LGA1200, LGA1700 and LGA1851, plus RAM kits, storage, coolers, PSUs and cases.
+- **CPUs (192)**: every mainstream desktop model from 2017 on, including X3D, XT, G/GT, non-K, F and KF variants:
+  Ryzen 1000 / 2000 / 2000G–3000G / 3000 / 4000 / 5000 / 5000G / 7000 / 8000 / 9000, Intel Core 8th–14th gen
+  and Core Ultra 200S.
+- **GPUs (98)**: GeForce GT 1030 / GTX 10 / GTX 16 / RTX 20 / 30 / 40 / 50, Radeon RX 400 / 500 / Vega / VII /
+  RX 5000 / 6000 / 7000 / 9000, Intel Arc A and B.
+- Motherboard classes for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851 (with chipset support rules, e.g.
+  no Ryzen 1000 / 2000 on B550), plus RAM kits, storage, coolers, PSUs and cases.
 
-The part picker groups CPUs and GPUs by generation, newest first.
+Every CPU and GPU is scored on one shared scale (fastest model = 100), so any part compares with any other. The
+part picker shows the scores, groups parts by generation, and marks older generations; suggestions and the
+"best match" tag only recommend parts that are still sold new (older chips are offered as drop-in upgrades for
+an older platform).
 
 ## Adding or updating parts
 

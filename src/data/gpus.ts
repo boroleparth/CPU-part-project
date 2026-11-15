@@ -93,4 +93,30 @@ export const gpus: Gpu[] = [
   { id: 'arc-a770', name: 'Arc A770 16GB', brand: 'Intel', rasterIndex: 22, rtIndex: 19, vram: 16, bandwidth: 560, power: 225, lengthMm: 272, pcieLanes: 16, pcieGen: 4, cuda: false, needs12v2x6: false },
   { id: 'arc-a580', name: 'Arc A580', brand: 'Intel', rasterIndex: 18, rtIndex: 15, vram: 8, bandwidth: 512, power: 185, lengthMm: 250, pcieLanes: 8, pcieGen: 4, cuda: false, needs12v2x6: false },
   { id: 'arc-a380', name: 'Arc A380', brand: 'Intel', rasterIndex: 7, rtIndex: 6, vram: 6, bandwidth: 186, power: 75, lengthMm: 190, pcieLanes: 8, pcieGen: 4, cuda: false, needs12v2x6: false },
+  // ---- Complete line-ups, remaining models ----
+  { id: 'rtx5050', name: 'GeForce RTX 5050', brand: 'NVIDIA', rasterIndex: 23.5, rtIndex: 21.5, vram: 8, bandwidth: 320, power: 130, lengthMm: 210, pcieLanes: 8, pcieGen: 5, cuda: true, needs12v2x6: false },
+  { id: 'rtx3080-12', name: 'GeForce RTX 3080 12GB', brand: 'NVIDIA', rasterIndex: 43, rtIndex: 39, vram: 12, bandwidth: 912, power: 350, lengthMm: 285, pcieLanes: 16, pcieGen: 4, cuda: true, needs12v2x6: false },
+  { id: 'rtx3050-6', name: 'GeForce RTX 3050 6GB', brand: 'NVIDIA', rasterIndex: 11, rtIndex: 9.5, vram: 6, bandwidth: 168, power: 70, lengthMm: 180, pcieLanes: 8, pcieGen: 4, cuda: true, needs12v2x6: false },
+  { id: 'rtx2060-12', name: 'GeForce RTX 2060 12GB', brand: 'NVIDIA', rasterIndex: 17.5, rtIndex: 13, vram: 12, bandwidth: 336, power: 185, lengthMm: 229, pcieLanes: 16, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'gtx1630', name: 'GeForce GTX 1630', brand: 'NVIDIA', rasterIndex: 4.5, rtIndex: 0.5, vram: 4, bandwidth: 96, power: 75, lengthMm: 180, pcieLanes: 8, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'gtx1070ti', name: 'GeForce GTX 1070 Ti', brand: 'NVIDIA', rasterIndex: 15, rtIndex: 1.8, vram: 8, bandwidth: 256, power: 180, lengthMm: 267, pcieLanes: 16, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'gtx1060-3', name: 'GeForce GTX 1060 3GB', brand: 'NVIDIA', rasterIndex: 9, rtIndex: 1.1, vram: 3, bandwidth: 192, power: 120, lengthMm: 250, pcieLanes: 16, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'gtx1050', name: 'GeForce GTX 1050 2GB', brand: 'NVIDIA', rasterIndex: 4.8, rtIndex: 0.6, vram: 2, bandwidth: 112, power: 75, lengthMm: 180, pcieLanes: 16, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'gt1030', name: 'GeForce GT 1030', brand: 'NVIDIA', rasterIndex: 2.5, rtIndex: 0.3, vram: 2, bandwidth: 48, power: 30, lengthMm: 150, pcieLanes: 4, pcieGen: 3, cuda: true, needs12v2x6: false },
+  { id: 'rx9060xt8', name: 'Radeon RX 9060 XT 8GB', brand: 'AMD', rasterIndex: 32.5, rtIndex: 25.5, vram: 8, bandwidth: 320, power: 150, lengthMm: 240, pcieLanes: 16, pcieGen: 5, cuda: false, needs12v2x6: false },
+  { id: 'rx6400', name: 'Radeon RX 6400', brand: 'AMD', rasterIndex: 6.5, rtIndex: 3.5, vram: 4, bandwidth: 128, power: 53, lengthMm: 170, pcieLanes: 4, pcieGen: 4, cuda: false, needs12v2x6: false },
+  { id: 'rx5500xt4', name: 'Radeon RX 5500 XT 4GB', brand: 'AMD', rasterIndex: 10, rtIndex: 1.2, vram: 4, bandwidth: 224, power: 130, lengthMm: 200, pcieLanes: 8, pcieGen: 4, cuda: false, needs12v2x6: false },
+  // AMD Vega / Radeon VII (no ray-tracing hardware)
+  { id: 'radeon7', name: 'Radeon VII', brand: 'AMD', rasterIndex: 24, rtIndex: 2.9, vram: 16, bandwidth: 1024, power: 300, lengthMm: 280, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'vega64', name: 'Radeon RX Vega 64', brand: 'AMD', rasterIndex: 17, rtIndex: 2, vram: 8, bandwidth: 484, power: 295, lengthMm: 280, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'vega56', name: 'Radeon RX Vega 56', brand: 'AMD', rasterIndex: 15, rtIndex: 1.8, vram: 8, bandwidth: 410, power: 210, lengthMm: 280, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  // AMD Polaris RX 400 / 500 (no ray-tracing hardware)
+  { id: 'rx590', name: 'Radeon RX 590', brand: 'AMD', rasterIndex: 10.5, rtIndex: 1.2, vram: 8, bandwidth: 256, power: 225, lengthMm: 250, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'rx580', name: 'Radeon RX 580 8GB', brand: 'AMD', rasterIndex: 9.5, rtIndex: 1.1, vram: 8, bandwidth: 256, power: 185, lengthMm: 241, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'rx570', name: 'Radeon RX 570 4GB', brand: 'AMD', rasterIndex: 8, rtIndex: 0.9, vram: 4, bandwidth: 224, power: 150, lengthMm: 241, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'rx560', name: 'Radeon RX 560 4GB', brand: 'AMD', rasterIndex: 4.5, rtIndex: 0.5, vram: 4, bandwidth: 112, power: 75, lengthMm: 170, pcieLanes: 8, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'rx480', name: 'Radeon RX 480 8GB', brand: 'AMD', rasterIndex: 9.2, rtIndex: 1.1, vram: 8, bandwidth: 256, power: 150, lengthMm: 241, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  { id: 'rx470', name: 'Radeon RX 470 4GB', brand: 'AMD', rasterIndex: 7.8, rtIndex: 0.9, vram: 4, bandwidth: 211, power: 120, lengthMm: 241, pcieLanes: 16, pcieGen: 3, cuda: false, needs12v2x6: false },
+  // Intel Arc entry
+  { id: 'arc-a310', name: 'Arc A310', brand: 'Intel', rasterIndex: 4.5, rtIndex: 3.8, vram: 4, bandwidth: 124, power: 75, lengthMm: 170, pcieLanes: 8, pcieGen: 4, cuda: false, needs12v2x6: false },
 ];

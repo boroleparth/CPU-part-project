@@ -23,7 +23,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 /** Integrated graphics expressed on the discrete-GPU raster scale. */
 export function igpuIndex(cpu?: Cpu): number {
   if (!cpu?.hasIgpu) return 0;
-  return cpu.generation.includes('APU') ? 9 : 3;
+  return cpu.igpuIndex ?? 3;
 }
 
 /**

@@ -1,4 +1,8 @@
-import { cases, coolers, cpus, gpus, motherboards, psus, ramKits, storages } from '../data';
+import { cases, coolers, cpus as allCpus, gpus as allGpus, isLegacyCpu, isLegacyGpu, motherboards, psus, ramKits, storages } from '../data';
+
+// The auto-builder recommends parts that are still sold new.
+const cpus = allCpus.filter((c) => !isLegacyCpu(c));
+const gpus = allGpus.filter((g) => !isLegacyGpu(g));
 import { checkCompatibility, recommendedPsuWatts } from './compatibility';
 import { minCpuIndexForGpu, simulateFps } from './simulation';
 import type { Build, Case, Cooler, Cpu, FormFactor, Gpu, MemType, Motherboard, RamKit, Resolution, WorkloadId } from './types';
@@ -57,7 +61,7 @@ export function targetFor(id: GamingId, req: AutoBuildRequest): number {
 
 /** Best motherboard for a CPU: right socket, VRM strong enough, preferred form factor and memory type. */
 export function pickMotherboard(cpu: Cpu, opts: { formFactor?: FormFactor | 'any'; memType?: MemType; minPcie?: number; tier?: Tier } = {}): Motherboard | undefined {
-  const all = motherboards.filter((m) => m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && !m.unsupported?.includes(cpu.generation) && m.pcieGen >= (opts.minPcie ?? 3));
+  const all = motherboards.filter((m) => m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && !m.unsupported?.includes(cpu.generation));
   const ff = opts.formFactor && opts.formFactor !== 'any' ? opts.formFactor : undefined;
   const memPref: MemType | undefined = opts.memType ?? (cpu.memTypes.includes('DDR5') && opts.tier !== 'entry' ? 'DDR5' : undefined);
   const score = (m: Motherboard) => {
@@ -67,8 +71,10 @@ export function pickMotherboard(cpu: Cpu, opts: { formFactor?: FormFactor | 'any
     if (!ff && m.formFactor === 'ITX') s += 50; // ITX only when asked for
     if (memPref && m.memType !== memPref) s += 200;
     if (m.biosNoteFor?.includes(cpu.generation)) s += 30;
+    // Prefer a PCIe 4.0+ slot for x8 cards; older platforms simply don't have one.
+    if (m.pcieGen < (opts.minPcie ?? 3)) s += 150;
     // Higher tiers get a mainstream-or-better chipset (better VRM, more M.2 / USB).
-    if ((opts.tier === 'high' || opts.tier === 'enthusiast') && ['A620', 'H610', 'B450', 'A520', 'H510'].includes(m.chipset)) s += 300;
+    if ((opts.tier === 'high' || opts.tier === 'enthusiast') && ['A620', 'H610', 'B450', 'A520', 'H510', 'H310'].includes(m.chipset)) s += 300;
     if (opts.tier === 'enthusiast' && !ff && m.formFactor !== 'ATX') s += 100;
     s += m.vrmWatts * 0.3; // otherwise prefer the simplest board that does the job
     return s;
@@ -206,7 +212,7 @@ export function autoBuild(req: AutoBuildRequest): AutoBuildResult {
       cpuNeeds.push((c) => c.cores >= 6);
     }
   }
-  if (req.tier !== 'entry') cpuNeeds.push((c) => (c.socket !== 'AM4' && c.socket !== 'LGA1200') || req.tier === 'mid');
+  if (req.tier !== 'entry') cpuNeeds.push((c) => (c.socket !== 'AM4' && c.socket !== 'LGA1200' && c.socket !== 'LGA1151') || req.tier === 'mid');
   if (gpu && ids.some(isGaming)) cpuNeeds.push((c) => c.gamingIndex >= minCpuIndexForGpu(gpu!));
   const sortedCpus = [...cpuPool].sort((a, b) => cpuCost(a) - cpuCost(b));
   let cpu = sortedCpus.find((c) => cpuNeeds.every((n) => n(c)));

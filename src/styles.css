@@ -534,3 +534,5 @@ button { -webkit-tap-highlight-color: transparent; }
   .cmp-build-head .tag { display: none; }
   .top-actions { font-size: 0.88rem; }
 }
+.prow-bench { font-size: 0.78rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.tag--old { background: transparent; color: var(--text-3); box-shadow: inset 0 0 0 1px var(--border-strong); }

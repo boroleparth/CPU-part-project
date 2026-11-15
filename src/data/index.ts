@@ -28,3 +28,8 @@ export const slotLabels: Record<PartSlot, string> = {
 };
 
 export const slotOrder: PartSlot[] = ['cpu', 'motherboard', 'ram', 'gpu', 'storage', 'cooler', 'psu', 'case'];
+
+/** Older generations: kept for checking existing / used builds, but not recommended as new purchases. */
+const legacyCpuGenerations = ['Zen', 'Zen+', 'Zen+ APU', 'Zen 2', 'Zen 2 APU', 'Coffee Lake', 'Coffee Lake Refresh', 'Comet Lake', 'Rocket Lake'];
+export const isLegacyCpu = (c: { generation: string }) => legacyCpuGenerations.includes(c.generation);
+export const isLegacyGpu = (g: { name: string }) => /GTX|GT 1030|RTX 20|RX 5\d{3}|RX [45]\d0\b|Vega|Radeon VII/.test(g.name);

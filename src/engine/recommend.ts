@@ -1,7 +1,7 @@
-import { cpus, gpus, ramKits, storages } from '../data';
+import { cpus, gpus, isLegacyCpu, isLegacyGpu, ramKits, storages } from '../data';
 import { pickCase, pickCooler, pickMotherboard, pickPsu, pickRam } from './builder';
 import { checkCompatibility, recommendedPsuWatts } from './compatibility';
-import { evaluateWorkload, type WorkloadResult } from './simulation';
+import { evaluateWorkload, minCpuIndexForGpu, type WorkloadResult } from './simulation';
 import type { Build, Cpu, Gpu, Resolution, WorkloadId } from './types';
 import { workloadById } from './workloads';
 
@@ -13,6 +13,10 @@ export interface Suggestion {
   /** Parts to swap in when the suggestion is applied. */
   changes: Build;
 }
+
+/** Suggestions recommend parts you can still buy new. Older CPUs are only offered as drop-in upgrades for an older platform. */
+const buyableGpus = gpus.filter((g) => !isLegacyGpu(g));
+const cpuPool = (build: Build) => cpus.filter((c) => !isLegacyCpu(c) || (!!build.cpu && isLegacyCpu(build.cpu) && c.socket === build.cpu.socket));
 
 const cpuCost = (c: Cpu) => c.gamingIndex * 0.6 + c.multiIndex * 0.4;
 const gpuCost = (g: Gpu) => g.rasterIndex + g.vram * 0.3;
@@ -76,7 +80,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       const r2 = evaluateWorkload(withSupportingParts({ ...build, gpu: g }), id, res);
       return r2.score >= 90 && hasNoErrors(withSupportingParts({ ...build, gpu: g }));
     };
-    const pool = [...gpus].sort((a, b) => gpuCost(a) - gpuCost(b));
+    const pool = [...buyableGpus].sort((a, b) => gpuCost(a) - gpuCost(b));
     const g = pool.find(ok) ?? pool.find((x) => evaluateWorkload({ ...build, gpu: x }, id, res).score >= 75);
     if (g) {
       const after = withSupportingParts({ ...build, gpu: g });
@@ -99,7 +103,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       const q = evaluateWorkload(trial, id, res).judged!;
       return q.limitedBy === 'gpu' || q.bottleneck < 0.06;
     };
-    const stronger = cpus.filter((c) => c.gamingIndex > build.cpu!.gamingIndex).sort((a, b) => cpuCost(a) - cpuCost(b));
+    const stronger = cpuPool(build).filter((c) => c.gamingIndex > build.cpu!.gamingIndex).sort((a, b) => cpuCost(a) - cpuCost(b));
     let same = stronger.find((c) => c.socket === build.cpu!.socket && fixes(c));
     if (!same) {
       // No drop-in CPU fully fixes it: offer the best drop-in upgrade if it helps meaningfully.
@@ -126,7 +130,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
 
   if (p.limitedBy === 'gpu' && p.bottleneck > 0.4) {
     // Spare CPU: either a stronger GPU or a cheaper CPU that performs the same.
-    const gpuFix = gpus
+    const gpuFix = buyableGpus
       .filter((g) => gpuCost(g) > gpuCost(build.gpu!))
       .sort((a, b) => gpuCost(a) - gpuCost(b))
       .find((g) => {
@@ -144,12 +148,12 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
         changes: changesBetween(build, after),
       });
     }
-    const cheaper = cpus
+    const cheaper = cpuPool(build)
       .filter((c) => c.socket === build.cpu!.socket && cpuCost(c) < cpuCost(build.cpu!))
       .sort((a, b) => cpuCost(a) - cpuCost(b))
       .find((c) => {
         const q = evaluateWorkload(withCpu(build, c), id, res).judged!;
-        return q.limitedBy === 'gpu' && q.bottleneck >= 0.15 && q.fps >= p.fps * 0.97;
+        return q.limitedBy === 'gpu' && q.bottleneck >= 0.15 && q.fps >= p.fps * 0.97 && c.gamingIndex >= minCpuIndexForGpu(build.gpu!);
       });
     if (cheaper) {
       out.push({
@@ -164,7 +168,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
 
   const w = workloadById[id];
   if (w.kind === 'gaming' && build.gpu.vram < w.vramNeed[res]) {
-    const g = gpus
+    const g = buyableGpus
       .filter((x) => x.vram >= w.vramNeed[res] && x.rasterIndex >= build.gpu!.rasterIndex * 0.95)
       .sort((a, b) => gpuCost(a) - gpuCost(b))[0];
     if (g) {
@@ -186,7 +190,7 @@ function suggestForThroughput(build: Build, r: WorkloadResult, res: Resolution, 
   if ((t.weakest === 'cpuMulti' || t.weakest === 'cpuSingle') && build.cpu) {
     const key = t.weakest === 'cpuMulti' ? 'multiIndex' : 'gamingIndex';
     const target = Math.min(1, t.strengths[t.strongest]!) * 100 * 0.85;
-    const pool = cpus.filter((c) => c[key] > build.cpu![key]).sort((a, b) => cpuCost(a) - cpuCost(b));
+    const pool = cpuPool(build).filter((c) => c[key] > build.cpu![key]).sort((a, b) => cpuCost(a) - cpuCost(b));
     const c = pool.find((c) => c.socket === build.cpu!.socket && c[key] >= target) ?? pool.find((c) => c[key] >= target) ?? pool[pool.length - 1];
     if (c) {
       const after = withSupportingParts(withCpu(build, c));
@@ -198,7 +202,7 @@ function suggestForThroughput(build: Build, r: WorkloadResult, res: Resolution, 
     const need = w.kind === 'throughput' ? w.vramNeed ?? 0 : 0;
     const current = build.gpu ? gpuCost(build.gpu) : 0;
     const prefersCuda = id === 'ai' || id === 'render3d';
-    const pool = gpus.filter((g) => gpuCost(g) > current && g.vram >= need).sort((a, b) => gpuCost(a) - gpuCost(b));
+    const pool = buyableGpus.filter((g) => gpuCost(g) > current && g.vram >= need).sort((a, b) => gpuCost(a) - gpuCost(b));
     const g = pool.find((g) => (!prefersCuda || g.cuda) && better(withSupportingParts({ ...build, gpu: g }))) ?? pool.find((g) => better({ ...build, gpu: g }));
     if (g) {
       const after = withSupportingParts({ ...build, gpu: g });

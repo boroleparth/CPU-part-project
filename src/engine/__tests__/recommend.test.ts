@@ -67,4 +67,22 @@ describe('suggest', () => {
     const e = evaluateBuild(b, ['render3d'], '1440p');
     expect(suggest(b, e.results, '1440p').some((x) => x.changes.gpu)).toBe(true);
   });
+
+  it('suggests parts that are still sold new for a modern build', async () => {
+    const { isLegacyCpu, isLegacyGpu } = await import('../../data');
+    for (const [c, g, res] of [['r5-7600', 'rtx4060', '4K'], ['r7-9800x3d', 'rtx4060', '1440p'], ['r5-7600', undefined, '1440p']] as const) {
+      const b = completeBuild({ cpu: cpu(c), gpu: g ? gpu(g) : undefined });
+      for (const s of suggest(b, evaluateBuild(b, ['aaa'], res).results, res)) {
+        if (s.changes.gpu) expect(isLegacyGpu(s.changes.gpu), s.title).toBe(false);
+        if (s.changes.cpu) expect(isLegacyCpu(s.changes.cpu), s.title).toBe(false);
+      }
+    }
+  });
+
+  it('can still suggest a drop-in upgrade on an older platform', () => {
+    const b = completeBuild({ cpu: cpu('r5-1600'), gpu: gpu('rtx3070') });
+    const s = suggest(b, evaluateBuild(b, ['aaa'], '1080p').results, '1080p').filter((x) => x.changes.cpu);
+    expect(s.length).toBeGreaterThan(0);
+    expect(s.some((x) => x.changes.cpu!.socket === 'AM4')).toBe(true);
+  });
 });
