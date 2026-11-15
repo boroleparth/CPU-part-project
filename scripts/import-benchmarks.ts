@@ -22,6 +22,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cpus } from '../src/data/cpus';
 import { gpus } from '../src/data/gpus';
+import { laptopCpus } from '../src/data/laptops';
 import type { BenchSource, CpuMetric, GpuMetric } from '../src/engine/types';
 import {
   ambiguous, cpuCatalogKey, cpuKey, gpuKey, gpuVariants, match, parseLlamaScoreboard, parsePassmarkChart, parsePassmarkList, toIndex,
@@ -104,7 +105,8 @@ function main() {
   const sources: object[] = [];
   const cpuOut: Out<CpuMetric> = {};
   const gpuOut: Out<GpuMetric> = {};
-  run('CPU', cpus, cpuCatalogKey, cpuKey, cpuAdapters, dir, date, cpuOut, sources);
+  // Laptop CPUs are in the same PassMark lists; laptop GPUs vary with power, so they stay estimated.
+  run('CPU', [...cpus, ...laptopCpus], cpuCatalogKey, cpuKey, cpuAdapters, dir, date, cpuOut, sources);
   run('GPU', gpus, (g) => gpuKey(g.name), gpuKey, gpuAdapters, dir, date, gpuOut, sources, gpuVariants);
   if (ambiguous.length) console.log(`\n[GPU] Ambiguous memory variants, left estimated: ${ambiguous.join('; ')}`);
 

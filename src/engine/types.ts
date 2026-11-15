@@ -1,6 +1,9 @@
 // Core data types for parts, builds and simulation results.
 
-export type Socket = 'AM4' | 'AM5' | 'LGA1151' | 'LGA1200' | 'LGA1700' | 'LGA1851';
+export type Socket = 'AM4' | 'AM5' | 'LGA1151' | 'LGA1200' | 'LGA1700' | 'LGA1851' | 'BGA';
+
+/** Desktop PC (parts you choose) or laptop (parts fixed by the model). */
+export type Device = 'desktop' | 'laptop';
 export type MemType = 'DDR4' | 'DDR5';
 export type FormFactor = 'ATX' | 'mATX' | 'ITX';
 export type PcieGen = 3 | 4 | 5;
@@ -49,6 +52,8 @@ export interface Cpu {
   /** Integrated graphics strength on the discrete-GPU raster scale (APUs only). */
   igpuIndex?: number;
   generation: string;
+  /** Laptop processor (soldered, socket 'BGA'). */
+  laptop?: boolean;
 }
 
 export interface Gpu {
@@ -74,6 +79,14 @@ export interface Gpu {
   cuda: boolean;
   /** Needs a 12V-2x6 / 12VHPWR power connector. */
   needs12v2x6: boolean;
+  /** Laptop graphics: the same chip comes in several power versions. */
+  laptop?: boolean;
+  /** Laptop chip name shared by its power versions, e.g. "RTX 3060 Laptop". */
+  family?: string;
+  /** Laptop graphics power limit (TGP) in watts. */
+  tgp?: number;
+  /** The power version most laptops with this chip use (shown first in the picker). */
+  typical?: boolean;
 }
 
 export interface Motherboard {
@@ -104,6 +117,8 @@ export interface RamKit {
   totalGb: number;
   speed: number;
   cl: number;
+  /** Soldered laptop memory (LPDDR5X): only for laptops, can't be upgraded. */
+  laptopOnly?: boolean;
 }
 
 export type StorageKind = 'HDD' | 'SATA SSD' | 'NVMe Gen3' | 'NVMe Gen4' | 'NVMe Gen5';

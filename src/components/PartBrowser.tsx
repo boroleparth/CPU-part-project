@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { catalog } from '../data';
+import { catalog, partFits } from '../data';
 import { checkCompatibility } from '../engine/compatibility';
 import { evaluateBuild, toneFor } from '../engine/simulation';
-import type { Build, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import type { Build, Device, PartSlot, Resolution, WorkloadId } from '../engine/types';
 import { benchLine, brandNames, brandOf, partSummary, seriesOf, seriesRank, strengthOf, type AnyPart, type BrandKey } from '../ui';
 import { isLegacyCpu, isLegacyGpu } from '../data';
 import type { Cpu, Gpu } from '../engine/types';
@@ -24,6 +24,7 @@ type SortKey = 'gen' | 'fit' | 'strong' | 'weak' | 'name';
 const sortLabels: Record<SortKey, string> = { gen: 'By generation', fit: 'Best match', strong: 'Most powerful', weak: 'Least powerful', name: 'Name' };
 
 interface Props {
+  device: Device;
   slot: PartSlot;
   build: Build;
   workloads: WorkloadId[];
@@ -32,7 +33,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function PartBrowser({ slot, build, workloads, resolution, onPick, onClose }: Props) {
+export function PartBrowser({ device, slot, build, workloads, resolution, onPick, onClose }: Props) {
   const [query, setQuery] = useState('');
   const grouped = slot === 'cpu' || slot === 'gpu';
   const [sort, setSort] = useState<SortKey>(grouped ? 'gen' : 'fit');
@@ -54,14 +55,20 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
 
   // Only parts that fit the rest of the build, each scored as if it were chosen.
   const rows = useMemo(() => {
+    // Laptop graphics: one row per chip, at its usual power (or the version already chosen).
+    const listed = (p: AnyPart) => {
+      const g = p as Gpu;
+      return !g.family || p === current || (g.typical && (current as Gpu | undefined)?.family !== g.family);
+    };
     return (catalog[slot] as readonly AnyPart[])
+      .filter((part) => partFits(slot, part, device) && listed(part))
       .map((part) => {
         const trial: Build = { ...build, [slot]: part };
         const fits = !checkCompatibility(trial).some((i) => i.severity === 'error' && i.slots.includes(slot));
         return { part, fits, fit: fits ? evaluateBuild(trial, workloads, resolution).overall : 0, strength: strengthOf(slot, part), brand: brandOf(slot, part), series: seriesOf(slot, part) ?? '' };
       })
       .filter((r) => r.fits || r.part === current);
-  }, [slot, build, workloads, resolution, current]);
+  }, [device, slot, build, workloads, resolution, current]);
 
   const brands = [...new Set(rows.map((r) => r.brand).filter(Boolean))] as BrandKey[];
   const visible = useMemo(() => {
@@ -90,7 +97,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
       <div className="sheet" role="dialog" aria-modal="true" aria-labelledby="browser-title">
         <header className="sheet-head">
           <span className="sheet-icon"><SlotIcon slot={slot} size={22} /></span>
-          <h2 id="browser-title">{titles[slot]}</h2>
+          <h2 id="browser-title">{device === 'laptop' && slot === 'gpu' ? 'Laptop graphics' : titles[slot]}</h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">✕</button>
         </header>
 
@@ -115,7 +122,7 @@ export function PartBrowser({ slot, build, workloads, resolution, onPick, onClos
           {slot === 'gpu' && !query && (
             <li>
               <button type="button" className={`prow${!current ? ' prow--current' : ''}`} onClick={() => onPick(undefined)}>
-                <span className="prow-main"><b>No graphics card</b><span className="prow-spec">Integrated graphics</span></span>
+                <span className="prow-main"><b>{device === 'laptop' ? 'No separate graphics' : 'No graphics card'}</b><span className="prow-spec">Integrated graphics</span></span>
               </button>
             </li>
           )}

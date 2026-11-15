@@ -1,23 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PartBrowser } from './components/PartBrowser';
-import { slotLabels, slotOrder } from './data';
+import { slotLabels, slotsFor } from './data';
 import { games } from './data/games';
 import { completeBuild } from './engine/builder';
 import { checkCompatibility } from './engine/compatibility';
 import { simulateGames } from './engine/games';
 import { suggest } from './engine/recommend';
 import { evaluateBuild } from './engine/simulation';
-import type { Build, PartSlot, WorkloadId } from './engine/types';
+import type { Build, Device, Gpu, PartSlot, WorkloadId } from './engine/types';
 import { workloadById } from './engine/workloads';
 import { Dashboard } from './pages/Results';
 import { ComparePage } from './pages/Compare';
-import { MonitorPage, PartsPage, PurposePage } from './pages/Setup';
+import { DevicePage, MonitorPage, PartsPage, PurposePage } from './pages/Setup';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
-type PageId = 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
+type PageId = 'device' | 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
 const resultPages: PageId[] = ['dashboard', 'compare'];
-const pageNames: Record<PageId, string> = { purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
+const pageNames: Record<PageId, string> = { device: 'Desktop or laptop', purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
@@ -37,7 +37,7 @@ function initial(): { state: AppState; page: PageId } {
   } catch {
     /* fall through */
   }
-  return { state: { ...defaultState(), build: {}, workloads: [] }, page: 'purpose' };
+  return { state: { ...defaultState(), build: {}, workloads: [] }, page: 'device' };
 }
 
 export default function App() {
@@ -48,11 +48,11 @@ export default function App() {
   /** Which build the part browser edits: the main one (A) or the comparison (B). */
   const [browseSide, setBrowseSide] = useState<'a' | 'b'>('a');
   const [copied, setCopied] = useState<'' | 'link' | 'list'>('');
-  const { build, workloads, resolution, refreshHz } = state;
+  const { device, build, workloads, resolution, refreshHz } = state;
   const gaming = workloads.some((id) => workloadById[id].kind === 'gaming');
 
   const pages = useMemo<PageId[]>(
-    () => (['purpose', gaming && 'monitor', 'parts', 'dashboard'] as (PageId | false)[]).filter(Boolean) as PageId[],
+    () => (['device', 'purpose', gaming && 'monitor', 'parts', 'dashboard'] as (PageId | false)[]).filter(Boolean) as PageId[],
     [gaming],
   );
   const index = Math.max(0, pages.indexOf(page));
@@ -82,6 +82,18 @@ export default function App() {
 
   const canNext = page === 'purpose' ? workloads.length > 0 : page === 'parts' ? !!build.cpu : true;
   const nextLabel = page === 'parts' ? 'Check my build' : isResult ? '' : 'Next';
+
+  /** Desktop and laptop parts don't mix, so switching clears the chosen parts. */
+  const pickDevice = (d: Device) =>
+    setState((s) => (s.device === d ? s : {
+      ...s, device: d, build: {}, chosen: [], compare: undefined,
+      // Most laptop screens are Full HD; desktops default to a 1440p monitor.
+      resolution: d === 'laptop' ? '1080p' : '1440p',
+    }));
+
+  /** Another power version of the same laptop graphics chip. */
+  const pickPower = (side: 'a' | 'b', g: Gpu) =>
+    setState((s) => (side === 'b' && s.compare ? { ...s, compare: { ...s.compare, gpu: g } } : { ...s, build: { ...s.build, gpu: g } }));
 
   const toggleWorkload = (id: WorkloadId) =>
     setState((s) => ({ ...s, workloads: s.workloads.includes(id) ? s.workloads.filter((w) => w !== id) : [...s.workloads, id] }));
@@ -118,8 +130,8 @@ export default function App() {
   };
 
   const partsListText = () => {
-    const lines = [`PC Harmony build: ${Math.round(evaluation.overall)}/100`, ''];
-    for (const slot of slotOrder) {
+    const lines = [`PC Harmony ${device === 'laptop' ? 'laptop' : 'build'}: ${Math.round(evaluation.overall)}/100`, ''];
+    for (const slot of slotsFor(device)) {
       const part = build[slot];
       lines.push(`${slotLabels[slot]}: ${part ? `${part.name} (${partSummary(slot, part)})` : slot === 'gpu' ? 'Integrated graphics' : '—'}`);
     }
@@ -148,7 +160,7 @@ export default function App() {
     } catch {
       /* ignore */
     }
-    setPage('purpose');
+    setPage('device');
     window.scrollTo({ top: 0 });
   };
 
@@ -168,9 +180,9 @@ export default function App() {
         </button>
         {isResult && (
           <span className="top-actions">
-            {page === 'dashboard' && <button type="button" className="btn btn--ghost btn--small" onClick={openCompare}>Compare with another build</button>}
+            {page === 'dashboard' && <button type="button" className="btn btn--ghost btn--small" onClick={openCompare}>{device === 'laptop' ? 'Compare with another laptop' : 'Compare with another build'}</button>}
             {page === 'compare' && <button type="button" className="link-btn" onClick={closeCompare}>← Back to results</button>}
-            <button type="button" className={`link-btn${page === 'compare' ? ' hide-sm' : ''}`} onClick={() => go('purpose')}>Edit answers</button>
+            <button type="button" className={`link-btn${page === 'compare' ? ' hide-sm' : ''}`} onClick={() => go('device')}>Edit answers</button>
             <button type="button" className="link-btn" onClick={startOver}>Start over</button>
           </span>
         )}
@@ -188,16 +200,18 @@ export default function App() {
       )}
 
       <main className="page" key={page}>
+        {page === 'device' && <DevicePage device={device} onPick={pickDevice} />}
         {page === 'purpose' && <PurposePage selected={workloads} onToggle={toggleWorkload} />}
         {page === 'monitor' && (
           <MonitorPage
+            device={device}
             resolution={resolution}
             refreshHz={refreshHz}
             onResolution={(r) => setState((s) => ({ ...s, resolution: r }))}
             onRefresh={(hz) => setState((s) => ({ ...s, refreshHz: hz }))}
           />
         )}
-        {page === 'parts' && <PartsPage build={build} onOpen={(slot) => openBrowser('a', slot)} />}
+        {page === 'parts' && <PartsPage device={device} build={build} onOpen={(slot) => openBrowser('a', slot)} onPower={(g) => pickPower('a', g)} />}
         {page === 'dashboard' && (
           <Dashboard
             build={build}
@@ -208,8 +222,10 @@ export default function App() {
             refreshHz={refreshHz}
             gaming={gaming}
             chosen={state.chosen}
+            device={device}
             copied={copied}
             onOpen={(slot) => openBrowser('a', slot)}
+            onPower={(g) => pickPower('a', g)}
             onApply={(s) => setState((st) => ({ ...st, build: { ...st.build, ...s.changes }, chosen: [...new Set([...st.chosen, ...(Object.keys(s.changes) as PartSlot[])])] }))}
             onCopy={copy}
             onCompare={openCompare}
@@ -222,7 +238,9 @@ export default function App() {
             workloads={workloads}
             resolution={resolution}
             refreshHz={refreshHz}
+            device={device}
             onOpen={openBrowser}
+            onPower={pickPower}
             onSwap={() => setState((s) => ({ ...s, build: s.compare!, compare: s.build, chosen: mainSlots.filter((m) => s.compare![m]) }))}
             onUseB={() => {
               setState((s) => ({ ...s, build: s.compare!, compare: undefined, chosen: mainSlots.filter((m) => s.compare![m]) }));
@@ -239,6 +257,7 @@ export default function App() {
 
       {browsing && (
         <PartBrowser
+          device={device}
           slot={browsing}
           build={browserBuild}
           workloads={workloads}

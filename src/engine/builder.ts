@@ -86,7 +86,7 @@ export function pickMotherboard(cpu: Cpu, opts: { formFactor?: FormFactor | 'any
 export function pickRam(board: Motherboard, cpu: Cpu, needGb: number): RamKit | undefined {
   const cpuMax = Math.round(((cpu.maxMemSpeed[board.memType] ?? 3200) * 1.15) / 200) * 200;
   const usable = Math.min(board.maxMemSpeed, Math.max(cpuMax, board.memType === 'DDR5' ? 6000 : 3600));
-  const kits = ramKits.filter((k) => k.type === board.memType && k.sticks <= board.memSlots && k.sticks >= 2 && k.totalGb <= board.maxMemGb);
+  const kits = ramKits.filter((k) => !k.laptopOnly && k.type === board.memType && k.sticks <= board.memSlots && k.sticks >= 2 && k.totalGb <= board.maxMemGb);
   const enough = kits.filter((k) => k.totalGb >= needGb);
   const pool = enough.length ? enough : kits;
   const score = (k: RamKit) => {
@@ -253,6 +253,7 @@ export function completeBuild(picked: Build, tier: Tier = 'mid'): Build {
   const { cpu } = build;
   if (!cpu) return build;
   if (build.ram && !cpu.memTypes.includes(build.ram.type)) build.ram = undefined;
+  if (cpu.laptop) return completeLaptop(build);
 
   const mbOk = (m?: Motherboard) => m && m.socket === cpu.socket && cpu.memTypes.includes(m.memType) && !m.unsupported?.includes(cpu.generation) && (!build.ram || build.ram.type === m.memType);
   if (!mbOk(build.motherboard)) {
@@ -268,4 +269,22 @@ export function completeBuild(picked: Build, tier: Tier = 'mid'): Build {
   if (!caseOk) build.case = pickCase(mb, build.gpu, build.cooler!) ?? cases[cases.length - 1];
   if (!build.psu || build.psu.watts < recommendedPsuWatts(build) || (build.gpu?.needs12v2x6 && !build.psu.native12v2x6)) build.psu = pickPsu(build);
   return build;
+}
+
+/**
+ * A laptop has no motherboard, cooler, power supply or case to choose. If memory or
+ * storage is missing, assume what most laptops with this processor ship with:
+ * two 8 GB sticks at the processor's rated speed and a 512 GB NVMe drive.
+ */
+function completeLaptop(build: Build): Build {
+  const cpu = build.cpu!;
+  const { motherboard: _m, cooler: _c, psu: _p, case: _k, ...laptop } = build;
+  if (!laptop.ram) {
+    const type: MemType = cpu.memTypes.includes('DDR5') ? 'DDR5' : 'DDR4';
+    const rated = cpu.maxMemSpeed[type] ?? 3200;
+    const kits = ramKits.filter((k) => k.type === type && k.totalGb === 16 && k.sticks === 2 && k.speed <= rated);
+    laptop.ram = [...kits].sort((a, b) => b.speed - a.speed)[0] ?? ramKits.find((k) => k.type === type && k.totalGb === 16 && k.sticks === 2);
+  }
+  if (!laptop.storage) laptop.storage = storages.find((s) => s.id === 'nvme4-512');
+  return laptop;
 }

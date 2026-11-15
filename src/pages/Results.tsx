@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { games } from '../data/games';
 import { limitReport, type LimitItem } from '../engine/limits';
-import { slotOrder } from '../data';
+import { slotsFor } from '../data';
 import { simulateGames } from '../engine/games';
 import type { Suggestion } from '../engine/recommend';
 import { componentLabelShort, type BuildEvaluation, type Tone, type WorkloadResult } from '../engine/simulation';
-import type { Build, Issue, PartSlot, Resolution } from '../engine/types';
+import type { Build, Device, Gpu, Issue, PartSlot, Resolution } from '../engine/types';
 import { ScoreRing, SourceLine, TierBadge, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
+import { PowerPicker } from '../components/PowerPicker';
 import { partSummary, tierOf } from '../ui';
 import { purposeLabels } from './Setup';
 import { FpsChart, TimeShareChart } from '../components/Charts';
@@ -55,7 +56,7 @@ function Analysis({ evaluation, resolution }: { evaluation: BuildEvaluation; res
   );
 }
 
-function VerdictCard({ build, evaluation, issues, resolution }: { build: Build; evaluation: BuildEvaluation; issues: Issue[]; resolution: Resolution }) {
+function VerdictCard({ build, evaluation, issues, resolution, laptop }: { build: Build; evaluation: BuildEvaluation; issues: Issue[]; resolution: Resolution; laptop: boolean }) {
   const errors = issues.filter((i) => i.severity === 'error');
   const worst = [...evaluation.results].sort((a, b) => a.score - b.score)[0];
   const main = worst ? shortVerdict(worst, resolution) : { title: 'Add parts to see a verdict', line: '' };
@@ -89,8 +90,13 @@ function VerdictCard({ build, evaluation, issues, resolution }: { build: Build; 
         )}
 
         <div className="facts">
-          <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
-          <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
+          {laptop ? <>
+            <div className="fact"><span>Graphics power</span><b>{build.gpu?.tgp ? `${build.gpu.tgp} W` : 'Integrated'}</b></div>
+            <div className={`fact fact--${build.ram && build.ram.sticks < 2 ? 'warning' : 'good'}`}><span>Memory</span><b>{build.ram ? `${build.ram.totalGb} GB${build.ram.sticks < 2 ? ', 1 stick' : ''}` : '—'}</b></div>
+          </> : <>
+            <div className="fact"><span>Peak power</span><b>~{estimatePowerDraw(build)} W</b></div>
+            <div className="fact"><span>PSU needed</span><b>{recommendedPsuWatts(build)} W</b></div>
+          </>}
           <div className={`fact fact--${errors.length ? 'critical' : 'good'}`}><span>Compatibility</span><b>{errors.length ? `${errors.length} problem${errors.length > 1 ? 's' : ''}` : 'All fit'}</b></div>
         </div>
 
@@ -141,15 +147,16 @@ const slotNames: Record<PartSlot, string> = {
   storage: 'Storage', cooler: 'Cooler', psu: 'Power supply', case: 'Case',
 };
 
-function BuildCard({ build, issues, chosen, gaming, onOpen }: { build: Build; issues: Issue[]; chosen: PartSlot[]; gaming: boolean; onOpen: (slot: PartSlot) => void }) {
+function BuildCard({ build, issues, chosen, gaming, device, onOpen, onPower }: { build: Build; issues: Issue[]; chosen: PartSlot[]; gaming: boolean; device: Device; onOpen: (slot: PartSlot) => void; onPower: (g: Gpu) => void }) {
+  const laptop = device === 'laptop';
   return (
     <section className="panel panel--flush panel--build" aria-labelledby="build-title">
       <div className="panel-head">
-        <h2 id="build-title">Your build</h2>
+        <h2 id="build-title">{laptop ? 'This laptop' : 'Your build'}</h2>
         <span className="panel-meta">Tap to change</span>
       </div>
       <ul className="build-list">
-        {slotOrder.map((slot) => {
+        {slotsFor(device).map((slot) => {
           const part = build[slot];
           const own = issues.filter((i) => i.slots.includes(slot) && i.severity !== 'info');
           const noGpuForGames = slot === 'gpu' && !part && gaming;
@@ -160,13 +167,14 @@ function BuildCard({ build, issues, chosen, gaming, onOpen }: { build: Build; is
                 <span className={`state-dot state-dot--${part || slot === 'gpu' ? state : 'warning'}`} aria-label={toneText[state]} />
                 <span className="build-icon"><SlotIcon slot={slot} size={20} /></span>
                 <span className="build-body">
-                  <span className="build-label">{slotNames[slot]}{part && !chosen.includes(slot) && <span className="auto-tag">Auto-picked</span>}</span>
+                  <span className="build-label">{laptop && slot === 'gpu' ? 'Graphics' : slotNames[slot]}{part && !chosen.includes(slot) && <span className="auto-tag">{laptop ? 'Assumed' : 'Auto-picked'}</span>}</span>
                   <b>{part ? part.name : slot === 'gpu' ? 'Integrated graphics' : 'Not chosen'}</b>
-                  {noGpuForGames ? <span className="build-issue build-issue--critical">Too slow for games. Add a graphics card.</span>
+                  {noGpuForGames ? <span className="build-issue build-issue--critical">{laptop ? 'Too slow for games. Look for a laptop with separate graphics.' : 'Too slow for games. Add a graphics card.'}</span>
                     : own[0] ? <span className={`build-issue build-issue--${state}`}>{own[0].message}</span> : part && <span className="build-spec">{partSummary(slot, part)}</span>}
                 </span>
                 <span className="build-change">Change</span>
               </button>
+              {slot === 'gpu' && build.gpu?.laptop && <PowerPicker gpu={build.gpu} onPick={onPower} />}
               {part && <SourceLine slot={slot} part={part} />}
             </li>
           );
@@ -262,8 +270,10 @@ export interface DashboardProps {
   refreshHz: number;
   gaming: boolean;
   chosen: PartSlot[];
+  device: Device;
   copied: '' | 'link' | 'list';
   onOpen: (slot: PartSlot) => void;
+  onPower: (g: Gpu) => void;
   onApply: (s: Suggestion) => void;
   onCopy: (what: 'link' | 'list') => void;
   onCompare: () => void;
@@ -271,16 +281,17 @@ export interface DashboardProps {
 
 /** Everything after "Check my build", on one page. */
 export function Dashboard(props: DashboardProps) {
-  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, copied, onOpen, onApply, onCopy, onCompare } = props;
+  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, device, copied, onOpen, onPower, onApply, onCopy, onCompare } = props;
+  const laptop = device === 'laptop';
   return (
     <div className="dashboard">
       <div className="dash-side">
-        <VerdictCard build={build} evaluation={evaluation} issues={issues} resolution={resolution} />
-        <BuildCard build={build} issues={issues} chosen={chosen} gaming={gaming} onOpen={onOpen} />
+        <VerdictCard build={build} evaluation={evaluation} issues={issues} resolution={resolution} laptop={laptop} />
+        <BuildCard build={build} issues={issues} chosen={chosen} gaming={gaming} device={device} onOpen={onOpen} onPower={onPower} />
         <div className="share">
           <button type="button" className="btn" onClick={() => onCopy('list')}>{copied === 'list' ? 'Copied ✓' : 'Copy parts list'}</button>
           <button type="button" className="btn btn--ghost" onClick={() => onCopy('link')}>{copied === 'link' ? 'Copied ✓' : 'Copy link'}</button>
-          <button type="button" className="btn btn--ghost" onClick={onCompare}>Compare with another build</button>
+          <button type="button" className="btn btn--ghost" onClick={onCompare}>{laptop ? 'Compare with another laptop' : 'Compare with another build'}</button>
         </div>
       </div>
       <div className="dash-main">

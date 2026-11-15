@@ -1,7 +1,8 @@
 import { ScoreRing, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
 import { compareBuilds, type Side } from '../engine/compare';
-import type { Build, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import type { Build, Device, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import { PowerPicker } from '../components/PowerPicker';
 import { partSummary } from '../ui';
 import { purposeLabels } from './Setup';
 
@@ -18,7 +19,9 @@ interface Props {
   workloads: WorkloadId[];
   resolution: Resolution;
   refreshHz: number;
+  device: Device;
   onOpen: (side: Side, slot: PartSlot) => void;
+  onPower: (side: Side, g: Gpu) => void;
   onSwap: () => void;
   onUseB: () => void;
 }
@@ -36,7 +39,9 @@ function Cell({ side, win, children }: { side: Side; win: Side | null; children:
   return <td className={win === side ? 'cmp-win' : undefined}>{children}</td>;
 }
 
-export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, onSwap, onUseB }: Props) {
+export function ComparePage({ a, b, workloads, resolution, refreshHz, device, onOpen, onPower, onSwap, onUseB }: Props) {
+  const laptop = device === 'laptop';
+  const noun = laptop ? 'Laptop' : 'Build';
   const c = compareBuilds(a, b, workloads, resolution, refreshHz);
   const sides: [Side, Build][] = [['a', a], ['b', b]];
 
@@ -44,17 +49,17 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, on
     <div className="compare">
       <div className="cmp-top">
         <div>
-          <h1 className="page-title">Compare builds</h1>
+          <h1 className="page-title">{laptop ? 'Compare laptops' : 'Compare builds'}</h1>
           <p className="page-sub cmp-sub">{workloads.map((w) => purposeLabels[w]).join(' · ')}{workloads.some((w) => ['aaa', 'esports', 'raytracing', 'streaming'].includes(w)) ? ` · ${resolution} · ${refreshHz} Hz` : ''}</p>
         </div>
         <div className="cmp-actions">
           <button type="button" className="btn btn--ghost btn--small" onClick={onSwap}>Swap A ⇄ B</button>
-          <button type="button" className="btn btn--small" onClick={onUseB}>Use Build B</button>
+          <button type="button" className="btn btn--small" onClick={onUseB}>Use {noun} B</button>
         </div>
       </div>
 
       <div className={`cmp-summary${c.winner ? ' cmp-summary--win' : ''}`}>
-        {c.winner && <span className="cmp-summary-tag">Build {c.winner.toUpperCase()} recommended{c.reason ? `: ${c.reason}` : ''}</span>}
+        {c.winner && <span className="cmp-summary-tag">{noun} {c.winner.toUpperCase()} recommended{c.reason ? `: ${c.reason}` : ''}</span>}
         {c.lines.map((l, i) => <p key={i}>{l}</p>)}
       </div>
 
@@ -64,13 +69,13 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, on
           const other = side === 'a' ? b : a;
           const tone = s.errors ? 'critical' : s.evaluation.tone;
           return (
-            <section key={side} className={`panel cmp-build${c.winner === side ? ' cmp-build--win' : ''}`} aria-label={`Build ${side.toUpperCase()}`}>
+            <section key={side} className={`panel cmp-build${c.winner === side ? ' cmp-build--win' : ''}`} aria-label={`${noun} ${side.toUpperCase()}`}>
               <div className="cmp-build-head">
-                <h2>Build {side.toUpperCase()}</h2>
+                <h2>{noun} {side.toUpperCase()}</h2>
                 {c.winner === side && <span className="tag tag--best">Recommended</span>}
               </div>
               <div className="cmp-score">
-                <ScoreRing score={s.errors ? Math.min(s.evaluation.overall, 30) : s.evaluation.overall} tone={tone} size={84} label={`Build ${side.toUpperCase()} score`} />
+                <ScoreRing score={s.errors ? Math.min(s.evaluation.overall, 30) : s.evaluation.overall} tone={tone} size={84} label={`${noun} ${side.toUpperCase()} score`} />
                 <span className={`chip chip--${tone}`}>{s.errors ? 'Parts don’t fit' : toneText[tone]}</span>
               </div>
               <ul className="cmp-parts">
@@ -88,6 +93,7 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, on
                         </span>
                         <span className="cmp-change">Change</span>
                       </button>
+                      {slot === 'gpu' && build.gpu?.laptop && <PowerPicker gpu={build.gpu} onPick={(g) => onPower(side, g)} />}
                     </li>
                   );
                 })}
@@ -101,7 +107,7 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, on
         <h2 id="cmp-detail" className="cmp-h2">Side by side</h2>
         <div className="cmp-table-wrap">
           <table className="cmp-table">
-            <thead><tr><th /><th>Build A</th><th>Build B</th></tr></thead>
+            <thead><tr><th /><th>{noun} A</th><th>{noun} B</th></tr></thead>
             <tbody>
               {(() => {
                 const w = better(c.a.evaluation.overall, c.b.evaluation.overall, 0.03);
@@ -125,11 +131,15 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, onOpen, on
                   <td>{neck(c.b.bottlenecks[ra.workload])}</td>
                 </tr>
               ))}
-              {(() => {
-                const w = better(c.a.power, c.b.power, 0.05, true);
-                return <tr><th>Peak power</th><Cell side="a" win={w}>~{c.a.power} W</Cell><Cell side="b" win={w}>~{c.b.power} W</Cell></tr>;
-              })()}
-              <tr><th>PSU needed</th><td>{c.a.psuNeeded} W</td><td>{c.b.psuNeeded} W</td></tr>
+              {laptop ? (
+                <tr><th>Graphics power</th><td>{a.gpu?.tgp ? `${a.gpu.tgp} W` : '—'}</td><td>{b.gpu?.tgp ? `${b.gpu.tgp} W` : '—'}</td></tr>
+              ) : <>
+                {(() => {
+                  const w = better(c.a.power, c.b.power, 0.05, true);
+                  return <tr><th>Peak power</th><Cell side="a" win={w}>~{c.a.power} W</Cell><Cell side="b" win={w}>~{c.b.power} W</Cell></tr>;
+                })()}
+                <tr><th>PSU needed</th><td>{c.a.psuNeeded} W</td><td>{c.b.psuNeeded} W</td></tr>
+              </>}
             </tbody>
           </table>
         </div>

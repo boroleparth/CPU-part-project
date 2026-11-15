@@ -1,4 +1,4 @@
-import { cases, coolers, cpus, gpus, motherboards, psus, ramKits, storages } from '../../data';
+import { cases, coolers, cpus, gpus, laptopCpus as laptopCpusList, laptopGpus as laptopGpusList, motherboards, psus, ramKits, storages } from '../../data';
 import type { Build } from '../types';
 
 const find = <T extends { id: string }>(list: T[], id: string): T => {
@@ -27,3 +27,6 @@ export const goodBuild = (): Build => ({
   psu: psu('psu-750'),
   case: pcCase('case-mid'),
 });
+
+export const laptopCpu = (id: string) => find(laptopCpusList, id);
+export const laptopGpu = (id: string) => find(laptopGpusList, id);

@@ -1,4 +1,4 @@
-import { cpus, gpus, isLegacyCpu, isLegacyGpu, ramKits, storages } from '../data';
+import { cpus, gpus, isLaptopBuild, isLegacyCpu, isLegacyGpu, laptopCpus, laptopGpus, powerVersions, ramKits, storages } from '../data';
 import { pickCase, pickCooler, pickMotherboard, pickPsu, pickRam } from './builder';
 import { checkCompatibility, recommendedPsuWatts } from './compatibility';
 import { evaluateWorkload, minCpuIndexForGpu, type WorkloadResult } from './simulation';
@@ -15,8 +15,18 @@ export interface Suggestion {
 }
 
 /** Suggestions recommend parts you can still buy new. Older CPUs are only offered as drop-in upgrades for an older platform. */
-const buyableGpus = gpus.filter((g) => !isLegacyGpu(g));
-const cpuPool = (build: Build) => cpus.filter((c) => !isLegacyCpu(c) || (!!build.cpu && isLegacyCpu(build.cpu) && c.socket === build.cpu.socket));
+const buyableDesktopGpus = gpus.filter((g) => !isLegacyGpu(g));
+/** Laptop graphics are offered at their usual power version; the power suggestion covers the rest. */
+const buyableLaptopGpus = laptopGpus.filter((g) => g.typical && !isLegacyGpu(g));
+const gpuPool = (build: Build) => (isLaptopBuild(build) ? buyableLaptopGpus : buyableDesktopGpus);
+const cpuPool = (build: Build) =>
+  isLaptopBuild(build)
+    ? laptopCpus.filter((c) => !isLegacyCpu(c))
+    : cpus.filter((c) => !isLegacyCpu(c) || (!!build.cpu && isLegacyCpu(build.cpu) && c.socket === build.cpu.socket));
+
+/** In a laptop the processor and graphics can't be swapped, so the advice is which laptop to buy instead. */
+const cpuTitle = (build: Build, c: Cpu) => (isLaptopBuild(build) ? `Choose a laptop with the ${c.name}` : `Upgrade CPU to ${c.name}`);
+const gpuTitle = (build: Build, g: Gpu) => (isLaptopBuild(build) ? `Choose a laptop with the ${g.name}` : `Upgrade GPU to ${g.name}`);
 
 const cpuCost = (c: Cpu) => c.gamingIndex * 0.6 + c.multiIndex * 0.4;
 const gpuCost = (g: Gpu) => g.rasterIndex + g.vram * 0.3;
@@ -80,7 +90,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       const r2 = evaluateWorkload(withSupportingParts({ ...build, gpu: g }), id, res);
       return r2.score >= 90 && hasNoErrors(withSupportingParts({ ...build, gpu: g }));
     };
-    const pool = [...buyableGpus].sort((a, b) => gpuCost(a) - gpuCost(b));
+    const pool = [...gpuPool(build)].sort((a, b) => gpuCost(a) - gpuCost(b));
     const g = pool.find(ok) ?? pool.find((x) => evaluateWorkload({ ...build, gpu: x }, id, res).score >= 75);
     if (g) {
       const after = withSupportingParts({ ...build, gpu: g });
@@ -88,7 +98,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       out.push({
         id: `add-gpu-${g.id}`,
         kind: 'fix',
-        title: `Add a graphics card: ${g.name}`,
+        title: isLaptopBuild(build) ? `Choose a laptop with the ${g.name}` : `Add a graphics card: ${g.name}`,
         detail: `Matches the ${build.cpu.name}: ~${Math.round(p.fps)} → ~${Math.round(q.fps)} FPS in ${name} at ${res}.${after.psu !== build.psu && after.psu ? ` Includes a ${after.psu.watts} W PSU.` : ''}`,
         changes: changesBetween(build, after),
       });
@@ -118,7 +128,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       out.push({
         id: `cpu-${c.id}-${id}`,
         kind: 'upgrade',
-        title: `Upgrade CPU to ${c.name}`,
+        title: cpuTitle(build, c),
         detail: `Removes the ${name} CPU bottleneck at ${res}: ~${Math.round(p.fps)} → ~${Math.round(q.fps)} FPS.${platformNote(build, after)}`,
         changes: changesBetween(build, after),
       });
@@ -130,7 +140,7 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
 
   if (p.limitedBy === 'gpu' && p.bottleneck > 0.4) {
     // Spare CPU: either a stronger GPU or a cheaper CPU that performs the same.
-    const gpuFix = buyableGpus
+    const gpuFix = gpuPool(build)
       .filter((g) => gpuCost(g) > gpuCost(build.gpu!))
       .sort((a, b) => gpuCost(a) - gpuCost(b))
       .find((g) => {
@@ -143,12 +153,12 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
       out.push({
         id: `gpu-${gpuFix.id}-${id}`,
         kind: 'upgrade',
-        title: `Upgrade GPU to ${gpuFix.name}`,
+        title: gpuTitle(build, gpuFix),
         detail: `Your CPU has headroom to spare. This card uses it: ~${Math.round(p.fps)} → ~${Math.round(q.fps)} FPS in ${name} at ${res}.${after.psu !== build.psu ? ` Includes a ${after.psu?.watts} W PSU.` : ''}`,
         changes: changesBetween(build, after),
       });
     }
-    const cheaper = cpuPool(build)
+    const cheaper = isLaptopBuild(build) ? undefined : cpuPool(build)
       .filter((c) => c.socket === build.cpu!.socket && cpuCost(c) < cpuCost(build.cpu!))
       .sort((a, b) => cpuCost(a) - cpuCost(b))
       .find((c) => {
@@ -168,12 +178,12 @@ function suggestForGaming(build: Build, r: WorkloadResult, res: Resolution, id: 
 
   const w = workloadById[id];
   if (w.kind === 'gaming' && build.gpu.vram < w.vramNeed[res]) {
-    const g = buyableGpus
+    const g = gpuPool(build)
       .filter((x) => x.vram >= w.vramNeed[res] && x.rasterIndex >= build.gpu!.rasterIndex * 0.95)
       .sort((a, b) => gpuCost(a) - gpuCost(b))[0];
     if (g) {
       const after = withSupportingParts({ ...build, gpu: g });
-      out.push({ id: `vram-${g.id}`, kind: 'fix', title: `Get more VRAM: ${g.name} (${g.vram} GB)`, detail: `${build.gpu.vram} GB is tight for ${res}. This card has similar or better speed and enough memory for high textures.`, changes: changesBetween(build, after) });
+      out.push({ id: `vram-${g.id}`, kind: 'fix', title: isLaptopBuild(build) ? `Get more VRAM: a laptop with the ${g.name} (${g.vram} GB)` : `Get more VRAM: ${g.name} (${g.vram} GB)`, detail: `${build.gpu.vram} GB is tight for ${res}. This card has similar or better speed and enough memory for high textures.`, changes: changesBetween(build, after) });
     }
   }
   return out;
@@ -194,7 +204,7 @@ function suggestForThroughput(build: Build, r: WorkloadResult, res: Resolution, 
     const c = pool.find((c) => c.socket === build.cpu!.socket && c[key] >= target) ?? pool.find((c) => c[key] >= target) ?? pool[pool.length - 1];
     if (c) {
       const after = withSupportingParts(withCpu(build, c));
-      if (better(after)) out.push({ id: `cpu-${c.id}-${id}`, kind: 'upgrade', title: `Upgrade CPU to ${c.name}`, detail: `${name} leans on ${t.weakest === 'cpuMulti' ? 'many cores' : 'fast single cores'}; ${c.cores} cores bring it in line with your other parts.${platformNote(build, after)}`, changes: changesBetween(build, after) });
+      if (better(after)) out.push({ id: `cpu-${c.id}-${id}`, kind: 'upgrade', title: cpuTitle(build, c), detail: `${name} leans on ${t.weakest === 'cpuMulti' ? 'many cores' : 'fast single cores'}; ${c.cores} cores bring it in line with your other parts.${platformNote(build, after)}`, changes: changesBetween(build, after) });
     }
   }
   if (t.weakest === 'gpu' || t.weakest === 'gpuBandwidth') {
@@ -202,19 +212,26 @@ function suggestForThroughput(build: Build, r: WorkloadResult, res: Resolution, 
     const need = w.kind === 'throughput' ? w.vramNeed ?? 0 : 0;
     const current = build.gpu ? gpuCost(build.gpu) : 0;
     const prefersCuda = id === 'ai' || id === 'render3d';
-    const pool = buyableGpus.filter((g) => gpuCost(g) > current && g.vram >= need).sort((a, b) => gpuCost(a) - gpuCost(b));
+    const pool = gpuPool(build).filter((g) => gpuCost(g) > current && g.vram >= need).sort((a, b) => gpuCost(a) - gpuCost(b));
     const g = pool.find((g) => (!prefersCuda || g.cuda) && better(withSupportingParts({ ...build, gpu: g }))) ?? pool.find((g) => better({ ...build, gpu: g }));
     if (g) {
       const after = withSupportingParts({ ...build, gpu: g });
-      out.push({ id: `gpu-${g.id}-${id}`, kind: 'upgrade', title: `Upgrade GPU to ${g.name}`, detail: `${name} is GPU-heavy; ${g.vram} GB${g.cuda && prefersCuda ? ' with CUDA support' : ''} lifts it to ~${Math.round(evaluateWorkload(after, id, res).throughput!.performance)}% of top-end.`, changes: changesBetween(build, after) });
+      out.push({ id: `gpu-${g.id}-${id}`, kind: 'upgrade', title: gpuTitle(build, g), detail: `${name} is GPU-heavy; ${g.vram} GB${g.cuda && prefersCuda ? ' with CUDA support' : ''} lifts it to ~${Math.round(evaluateWorkload(after, id, res).throughput!.performance)}% of top-end.`, changes: changesBetween(build, after) });
     }
   }
   if (t.weakest === 'ram' || (build.ram && build.ram.totalGb < workloadById[id].ramNeedGb)) {
     const type = build.motherboard?.memType ?? build.ram?.type ?? 'DDR5';
     const need = workloadById[id].ramNeedGb;
+    // Soldered laptop memory can only be chosen when buying; other laptops take normal SO-DIMM sticks.
+    const soldered = !!build.ram?.laptopOnly;
+    const rated = build.cpu?.laptop ? build.cpu.maxMemSpeed[type] : undefined;
     const kit = (build.motherboard && build.cpu ? pickRam(build.motherboard, build.cpu, need) : undefined) ??
-      ramKits.filter((k) => k.type === type && k.sticks === 2 && k.totalGb >= need).sort((a, b) => a.totalGb - b.totalGb)[0];
-    if (kit && kit !== build.ram) out.push({ id: `ram-${kit.id}`, kind: 'fix', title: `Use ${kit.name}`, detail: `${name} wants ~${need} GB in two sticks (dual-channel).`, changes: { ram: kit } });
+      ramKits
+        .filter((k) => k.type === type && k.sticks === 2 && k.totalGb >= need && !!k.laptopOnly === soldered && (!rated || k.speed <= rated))
+        .sort((a, b) => a.totalGb - b.totalGb || b.speed - a.speed)[0];
+    const title = soldered ? `Choose the ${kit?.totalGb} GB version` : build.cpu?.laptop ? `Upgrade memory to ${kit?.name}` : `Use ${kit?.name}`;
+    const detail = soldered ? `${name} wants ~${need} GB. This laptop's memory is soldered, so pick the bigger configuration when buying.` : `${name} wants ~${need} GB in two sticks (dual-channel).`;
+    if (kit && kit !== build.ram) out.push({ id: `ram-${kit.id}`, kind: 'fix', title, detail, changes: { ram: kit } });
   }
   if (t.weakest === 'storage' || build.storage?.kind === 'HDD' || build.storage?.kind === 'SATA SSD') {
     const s = storages.find((x) => x.kind === 'NVMe Gen4' && x.capacityGb >= (build.storage?.capacityGb ?? 1000)) ?? storages.find((x) => x.id === 'nvme4-2tb')!;
@@ -254,16 +271,66 @@ function compatibilityFixes(build: Build): Suggestion[] {
   return out;
 }
 
+/**
+ * Laptop graphics at a low power limit: the same chip in a laptop that gives it more
+ * watts is noticeably faster, so it is worth checking the spec sheet before buying.
+ */
+function powerSuggestion(build: Build, results: WorkloadResult[], res: Resolution): Suggestion[] {
+  const gpu = build.gpu;
+  if (!gpu?.laptop || !results.length) return [];
+  const top = powerVersions(gpu).at(-1)!;
+  if (top === gpu) return [];
+  // The biggest gain across the chosen uses (everyday work barely touches the GPU, games do).
+  const perf = (b: Build, id: WorkloadResult['workload']) => {
+    const x = evaluateWorkload(b, id, res);
+    return x.judged ? x.judged.fps : x.throughput!.performance;
+  };
+  const gain = Math.max(...results.map((r) => {
+    const before = perf(build, r.workload);
+    return before > 0 ? perf({ ...build, gpu: top }, r.workload) / before - 1 : 0;
+  }));
+  if (gain < 0.06) return [];
+  return [{
+    id: `tgp-${top.id}`,
+    kind: 'upgrade',
+    title: `Look for the ${top.tgp} W version of the ${gpu.family}`,
+    detail: `Same chip with more power: about ${Math.round(gain * 100)}% faster than at ${gpu.tgp} W. Check "Max graphics power" (TGP) on the laptop's spec sheet.`,
+    changes: { gpu: top },
+  }];
+}
+
+/** One memory stick runs single-channel, which costs real speed (very common in budget laptops). */
+function dualChannelFix(build: Build): Suggestion[] {
+  const r = build.ram;
+  if (!r || r.sticks !== 1) return [];
+  const rated = build.cpu?.laptop ? build.cpu.maxMemSpeed[r.type] : undefined;
+  const kit = ramKits
+    .filter((k) => k.type === r.type && k.sticks === 2 && !k.laptopOnly && k.totalGb >= r.totalGb && (!rated || k.speed <= rated))
+    .sort((a, b) => a.totalGb - b.totalGb || Math.abs(a.speed - r.speed) - Math.abs(b.speed - r.speed))[0];
+  if (!kit) return [];
+  const laptop = isLaptopBuild(build);
+  return [{
+    id: `dual-${kit.id}`,
+    kind: 'fix',
+    title: laptop ? `Add a second memory stick (${kit.name})` : `Use two sticks: ${kit.name}`,
+    detail: laptop
+      ? 'One stick runs single-channel, which slows games and the graphics. Most laptops have a free slot; check before buying.'
+      : 'One stick runs single-channel and halves memory bandwidth. Two matching sticks fix it.',
+    changes: { ram: kit },
+  }];
+}
+
 export function suggest(build: Build, results: WorkloadResult[], res: Resolution): Suggestion[] {
-  const all: Suggestion[] = [...compatibilityFixes(build)];
+  const all: Suggestion[] = [...compatibilityFixes(build), ...dualChannelFix(build), ...powerSuggestion(build, results, res)];
   for (const r of results) {
     const w = workloadById[r.workload];
     all.push(...(w.kind === 'gaming' ? suggestForGaming(build, r, res, r.workload) : suggestForThroughput(build, r, res, r.workload)));
   }
-  // De-duplicate by the set of parts changed.
+  // De-duplicate by the set of parts changed (the first, most specific reason wins).
   const seen = new Set<string>();
   return all.filter((s) => {
-    const key = s.title;
+    const ids = Object.values(s.changes).map((p) => p.id).sort().join('+');
+    const key = ids || s.title;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

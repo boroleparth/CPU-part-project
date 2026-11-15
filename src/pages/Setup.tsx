@@ -1,7 +1,8 @@
 import { REFRESH_RATES } from '../engine/games';
 import { RESOLUTIONS } from '../engine/simulation';
-import type { Build, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import type { Build, Device, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
 import { SlotIcon } from '../components/Icons';
+import { PowerPicker } from '../components/PowerPicker';
 import { partSummary } from '../ui';
 
 export const purposeLabels: Record<WorkloadId, string> = {
@@ -25,6 +26,35 @@ const purposeIcons: Record<WorkloadId, React.ReactNode> = {
   ai: <><rect x="6" y="6" width="12" height="12" rx="3" /><path d="M10 10h4v4h-4zM9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" /></>,
   office: <><rect x="4" y="5" width="16" height="11" rx="1.5" /><path d="M2 19h20" /></>,
 };
+
+const deviceIcons: Record<Device, React.ReactNode> = {
+  desktop: <><rect x="3" y="4" width="13" height="10" rx="1.5" /><path d="M7 18h5M9.5 14v4M19 4v14M19 8h2M19 12h2" /></>,
+  laptop: <><rect x="5" y="5" width="14" height="10" rx="1.5" /><path d="M2 19h20l-2-4H4z" /></>,
+};
+const deviceText: Record<Device, { name: string; hint: string }> = {
+  desktop: { name: 'Desktop PC', hint: 'Choose the parts' },
+  laptop: { name: 'Laptop', hint: 'Check a model' },
+};
+
+export function DevicePage({ device, onPick }: { device: Device; onPick: (d: Device) => void }) {
+  return (
+    <>
+      <h1 className="page-title">What are you checking?</h1>
+      <p className="page-sub">A desktop you're building or a laptop you're buying.</p>
+      <div className="tiles tiles--2">
+        {(['desktop', 'laptop'] as Device[]).map((d) => (
+          <button key={d} type="button" className={`tile tile--tall${d === device ? ' tile--on' : ''}`} aria-pressed={d === device} onClick={() => onPick(d)}>
+            <svg className="tile-icon" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              {deviceIcons[d]}
+            </svg>
+            <span className="tile-big">{deviceText[d].name}</span>
+            <span className="tile-small">{deviceText[d].hint}</span>
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
 
 const purposeOrder: WorkloadId[] = ['aaa', 'esports', 'raytracing', 'streaming', 'video', 'render3d', 'ai', 'office'];
 
@@ -52,12 +82,12 @@ export function PurposePage({ selected, onToggle }: { selected: WorkloadId[]; on
 
 const resNames: Record<Resolution, string> = { '1080p': 'Full HD', '1440p': 'Quad HD', '4K': 'Ultra HD' };
 
-export function MonitorPage(props: { resolution: Resolution; refreshHz: number; onResolution: (r: Resolution) => void; onRefresh: (hz: number) => void }) {
-  const { resolution, refreshHz, onResolution, onRefresh } = props;
+export function MonitorPage(props: { device: Device; resolution: Resolution; refreshHz: number; onResolution: (r: Resolution) => void; onRefresh: (hz: number) => void }) {
+  const { device, resolution, refreshHz, onResolution, onRefresh } = props;
   return (
     <>
-      <h1 className="page-title">Your monitor</h1>
-      <p className="page-sub">Resolution and refresh rate.</p>
+      <h1 className="page-title">{device === 'laptop' ? 'The screen you play on' : 'Your monitor'}</h1>
+      <p className="page-sub">{device === 'laptop' ? 'The laptop screen, or a monitor you plug in. 1600p counts as 1440p.' : 'Resolution and refresh rate.'}</p>
       <div className="tiles tiles--3">
         {RESOLUTIONS.map((r) => (
           <button key={r} type="button" className={`tile tile--tall${r === resolution ? ' tile--on' : ''}`} aria-pressed={r === resolution} onClick={() => onResolution(r)}>
@@ -84,11 +114,12 @@ const mainSlots: { slot: PartSlot; label: string }[] = [
   { slot: 'storage', label: 'Storage' },
 ];
 
-export function PartsPage({ build, onOpen }: { build: Build; onOpen: (slot: PartSlot) => void }) {
+export function PartsPage({ device, build, onOpen, onPower }: { device: Device; build: Build; onOpen: (slot: PartSlot) => void; onPower: (g: Gpu) => void }) {
+  const laptop = device === 'laptop';
   return (
     <>
-      <h1 className="page-title">Your parts</h1>
-      <p className="page-sub">We'll match the rest.</p>
+      <h1 className="page-title">{laptop ? "The laptop's specs" : 'Your parts'}</h1>
+      <p className="page-sub">{laptop ? 'From the listing or spec sheet.' : "We'll match the rest."}</p>
       <ul className="pick-list">
         {mainSlots.map(({ slot, label }) => {
           const part = build[slot];
@@ -103,6 +134,7 @@ export function PartsPage({ build, onOpen }: { build: Build; onOpen: (slot: Part
                 </span>
                 <span className="pick-action">{part ? 'Change' : '+'}</span>
               </button>
+              {slot === 'gpu' && build.gpu?.laptop && <PowerPicker gpu={build.gpu} onPick={onPower} />}
             </li>
           );
         })}

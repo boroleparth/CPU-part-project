@@ -62,7 +62,7 @@ export function strengthOf(slot: PartSlot, part: AnyPart): number {
 /** Very short spec line for a part (one glance, not a datasheet). */
 export function partSummary(slot: PartSlot, part: AnyPart): string {
   switch (slot) {
-    case 'cpu': { const c = part as Cpu; return `${c.cores} cores · ${c.socket}`; }
+    case 'cpu': { const c = part as Cpu; return `${c.cores} cores · ${c.laptop ? 'Laptop' : c.socket}`; }
     case 'gpu': { const g = part as Gpu; return `${g.vram} GB VRAM`; }
     case 'motherboard': { const m = part as Motherboard; return `${m.socket} · ${m.formFactor} · ${m.memType}`; }
     case 'ram': { const r = part as RamKit; return `${r.type} · ${r.speed} MT/s`; }
@@ -75,6 +75,22 @@ export function partSummary(slot: PartSlot, part: AnyPart): string {
 
 /** Generation / series a CPU or GPU belongs to, for grouping in lists (newest first). */
 const cpuSeries: [string, string][] = [
+  // Laptops (newest first)
+  ['Arrow Lake-HX', 'Core Ultra 200HX'],
+  ['Arrow Lake-H', 'Core Ultra 200H'],
+  ['Lunar Lake', 'Core Ultra 200V'],
+  ['Meteor Lake', 'Core Ultra 100'],
+  ['Raptor Lake Refresh-HX', 'Core 14th gen HX'],
+  ['Raptor Lake-HX', 'Core 13th gen HX'],
+  ['Raptor Lake-H', 'Core 13th gen H / Core 5 · 7'],
+  ['Raptor Lake-U', 'Core 13th gen U'],
+  ['Alder Lake-HX', 'Core 12th gen HX'],
+  ['Alder Lake-H', 'Core 12th gen H'],
+  ['Alder Lake-U', 'Core 12th gen U'],
+  ['Tiger Lake-H', 'Core 11th gen H'],
+  ['Tiger Lake-U', 'Core 11th gen U'],
+  ['Comet Lake-H', 'Core 10th gen H'],
+  // Desktops
   ['Zen 5', 'Ryzen 9000'],
   ['Arrow Lake', 'Core Ultra 200S'],
   ['Zen 4 APU', 'Ryzen 8000'],

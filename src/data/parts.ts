@@ -37,12 +37,20 @@ export const motherboards: Motherboard[] = [
 ];
 
 export const ramKits: RamKit[] = [
+  { id: 'ddr4-1x8-2933', name: 'DDR4 8GB (1×8) 2933', type: 'DDR4', sticks: 1, totalGb: 8, speed: 2933, cl: 21 },
+  { id: 'ddr4-2x8-2933', name: 'DDR4 16GB (2×8) 2933', type: 'DDR4', sticks: 2, totalGb: 16, speed: 2933, cl: 21 },
   { id: 'ddr4-1x8-3200', name: 'DDR4 8GB (1×8) 3200 CL16', type: 'DDR4', sticks: 1, totalGb: 8, speed: 3200, cl: 16 },
   { id: 'ddr4-1x16-3200', name: 'DDR4 16GB (1×16) 3200 CL16', type: 'DDR4', sticks: 1, totalGb: 16, speed: 3200, cl: 16 },
   { id: 'ddr4-2x8-3200', name: 'DDR4 16GB (2×8) 3200 CL16', type: 'DDR4', sticks: 2, totalGb: 16, speed: 3200, cl: 16 },
   { id: 'ddr4-2x16-3200', name: 'DDR4 32GB (2×16) 3200 CL16', type: 'DDR4', sticks: 2, totalGb: 32, speed: 3200, cl: 16 },
   { id: 'ddr4-2x16-3600', name: 'DDR4 32GB (2×16) 3600 CL18', type: 'DDR4', sticks: 2, totalGb: 32, speed: 3600, cl: 18 },
   { id: 'ddr4-2x32-3600', name: 'DDR4 64GB (2×32) 3600 CL18', type: 'DDR4', sticks: 2, totalGb: 64, speed: 3600, cl: 18 },
+  { id: 'ddr5-1x8-4800', name: 'DDR5 8GB (1×8) 4800', type: 'DDR5', sticks: 1, totalGb: 8, speed: 4800, cl: 40 },
+  { id: 'ddr5-2x8-4800', name: 'DDR5 16GB (2×8) 4800', type: 'DDR5', sticks: 2, totalGb: 16, speed: 4800, cl: 40 },
+  { id: 'ddr5-1x16-4800', name: 'DDR5 16GB (1×16) 4800', type: 'DDR5', sticks: 1, totalGb: 16, speed: 4800, cl: 40 },
+  { id: 'ddr5-2x16-4800', name: 'DDR5 32GB (2×16) 4800', type: 'DDR5', sticks: 2, totalGb: 32, speed: 4800, cl: 40 },
+  { id: 'ddr5-1x8-5600', name: 'DDR5 8GB (1×8) 5600', type: 'DDR5', sticks: 1, totalGb: 8, speed: 5600, cl: 46 },
+  { id: 'ddr5-2x8-5600', name: 'DDR5 16GB (2×8) 5600', type: 'DDR5', sticks: 2, totalGb: 16, speed: 5600, cl: 46 },
   { id: 'ddr5-1x16-5600', name: 'DDR5 16GB (1×16) 5600 CL40', type: 'DDR5', sticks: 1, totalGb: 16, speed: 5600, cl: 40 },
   { id: 'ddr5-2x8-5200', name: 'DDR5 16GB (2×8) 5200 CL40', type: 'DDR5', sticks: 2, totalGb: 16, speed: 5200, cl: 40 },
   { id: 'ddr5-2x16-5600', name: 'DDR5 32GB (2×16) 5600 CL36', type: 'DDR5', sticks: 2, totalGb: 32, speed: 5600, cl: 36 },
@@ -50,11 +58,21 @@ export const ramKits: RamKit[] = [
   { id: 'ddr5-2x32-6000', name: 'DDR5 64GB (2×32) 6000 CL30', type: 'DDR5', sticks: 2, totalGb: 64, speed: 6000, cl: 30 },
   { id: 'ddr5-2x16-7200', name: 'DDR5 32GB (2×16) 7200 CL34', type: 'DDR5', sticks: 2, totalGb: 32, speed: 7200, cl: 34 },
   { id: 'ddr5-2x48-6400', name: 'DDR5 96GB (2×48) 6400 CL32', type: 'DDR5', sticks: 2, totalGb: 96, speed: 6400, cl: 32 },
+  { id: 'ddr5-2x32-5600', name: 'DDR5 64GB (2×32) 5600', type: 'DDR5', sticks: 2, totalGb: 64, speed: 5600, cl: 46 },
+  // Soldered laptop memory: always dual-channel (or wider), can't be upgraded later.
+  { id: 'lpddr5x-16-7467', name: 'LPDDR5X 16GB 7467 (soldered)', type: 'DDR5', sticks: 2, totalGb: 16, speed: 7467, cl: 60, laptopOnly: true },
+  { id: 'lpddr5x-32-7467', name: 'LPDDR5X 32GB 7467 (soldered)', type: 'DDR5', sticks: 2, totalGb: 32, speed: 7467, cl: 60, laptopOnly: true },
+  { id: 'lpddr5x-16-8533', name: 'LPDDR5X 16GB 8533 (soldered)', type: 'DDR5', sticks: 2, totalGb: 16, speed: 8533, cl: 60, laptopOnly: true },
+  { id: 'lpddr5x-32-8533', name: 'LPDDR5X 32GB 8533 (soldered)', type: 'DDR5', sticks: 2, totalGb: 32, speed: 8533, cl: 60, laptopOnly: true },
   { id: 'ddr5-4x32-5600', name: 'DDR5 128GB (4×32) 5600 CL40', type: 'DDR5', sticks: 4, totalGb: 128, speed: 5600, cl: 40 },
 ];
 
 export const storages: Storage[] = [
   { id: 'hdd-2tb', name: '2TB Hard drive (7200rpm)', kind: 'HDD', capacityGb: 2000 },
+  { id: 'nvme3-256', name: '256GB NVMe Gen3', kind: 'NVMe Gen3', capacityGb: 256 },
+  { id: 'nvme3-512', name: '512GB NVMe Gen3', kind: 'NVMe Gen3', capacityGb: 512 },
+  { id: 'nvme4-512', name: '512GB NVMe Gen4', kind: 'NVMe Gen4', capacityGb: 512 },
+  { id: 'sata-512', name: '512GB SATA SSD', kind: 'SATA SSD', capacityGb: 512 },
   { id: 'sata-1tb', name: '1TB SATA SSD', kind: 'SATA SSD', capacityGb: 1000 },
   { id: 'nvme3-1tb', name: '1TB NVMe Gen3', kind: 'NVMe Gen3', capacityGb: 1000 },
   { id: 'nvme4-1tb', name: '1TB NVMe Gen4', kind: 'NVMe Gen4', capacityGb: 1000 },

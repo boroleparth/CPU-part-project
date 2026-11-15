@@ -25,7 +25,8 @@ export function effectiveRamSpeed(build: Build): number | undefined {
   if (motherboard) speed = Math.min(speed, motherboard.maxMemSpeed);
   // CPUs' "official" spec is conservative; XMP/EXPO usually runs ~15% above it.
   const cpuMax = cpu?.maxMemSpeed[ram.type];
-  if (cpuMax) speed = Math.min(speed, Math.round(cpuMax * 1.15 / 200) * 200);
+  // Laptops run memory at the processor's rated speed (no XMP / EXPO).
+  if (cpuMax) speed = Math.min(speed, cpu?.laptop ? cpuMax : Math.round(cpuMax * 1.15 / 200) * 200);
   return speed;
 }
 
@@ -35,6 +36,14 @@ const issue = (severity: Issue['severity'], slots: PartSlot[], message: string):
 export function checkCompatibility(build: Build): Issue[] {
   const issues: Issue[] = [];
   const { cpu, motherboard: mb, ram, gpu, cooler, psu, case: pcCase, storage } = build;
+
+  // Laptop parts can't be mixed with desktop parts.
+  if (cpu && gpu && !!cpu.laptop !== !!gpu.laptop) {
+    issues.push(issue('error', ['cpu', 'gpu'], cpu.laptop ? `${cpu.name} is a laptop processor; it can't be paired with a desktop graphics card.` : `${gpu.name} is laptop graphics; it can't be paired with a desktop processor.`));
+  }
+  if (ram?.laptopOnly && cpu && !cpu.laptop) {
+    issues.push(issue('error', ['ram', 'cpu'], `${ram.name} is soldered laptop memory; desktops use DIMM sticks.`));
+  }
 
   // CPU ↔ motherboard
   if (cpu && mb) {
@@ -74,7 +83,7 @@ export function checkCompatibility(build: Build): Issue[] {
   }
   if (ram && (mb || cpu) && (!mb || ram.type === mb.memType)) {
     const eff = effectiveRamSpeed(build);
-    if (eff !== undefined && eff < ram.speed) {
+    if (eff !== undefined && eff < ram.speed && !cpu?.laptop) {
       issues.push(issue('info', ['ram'], `This kit is rated ${ram.speed} MT/s but will likely run at about ${eff} MT/s on this CPU/board, so you would be paying for speed you can't use.`));
     }
   }
