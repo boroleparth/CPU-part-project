@@ -13,7 +13,8 @@
     "typecheck": "tsc -b",
     "bench:import": "vite-node scripts/import-benchmarks.ts --",
     "bench:laptops:fetch": "vite-node scripts/fetch-notebookcheck.ts",
-    "bench:laptops": "vite-node scripts/calibrate-notebookcheck.ts --"
+    "bench:laptops": "vite-node scripts/calibrate-notebookcheck.ts --",
+    "bench:accuracy": "vite-node scripts/accuracy-report.ts --"
   },
   "dependencies": {
     "react": "^19.1.0",
