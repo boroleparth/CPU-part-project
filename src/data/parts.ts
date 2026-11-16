@@ -51,6 +51,8 @@ export const ramKits: RamKit[] = [
   { id: 'ddr5-2x16-4800', name: 'DDR5 32GB (2×16) 4800', type: 'DDR5', sticks: 2, totalGb: 32, speed: 4800, cl: 40 },
   { id: 'ddr5-1x8-5600', name: 'DDR5 8GB (1×8) 5600', type: 'DDR5', sticks: 1, totalGb: 8, speed: 5600, cl: 46 },
   { id: 'ddr5-2x8-5600', name: 'DDR5 16GB (2×8) 5600', type: 'DDR5', sticks: 2, totalGb: 16, speed: 5600, cl: 46 },
+  { id: 'ddr5-2x12-5600', name: 'DDR5 24GB (16+8) 5600', type: 'DDR5', sticks: 2, totalGb: 24, speed: 5600, cl: 46 },
+  { id: 'ddr5-2x12-4800', name: 'DDR5 24GB (16+8) 4800', type: 'DDR5', sticks: 2, totalGb: 24, speed: 4800, cl: 40 },
   { id: 'ddr5-1x16-5600', name: 'DDR5 16GB (1×16) 5600 CL40', type: 'DDR5', sticks: 1, totalGb: 16, speed: 5600, cl: 40 },
   { id: 'ddr5-2x8-5200', name: 'DDR5 16GB (2×8) 5200 CL40', type: 'DDR5', sticks: 2, totalGb: 16, speed: 5200, cl: 40 },
   { id: 'ddr5-2x16-5600', name: 'DDR5 32GB (2×16) 5600 CL36', type: 'DDR5', sticks: 2, totalGb: 32, speed: 5600, cl: 36 },

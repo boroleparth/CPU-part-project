@@ -147,7 +147,11 @@ export function LinkPage(props: LinkPageProps) {
               </div>
 
               {someMissing && result.url && (
-                <p className="link-note">Some specs aren't in this link. Paste the product title or spec list after the link in the box above and press Recognise again, or choose them below.</p>
+                <p className="link-note">
+                  {result.store === 'Amazon'
+                    ? 'Amazon links keep only a few words of the product title. Copy the title from the page (or use Share in the Amazon app, which includes it), paste it after the link above and press Recognise again.'
+                    : "Some specs aren't in this link. Paste the product title or spec list after the link in the box above and press Recognise again, or choose them below."}
+                </p>
               )}
               <ul className="pick-list">
                 {slotRows.map(({ slot, label, key }) => {
@@ -168,9 +172,13 @@ export function LinkPage(props: LinkPageProps) {
                               <button type="button" className={`pill-btn${noGpu ? ' pill-btn--on' : ''}`} aria-pressed={noGpu} onClick={() => setNoGpu(!noGpu)}>It has no separate graphics</button>
                             </span>
                           )}
-                          {m.status === 'choose' && m.candidates && !part && (
+                          {m.candidates && m.candidates.length > 1 && (m.status === 'choose' || m.assumed) && (
                             <span className="lchoices">
-                              {m.candidates.map((c) => <button key={c.id} type="button" className="pill-btn" onClick={() => onPick(slot, c)}>{c.name}</button>)}
+                              {m.candidates.map((c) => (
+                                <button key={c.id} type="button" className={`pill-btn${c === part ? ' pill-btn--on' : ''}`} aria-pressed={c === part} onClick={() => onPick(slot, c)}>
+                                  {c.name}{c === m.part && m.status === 'found' ? ' (likely)' : ''}
+                                </button>
+                              ))}
                             </span>
                           )}
                         </span>

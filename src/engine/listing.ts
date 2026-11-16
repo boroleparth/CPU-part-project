@@ -124,6 +124,24 @@ const key = (name: string) => name.toLowerCase().replace(/\b(intel|amd)\b/g, '')
 const allCpus = catalog.cpu as readonly Cpu[];
 const cpuByKey = new Map(allCpus.map((c) => [key(c.name), c]));
 
+/**
+ * Popular laptop series and the processor each tier uses, for listings that only say
+ * "Core i5 13th Gen" but name the model (Croma, Amazon). [series pattern, generation, tier -> CPU id].
+ * Only series with one chip per tier; shown as "likely", with the alternatives one tap away.
+ */
+const seriesHints: [RegExp, string, Record<string, string>][] = [
+  [/\bloq\b.*\b15irx9\b|\b15irx9\b.*\bloq\b|\b83dv/, '13', { 5: 'i5-13450hx', 7: 'i7-13650hx' }],
+  [/\bloq\b.*\b15irh8\b|\b15irh8\b/, '13', { 5: 'i5-13420h', 7: 'i7-13620h' }],
+  [/\bvictus\b.*\bfa[12]\d{3}|\bfa[12]\d{3}\s*tx\b/, '13', { 5: 'i5-13420h' }],
+  [/\bnitro v\b|\banv15 51\b|\bnitro 5\b/, '13', { 5: 'i5-13420h', 7: 'i7-13620h' }],
+  [/\bpredator\b.*\bneo\b|\bphn16 71\b/, '13', { 5: 'i5-13500hx', 7: 'i7-13700hx' }],
+  [/\bpredator helios 16\b|\bph16 71\b/, '13', { 7: 'i7-13700hx', 9: 'i9-13900hx' }],
+  [/\bthin 15\b.*\bb13v|\bb13v[a-z]{0,2}\b/, '13', { 5: 'i5-13420h', 7: 'i7-13620h' }],
+  [/\bg6 kf\b|\bg6x\b/, '13', { 7: 'i7-13620h' }],
+  [/\bg15 5530\b/, '13', { 5: 'i5-13450hx', 7: 'i7-13650hx' }],
+  [/\blegion pro 5i?\b.*\b16irx8\b|\b16irx8\b/, '13', { 5: 'i5-13500hx', 7: 'i7-13700hx' }],
+];
+
 function findCpu(t: string, device?: Device): PartMatch<Cpu> {
   // Exact models: "i7 11800h", "core ultra 7 155h", "core 5 210h", "ryzen 7 7800x3d", "i5 1135g7".
   const patterns: [RegExp, (m: RegExpMatchArray) => string][] = [
@@ -157,6 +175,13 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
     const gaming = /\b(rtx|gtx|gaming)\b/.test(t);
     const candidates = pool.filter((c) => new RegExp(`^Core i${tier}-${gen}\\d{2,3}`).test(c.name) && !(gaming && /\d(U|G\d|V)$/.test(c.name)));
     if (candidates.length === 1) return { status: 'found', part: candidates[0], text: vague[0] };
+    // The model code often settles it: "LOQ 15IRX9" + "i5 13th Gen" = i5-13450HX.
+    const hint = seriesHints.find(([re, g, tiers]) => g === gen && tiers[tier] && re.test(t));
+    const likely = hint && laptopCpus.find((c) => c.id === hint[2][tier]);
+    if (likely) {
+      const others = candidates.filter((c) => c !== likely);
+      return { status: 'found', part: likely, candidates: [likely, ...others], text: vague[0], assumed: true, note: `Most of these laptops with "${vague[0]}" use the ${likely.name}. Check the spec sheet, or pick another below.` };
+    }
     if (candidates.length) return { status: 'choose', candidates, text: vague[0], note: `"${vague[0]}" could be several processors. Check the spec sheet for the exact model.` };
     return { status: 'unsupported', text: vague[0] };
   }
@@ -168,6 +193,7 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
 function findVram(t: string): number | undefined {
   const m =
     t.match(/\b(?:dedicated graphic(?:s)? memory capacity|graphic(?:s)? memory|graphics card ram size|graphics ram|video memory|vram)\s*(\d{1,2})\s*gb\b/) ??
+    t.match(/\b(\d{1,2})\s*(?:gb\s*)?graphics\b/) ??
     t.match(/\b(\d{1,2})\s*gb\s*(?:gddr\d\w*|graphics|vram|dedicated|video)\b/) ??
     t.match(/\b(?:rtx|gtx|rx|arc)\s*[ab]?\d{3,4}\s*(?:ti|super|xt|gre)?\s*(?:laptop\s*(?:gpu)?\s*)?(\d{1,2})\s*gb\b(?!\s*(?:ram|memory|ddr|lpddr|ssd))/) ??
     t.match(/\b(\d{1,2})\s*gb\s*(?:nvidia|geforce|rtx|gtx|amd radeon|radeon)\b/);
@@ -215,6 +241,9 @@ function findStorage(t: string, cpu?: Cpu): { match: PartMatch<Storage>; rest: s
     const isHdd = /\b(hdd|hard disk description hdd|7200 rpm|5400 rpm)\b/.test(t) && !/\b(ssd|nvme)\b/.test(t);
     t = t.replace(row[0], ` ${row[2]} ${row[3]} ${isHdd ? 'hdd' : 'ssd'} `);
   }
+  // Croma-style "16gb 512gb windows…" (no "ssd"): a RAM-sized number followed by a storage-sized one.
+  const pair = t.match(/\b(?:4|8|12|16|24|32|48|64)\s*gb\s+((?:128|256|512|1024|2048)\s*gb|[124]\s*tb)\b(?!\s*(?:ssd|hdd|emmc|ram))/);
+  if (pair && !/\b\d+(?:\.\d)?\s*(?:gb|tb)\s*(?:(?:pcie|nvme|m\.?2|gen\s*\d|sata|pci e)\s*)*(?:ssd|hdd|emmc)\b/.test(t)) t = t.replace(pair[1], `${pair[1]} ssd`);
   const m = t.match(/\b(\d+(?:\.\d)?)\s*(gb|tb)\s*((?:(?:pcie|nvme|m\.?2|gen\s*\d|sata|pci e)\s*)*)(ssd|hdd|emmc)\b/);
   if (!m) return { match: { status: 'missing' }, rest: t };
   const gb = m[2] === 'tb' ? Number(m[1]) * 1000 : Number(m[1]);
@@ -279,7 +308,10 @@ export function parseListing(input: string, forceDevice?: Device): ListingResult
     (/\b(laptop|notebook|ultrabook|2 in 1|chromebook|gaming laptop)\b/.test(t) ? 'laptop'
     : /\b(desktop|gaming pc|tower|all in one|mini pc|cabinet|prebuilt|pre built)\b/.test(t) ? 'desktop'
     : undefined);
-  const cpu = findCpu(t, device);
+  // Weaker laptop clues (screen size, series names) narrow vague processors; an exact processor overrides them.
+  const looksLaptop = /\b\d{2}(?:[. ]\d{1,2})?\s*(inch|in|cm)\b/.test(t) ||
+    /\b(victus|omen|loq|legion|nitro|predator|tuf|rog|zephyrus|strix|katana|cyborg|vivobook|zenbook|ideapad|thinkpad|thinkbook|inspiron|vostro|latitude|aspire|pavilion|envy|spectre|swift|galaxy book|xps|yoga)\b/.test(t);
+  const cpu = findCpu(t, device ?? (looksLaptop ? 'laptop' : undefined));
   /** For memory and storage defaults: the found processor, or the first likely one. */
   const refCpu = cpu.part ?? cpu.candidates?.[0];
   if (!device && cpu.part) device = cpu.part.laptop ? 'laptop' : 'desktop';
@@ -289,13 +321,14 @@ export function parseListing(input: string, forceDevice?: Device): ListingResult
     cpu.note = `${cpu.part.name} is a ${cpu.part.laptop ? 'laptop' : 'desktop'} processor.`;
     cpu.part = undefined;
   }
-  if (!device && /\b\d{2}(\.\d)?\s*(inch|in|cm)\b/.test(t)) device = 'laptop';
+  if (!device && looksLaptop) device = 'laptop';
   const vram = findVram(t);
   const gpu = findGpu(t, device, vram);
   if (!device && gpu.part) device = gpu.part.laptop ? 'laptop' : 'desktop';
   // Remove graphics memory and storage before reading RAM, so "6 GB graphics" or "512 GB SSD" isn't taken as RAM.
   const noVram = t
     .replace(/\b\d{1,2}\s*gb\s*(?:gddr\d\w*|graphics|vram|dedicated|video)\b/g, ' ')
+    .replace(/\b\d{1,2}\s*graphics\b/g, ' ')
     .replace(/\b(?:dedicated graphic(?:s)? memory capacity|graphic(?:s)? memory|graphics card ram size|graphics ram|video memory|vram)\s*\d{1,2}\s*gb\b/g, ' ')
     .replace(/\b((?:rtx|gtx|rx|arc)\s*[ab]?\d{3,4}\s*(?:ti|super|xt|gre)?\s*(?:laptop\s*(?:gpu)?\s*)?)\d{1,2}\s*gb\b(?!\s*(?:ram|memory|ddr|lpddr|ssd))/g, '$1')
     .replace(/\b\d{1,2}\s*gb\s*(nvidia|geforce|rtx|gtx|amd radeon|radeon)\b/g, '$1');

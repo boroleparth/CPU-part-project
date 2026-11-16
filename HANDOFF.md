@@ -23,7 +23,12 @@ parts work well together, so no part bottlenecks the others.
    editable, and the results page links back to the listing (`src=` in the share link).
    **"Check in PC Harmony" bookmark** (`src/bookmarklet.ts`, offered on the Check a link page): clicked on a
    product page it collects the title and spec rows in the user's own browser and opens Check a link via
-   `#text=...&src=...` (hash only, never sent to a server; cleared after reading). Fixes listings whose link
+   `#text=...&src=...` (hash only, never sent to a server; cleared after reading).
+   Tested on 14 real store links (`listing.test.ts`, "real store links"): Flipkart links carry the exact CPU,
+   Croma links only "i5 13th Gen" plus a model code (resolved by `seriesHints` in `listing.ts`, shown as
+   "likely" with alternatives; extend that table for more series), Amazon links only the CPU (the page title
+   has to be pasted or shared). Downloading store pages from a server is not an option: Amazon, Flipkart,
+   Croma and Reliance Digital all block it (503 / Access Denied / captcha). Fixes listings whose link
    or title only says "i7 13th Gen" while the spec table has the exact model. Phones: copy-paste the specs.
 2. **Results dashboard** (one wide page):
    - verdict: score ring, headline, CPU/GPU match, peak power, PSU needed, compatibility;
@@ -41,7 +46,7 @@ for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers,
 **Laptops:** 53 Intel laptop CPUs (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U,
 200V, 200H/HX) and 26 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop), each in 2–5 power versions
 (`src/data/laptops.ts`); plus SO-DIMM / LPDDR5X memory and 256/512 GB drives.
-**273 tests**, all passing.
+**288 tests**, all passing.
 
 ## Key architectural decisions
 

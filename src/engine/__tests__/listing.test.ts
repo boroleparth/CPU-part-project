@@ -28,15 +28,23 @@ describe('reading store links', () => {
     expect(r.refreshHz).toBe(144);
   });
 
-  it('asks which processor when the listing only says "i5 13th gen", leaving out low-power chips for gaming laptops', () => {
+  it('uses the model code when the listing only says "i5 13th gen" (HP Victus 15-fa1xxx: i5-13420H), with alternatives', () => {
     const r = parseListing(croma);
-    expect(r.cpu.status).toBe('choose');
+    expect(r.cpu.part?.id).toBe('i5-13420h');
+    expect(r.cpu.assumed).toBe(true);
     const ids = r.cpu.candidates!.map((c) => c.id);
     expect(ids).toContain('i5-13420h');
     expect(ids).not.toContain('i5-1335u');
     expect(r.gpu.part?.family).toBe('RTX 4050 Laptop');
     expect(r.ram.part?.type).toBe('DDR5');
     expect(r.resolution).toBe('1080p');
+  });
+
+  it('asks which processor when neither the listing nor the model code settles it', () => {
+    const r = parseListing('https://www.croma.com/hp-omen-16-wd0990tx-intel-core-i5-13th-gen-16-1-inch-16gb-512gb-windows-11-home-ms-office-2021-nvidia-geforce-rtx-4050-fhd-ips-display-shadow-black-88y66pa-/p/274584');
+    expect(r.cpu.status).toBe('choose');
+    expect(r.cpu.candidates!.every((c) => c.laptop)).toBe(true); // "16.1 inch" / OMEN: no desktop chips
+    expect(r.storage.part?.capacityGb).toBe(512); // "16gb 512gb" without "ssd"
   });
 
   it('reads Reliance Digital and Vijay Sales links (id before or after the name)', () => {
@@ -173,5 +181,45 @@ describe('reading pasted product text', () => {
 
   it('normalises separators', () => {
     expect(normalise('Core_i7-11800H/16GB+512GB')).toBe('core i7 11800h 16gb 512gb');
+  });
+});
+
+/** Real product links found on the stores (Nov 2026), with what each link itself contains. */
+describe('real store links', () => {
+  const cases: [string, string, string | undefined, number | undefined][] = [
+    // [link, processor, graphics family, RAM GB]
+    ['https://www.flipkart.com/lenovo-loq-intel-core-i7-13th-gen-13620h-16-gb-512-gb-ssd-windows-11-home-8-graphics-nvidia-geforce-rtx-4060-15irh8-gaming-laptop/p/itm0a107f7d8e2af', 'i7-13620h', 'RTX 4060 Laptop', 16],
+    ['https://www.flipkart.com/gigabyte-g6-kf-h3in853sh-intel-core-i7-13th-gen-g-series-16-gb-512-gb-ssd-windows-11-home-6-graphics-nvidia-geforce-rtx-4060-165-hz-gaming-laptop/p/itmc0a0fd11d7fd4', 'i7-13620h', 'RTX 4060 Laptop', 16],
+    ['https://www.flipkart.com/hp-omen-intel-core-i7-13th-gen-13700hx-16-gb-512-gb-ssd-windows-11-home-8-graphics-nvidia-geforce-rtx-4060-16-wf0055tx-gaming-laptop/p/itmf8ab1adff347c', 'i7-13700hx', 'RTX 4060 Laptop', 16],
+    ['https://www.flipkart.com/acer-predator-helios-16-core-i7-13th-gen-16-gb-512-gb-ssd-windows-11-home-8-graphics-nvidia-geforce-rtx-4060-ph16-71-gaming-laptop/p/itm3e3225513534d', 'i7-13700hx', 'RTX 4060 Laptop', 16],
+    ['https://www.flipkart.com/colorful-p15-intel-core-i7-12th-gen-12650h-16-gb-512-gb-ssd-windows-11-home-8-graphics-nvidia-geforce-rtx-4060-23-hf76b16512e-b-sa-gaming-laptop/p/itm539c6f24a89a5', 'i7-12650h', 'RTX 4060 Laptop', 16],
+    ['https://www.croma.com/acer-nitro-5-intel-core-i5-13th-gen-gaming-laptop-16gb-512gb-windows-11-home-6gb-graphics-15-6-inch-144-hz-fhd-ips-display-nvidia-geforce-rtx-4050-ms-office-2021-obsidian-black-2-13-kg-/p/302709', 'i5-13420h', 'RTX 4050 Laptop', 16],
+    ['https://www.croma.com/acer-16-predator-neo-intel-core-i5-13th-gen-gaming-laptop-16gb-512gb-ssd-windows-11-home-6gb-graphics-16-inch-165-hz-qhd-led-backlit-display-nvidia-geforce-rtx-4050-obsidian-black-2-6-kg-/p/272086', 'i5-13500hx', 'RTX 4050 Laptop', 16],
+    ['https://www.croma.com/lenovo-loq-15irx9-intel-core-i5-13th-gen-gaming-laptop-24gb-512gb-ssd-windows-11-home-6gb-graphics-15-6-inch-144-hz-full-hd-ips-display-nvidia-geforce-rtx-4050-ms-office-home-2024-luna-grey-2-38-kg-/p/314362', 'i5-13450hx', 'RTX 4050 Laptop', 24],
+    ['https://www.croma.com/msi-thin-15-b13ve-2611in-intel-core-i5-13th-gen-gaming-laptop-16gb-512gb-ssd-windows-11-home-6gb-graphics-15-6-inch-144-hz-full-hd-display-nvidia-geforce-rtx-4050-ms-office-2021-cosmos-gray-1-86-kg-/p/311031', 'i5-13420h', 'RTX 4050 Laptop', 16],
+    ['https://www.croma.com/hp-victus-15-fa2375tx-intel-core-i5-13th-gen-gaming-laptop-16gb-512gb-ssd-windows-11-home-6gb-graphics-15-6-inch-144-hz-full-hd-ips-display-nvidia-geforce-rtx-4050-performance-blue-2-29-kg-/p/318675', 'i5-13420h', 'RTX 4050 Laptop', 16],
+    // Amazon links keep only part of the title: the processor is there, the rest has to be pasted.
+    ['https://www.amazon.in/HP-Victus-i5-13420H-Flicker-Free-Enhanced/dp/B0F79G1XW6', 'i5-13420h', undefined, undefined],
+    ['https://www.amazon.in/Lenovo-i5-13450HX-300Nits-Graphics-83DV007GIN/dp/B0D49W5KZP', 'i5-13450hx', undefined, undefined],
+    ['https://www.amazon.in/Acer-i5-13420H-Graphics-Display-ANV15-51/dp/B0CHJJZ9G8', 'i5-13420h', undefined, undefined],
+  ];
+  for (const [url, cpu, gpu, ram] of cases) {
+    it(url.split('/')[3].slice(0, 60), () => {
+      const r = parseListing(url);
+      expect(r.device).toBe('laptop');
+      expect(r.cpu.part?.id).toBe(cpu);
+      expect(r.gpu.part?.family).toBe(gpu);
+      expect(r.ram.part?.totalGb).toBe(ram);
+      if (gpu) expect(r.storage.part?.capacityGb).toBe(512);
+    });
+  }
+
+  it('reads an Amazon link plus its pasted title completely', () => {
+    const r = parseListing('https://www.amazon.in/HP-Victus-i5-13420H-Flicker-Free-Enhanced/dp/B0F79G1XW6 HP Victus, 13th Gen Intel Core i5-13420H, RTX 4050-6GB, 16GB DDR4, 512GB SSD, FHD IPS, 15.6"/39.6cm, 144Hz, Win 11, Office21, Mica Silver, 2.29kg, fa1279TX, Flicker-Free Enhanced Cooling Gaming Laptop');
+    expect(r.cpu.part?.id).toBe('i5-13420h');
+    expect(r.gpu.part?.family).toBe('RTX 4050 Laptop');
+    expect(r.ram.part).toMatchObject({ totalGb: 16, type: 'DDR4' });
+    expect(r.storage.part?.capacityGb).toBe(512);
+    expect(r.refreshHz).toBe(144);
   });
 });
