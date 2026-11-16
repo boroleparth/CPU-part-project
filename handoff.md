@@ -22,8 +22,9 @@ balanced (no part holding the others back), how fast it is in 10 popular games, 
 | Laptop checker | Done: 93 laptop CPUs (54 Intel, 39 AMD Ryzen), 28 NVIDIA laptop GPUs in 2–5 power versions each |
 | Check a link | Done: store links (Flipkart, Croma, Amazon, Reliance Digital, Vijay Sales, brand sites) or pasted specs; "Check in PC Harmony" bookmark reads the whole product page |
 | Benchmarks | Desktop CPU multi/single: PassMark (sourced). GPU local AI: llama.cpp (sourced). Laptop GPUs: Notebookcheck (calibrated). Desktop gaming/raster/RT and all laptop CPUs: estimates |
+| Real-world signals | RAM in use (Windows + apps + game + VRAM overflow), GPU % busy (drops when waiting on VRAM / paging), CPU main thread vs Task Manager %, 1% lows with stutter warning |
 | Accuracy | Laptop GPUs 12.2% average error vs ~8,000 real measurements (noise floor ~10%). 5 games refitted to measured FPS (measured ÷ model 0.87–1.04) |
-| Tests | 295 passing (`npm test`) |
+| Tests | 307 passing (`npm test`) |
 | Deployed | Yes, `main` = live site |
 
 **Open decisions for the user**
@@ -42,29 +43,48 @@ In priority order. "Needs" says what has to come from the user or outside this r
 |---|---|---|---|---|
 | 1 | **Source laptop CPUs from PassMark:** run `npm run bench:import` on the PassMark pages saved on the home computer (`data/sources/2026-11-15/`) | All 93 laptop CPUs (incl. the new AMD ones) are still estimates; they are already in the import list | Small | The home computer (pages are git-ignored, so only there) |
 | 2 | **Real failing links → tests:** collect store links that misread, add each to `listing.test.ts`, extend `seriesHints` in `src/engine/listing.ts` (HP OMEN 16-wd0, Victus 16, ASUS TUF FX507, ROG Strix G16, Legion 5i …) | Croma / Amazon listings often only say "i5 13th Gen"; the model-code table resolves them | Small per link | Links from the user; "What we read" box shows what the reader saw |
-| 3 | **Accuracy parameters 1, 2, 6** (see list below): memory pressure, 1% lows, CPU main-thread load | Real laptops rarely show "GPU 100% busy"; RAM / VRAM overflow lowers GPU usage and causes stutter | Medium | – |
-| 4 | **Accuracy parameters 3, 4, 5:** settings preset + DLSS question, laptop cooling / chassis / age, MUX switch | Large FPS effects the model doesn't see yet | Medium | – |
-| 5 | **Desktop GPU corrections:** apply the Notebookcheck cross-check (desktop RTX 5070 ~8% low; RTX 3070 / 4090 ~9–11% high), and source desktop gaming / raster / RT (Tom's Hardware GPU hierarchy is reachable from the cloud session; TechPowerUp needs browser screenshots) | Desktop gaming indices are still estimates | Medium | Screenshots only if TechPowerUp is used |
-| 6 | **Remaining game profiles:** Valorant, Apex, Marvel Rivals (≤9 Notebookcheck measurements), Fortnite (none) | Still estimates; Apex looks ~35% low, Valorant ~25% high | Small | More measured data |
-| 7 | **User's own laptop as reference tests** (accuracy parameter 7): MSI Afterburner numbers from the ASUS TUF F15 2021 | First real measured laptop reference | Small | Game, settings, avg FPS, GPU %, CPU %, RAM / VRAM used, power mode |
-| 8 | **Quality-of-life** (agreed list, not started): browser Back button, keep answers on refresh, undo after Apply, forgiving search (`i5 13600k`, `4070s`), saved builds, light/dark switch, keyboard navigation | Things that feel broken / missing in daily use | Small–medium | – |
-| 9 | **Phones:** "Share to PC Harmony" (installable web app with a share target) so the Amazon / Flipkart app's Share sends the title straight in | The bookmark button is computer-only | Medium | – |
-| 10 | **Coverage gaps:** Radeon laptop GPUs (RX 7600S etc.), Intel P-series, laptop model presets ("ASUS TUF F15 2021" fills all specs), Threadripper / Xeon, pre-2017 parts | Rare in India; lower priority | Medium | – |
-| 11 | **Prices (INR) and budget mode** | Value suggestions ("₹X more for Y% more FPS"); user deprioritised it | Medium | A price source |
+| 3 | **Accuracy parameters 3, 4, 5:** settings preset + DLSS question, laptop cooling / chassis / age, MUX switch | Large FPS effects the model doesn't see yet | Medium | – |
+| 4 | **Desktop GPU corrections:** apply the Notebookcheck cross-check (desktop RTX 5070 ~8% low; RTX 3070 / 4090 ~9–11% high), and source desktop gaming / raster / RT (Tom's Hardware GPU hierarchy is reachable from the cloud session; TechPowerUp needs browser screenshots) | Desktop gaming indices are still estimates | Medium | Screenshots only if TechPowerUp is used |
+| 5 | **Remaining game profiles:** Valorant, Apex, Marvel Rivals (≤9 Notebookcheck measurements), Fortnite (none) | Still estimates; Apex looks ~35% low, Valorant ~25% high | Small | More measured data |
+| 6 | **User's own laptop as reference tests** (accuracy parameter 7): MSI Afterburner numbers from the ASUS TUF F15 2021 | First real measured laptop reference | Small | Game, settings, avg FPS, GPU %, CPU %, RAM / VRAM used, power mode |
+| 7 | **Quality-of-life** (agreed list, not started): browser Back button, keep answers on refresh, undo after Apply, forgiving search (`i5 13600k`, `4070s`), saved builds, light/dark switch, keyboard navigation | Things that feel broken / missing in daily use | Small–medium | – |
+| 8 | **Phones:** "Share to PC Harmony" (installable web app with a share target) so the Amazon / Flipkart app's Share sends the title straight in | The bookmark button is computer-only | Medium | – |
+| 9 | **Coverage gaps:** Radeon laptop GPUs (RX 7600S etc.), Intel P-series, laptop model presets ("ASUS TUF F15 2021" fills all specs), Threadripper / Xeon, pre-2017 parts | Rare in India; lower priority | Medium | – |
+| 10 | **Prices (INR) and budget mode** | Value suggestions ("₹X more for Y% more FPS"); user deprioritised it | Medium | A price source |
 
 **Accuracy parameters (agreed list, from the user's real-world feedback)**
-1. Memory pressure: Windows (~4 GB) + background apps + game RAM, and VRAM overflow into RAM → GPU shows
+1. ✅ Memory pressure: Windows (~4 GB) + background apps + game RAM, and VRAM overflow into RAM → GPU shows
    60–80% busy instead of 100%, lower FPS, stutter.
-2. 1% lows (stutter) next to average FPS.
+2. ✅ 1% lows (stutter) next to average FPS.
 3. Game settings preset (Low–Ultra) and upscaling (DLSS / FSR) as a question.
 4. Laptop shared power and cooling budget; thin vs thick chassis; age (thermal throttling).
 5. MUX switch / Advanced Optimus (5–15% FPS without one).
-6. CPU main-thread load instead of "total CPU %" (Task Manager averages all threads).
+6. ✅ CPU main-thread load instead of "total CPU %" (Task Manager averages all threads).
 7. Real measured reference points as tests.
 
 ---
 
 ## Session log
+
+### 16 Nov 2026: memory pressure, 1% lows, CPU main thread
+
+Accuracy parameters 1, 2 and 6 from the user's real-world feedback. New model pieces in `src/engine/simulation.ts`:
+- **Memory in use** (`memoryUse`): Windows 3.5 GB + background apps 2.5 GB (+2 GB OBS when streaming) + the
+  game's own RAM (new `ramUseGb` per game / gaming use) + graphics data that doesn't fit in VRAM (integrated
+  graphics: all of it). Above the installed RAM, Windows pages to the drive: a mild FPS loss (`pagingFactor`,
+  worse on a hard drive) and a large 1% low loss.
+- **GPU % busy**: `gpuCapacityFps` is the chip's ceiling with enough memory; `gpuBusy = fps / gpuCapacityFps`, so
+  a VRAM spill shows as e.g. "85% busy · waiting on graphics memory" instead of 100%. FPS itself is unchanged
+  (same VRAM factor as before), so the Notebookcheck accuracy figures are identical (12.2%).
+- **CPU main thread vs Task Manager**: the CPU row shows "Main thread X%"; the hint gives Task Manager's
+  all-thread average from the game's `threads` (e.g. a CPU-bound Ryzen 5 5600 shows 100% main thread, ~38% in
+  Task Manager).
+- **1% lows** (`lowRatio`): from CPU-boundness, X3D cache, single stick, low-tier CPU for the GPU, VRAM spill,
+  RAM pressure and drive type. "Your games" shows the 1% low under each FPS (red when below 60% of the
+  average); gaming uses add an "Expect stutter" note.
+- The user's TUF F15 (AAA, 1080p): GPU 85% busy (2 GB of 8 GB doesn't fit), RAM ~17 GB of 16 GB used (swapping),
+  main thread 55% / Task Manager ~19%, Cyberpunk 59 FPS with 1% lows of 37.
+- Tests: `src/engine/__tests__/memory.test.ts` (12 tests).
 
 ### 15–16 Nov 2026: laptops, real benchmarks, Check a link, AMD
 
@@ -193,8 +213,8 @@ In priority order. "Needs" says what has to come from the user or outside this r
 | `src/engine/types.ts` | Part, build, issue types |
 | `src/engine/compatibility.ts` | Compatibility rules, power, effective RAM speed |
 | `src/engine/workloads.ts` | Workload definitions, shared `FpsModel` |
-| `src/engine/simulation.ts` | FPS and time-share models, grades, shortfall caps, verdicts |
-| `src/engine/games.ts` | Per-game FPS, 1% lows, refresh-rate verdicts |
+| `src/engine/simulation.ts` | FPS and time-share models, memory in use, GPU busy, main thread, 1% lows, grades, shortfall caps, verdicts |
+| `src/engine/games.ts` | Per-game FPS, 1% lows, stutter flag, refresh-rate verdicts |
 | `src/engine/limits.ts` | "What's limiting performance" |
 | `src/engine/recommend.ts` | Suggestions (desktop and laptop wording, power versions, second stick) |
 | `src/engine/builder.ts` | `completeBuild` (desktop and laptop), part pickers, auto-builder (not in UI) |

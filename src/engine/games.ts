@@ -17,6 +17,8 @@ export interface GameResult {
   verdict: string;
   /** Two-word version of the verdict for compact lists. */
   short: string;
+  /** 1% lows far below the average: noticeable stutter. */
+  stutter: boolean;
 }
 
 /** Estimated frame rates for one game, and how they compare with the monitor's refresh rate. */
@@ -24,15 +26,15 @@ export function simulateGame(build: Build, game: Game, res: Resolution, refreshH
   const p = simulateFps(build, game, res);
   let fps = p.fps;
   let limitedBy: GameResult['limitedBy'] = p.limitedBy;
-  // CPU-bound games dip harder (draw-call and simulation spikes) than GPU-bound ones.
-  let low1 = fps * (p.limitedBy === 'cpu' ? 0.68 : 0.78);
+  // From the frame-rate model: CPU-bound frames, VRAM spill and RAM paging make dips worse.
+  let low1 = p.low1;
   if (game.fpsCap && fps >= game.fpsCap) {
     fps = game.fpsCap;
     low1 = Math.min(low1, game.fpsCap * 0.95);
     limitedBy = 'cap';
   }
   const { tone, verdict, short } = refreshVerdict(fps, refreshHz, game.fpsCap);
-  return { game, fps, low1, cpuFps: p.cpuFps, gpuFps: p.gpuFps, limitedBy, tone, verdict, short };
+  return { game, fps, low1, cpuFps: p.cpuFps, gpuFps: p.gpuFps, limitedBy, tone, verdict, short, stutter: low1 < fps * 0.6 };
 }
 
 export function refreshVerdict(fps: number, hz: number, cap?: number): { tone: Tone; verdict: string; short: string } {

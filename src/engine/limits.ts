@@ -10,6 +10,8 @@ export interface LimitItem {
   /** How hard this part is working / how full it is, 0–1 (can exceed 1 when it is too small). */
   load: number;
   label: string;
+  /** One line explaining the number (shown under the label). */
+  hint?: string;
   /** 'limit' = this part sets the pace; 'over' = not enough of it; 'ok' = has headroom. */
   status: 'limit' | 'over' | 'ok';
 }
@@ -24,22 +26,42 @@ export interface LimitReport {
 }
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+/** GB with at most one decimal: 2.5, 8. */
+const gb = (x: number) => String(Math.round(x * 2) / 2);
 const storageLoad = { HDD: 1, 'SATA SSD': 0.6, 'NVMe Gen3': 0.35, 'NVMe Gen4': 0.25, 'NVMe Gen5': 0.2 } as const;
 
 /** Which part limits performance for one workload result, and how loaded every part is. */
-export function limitReport(build: Build, r: WorkloadResult, res: Resolution): LimitReport {
+export function limitReport(build: Build, r: WorkloadResult, _res: Resolution): LimitReport {
   const w = workloadById[r.workload];
   const items: LimitItem[] = [];
 
   if (r.judged) {
     const p = r.judged;
-    const cpuLoad = p.cpuFps > 0 ? p.fps / p.cpuFps : 0;
-    const gpuLoad = p.gpuFps > 0 ? p.fps / p.gpuFps : 0;
-    items.push({ part: 'CPU', load: cpuLoad, label: `${pct(Math.min(cpuLoad, 1))} busy`, status: p.limitedBy === 'cpu' ? 'limit' : 'ok' });
-    items.push({ part: 'GPU', load: gpuLoad, label: build.gpu ? `${pct(Math.min(gpuLoad, 1))} busy` : 'Integrated graphics', status: p.limitedBy === 'gpu' ? 'limit' : 'ok' });
+    const m = p.memory;
+    items.push({
+      part: 'CPU', load: p.mainThread, label: `Main thread ${pct(p.mainThread)}`,
+      hint: build.cpu && `Task Manager would show ~${pct(p.cpuTotal)}: it averages all ${build.cpu.threads} threads, but games wait on the main one.`,
+      status: p.limitedBy === 'cpu' ? 'limit' : 'ok',
+    });
+    const gpuHint = !build.gpu
+      ? undefined
+      : p.stall === 'vram'
+        ? `Waiting on graphics memory: ${gb(m.spillGb)} GB doesn't fit in VRAM and comes from system RAM.`
+        : p.stall === 'ram'
+          ? 'Waiting while Windows swaps RAM to the drive.'
+          : p.limitedBy === 'cpu'
+            ? 'Waiting on the CPU for new frames.'
+            : undefined;
+    items.push({
+      part: 'GPU', load: p.gpuBusy, label: build.gpu ? `${pct(p.gpuBusy)} busy` : 'Integrated graphics', hint: gpuHint,
+      status: p.limitedBy === 'gpu' ? 'limit' : 'ok',
+    });
     if (w.kind === 'gaming' && build.gpu) {
-      const need = w.vramNeed[res];
-      items.push({ part: 'VRAM', load: need / build.gpu.vram, label: `${need} GB needed of ${build.gpu.vram} GB`, status: build.gpu.vram < need ? 'over' : 'ok' });
+      items.push({
+        part: 'VRAM', load: m.vramNeedGb / m.vramGb, label: `${m.vramNeedGb} GB needed of ${m.vramGb} GB`,
+        hint: m.spillGb > 0 ? `${gb(m.spillGb)} GB spills into system RAM.` : undefined,
+        status: m.vramGb < m.vramNeedGb ? 'over' : 'ok',
+      });
     }
   } else if (r.throughput) {
     const t = r.throughput.timeShare;
@@ -57,7 +79,22 @@ export function limitReport(build: Build, r: WorkloadResult, res: Resolution): L
   }
 
   // Capacity checks shared by every workload.
-  if (build.ram) {
+  if (build.ram && r.judged) {
+    // Gaming: what actually fills RAM, against the recommended size.
+    const m = r.judged.memory;
+    const need = w.ramNeedGb;
+    const single = build.ram.sticks === 1;
+    const parts = [`Windows ${gb(m.windowsGb)}`, `apps ${gb(m.backgroundGb)}`, `game ${gb(m.gameGb)}`];
+    if (m.spillGb > 0) parts.push(`${m.shared ? 'graphics' : 'VRAM overflow'} ${gb(m.spillGb)}`);
+    const full = m.pressure > 1 ? ' Full: Windows swaps to the drive (stutter).' : m.pressure > 0.9 ? ' Nearly full.' : '';
+    items.push({
+      part: 'RAM',
+      load: m.pressure,
+      label: `~${gb(m.usedGb)} GB used of ${build.ram.totalGb} GB${single ? ' · single stick' : ''}`,
+      hint: `${parts.join(' + ')} GB.${full}${build.ram.totalGb < need ? ` ${need} GB recommended.` : ''}`,
+      status: build.ram.totalGb < need || single || m.pressure > 1 ? 'over' : 'ok',
+    });
+  } else if (build.ram) {
     const need = w.ramNeedGb;
     const single = build.ram.sticks === 1;
     items.push({

@@ -131,7 +131,7 @@ function GamesCard({ build, resolution, refreshHz }: { build: Build; resolution:
               {g.list.map((r) => (
                 <li key={r.game.id} className="game-row" title={r.verdict}>
                   <span className="game-title">{r.game.name}</span>
-                  <span className="game-fps"><b>{Math.round(r.fps)}</b> FPS</span>
+                  <span className="game-fps"><b>{Math.round(r.fps)}</b> FPS<span className={`game-low${r.stutter ? ' game-low--bad' : ''}`} title="1% low: the frame rate of the slowest 1% of frames. Far below the average means stutter.">1% low {Math.round(r.low1)}</span></span>
                   <span className={`chip chip--${r.tone}`}>{r.short}</span>
                 </li>
               ))}
@@ -186,8 +186,10 @@ function BuildCard({ build, issues, chosen, gaming, device, onOpen, onPower }: {
   );
 }
 
+const capacityParts: LimitItem['part'][] = ['RAM', 'VRAM', 'Power supply'];
 const loadTone = (i: LimitItem, ideal: boolean): Tone =>
-  i.status === 'over' ? 'critical' : i.status === 'limit' ? (ideal ? 'good' : 'serious') : 'good';
+  i.status === 'over' ? 'critical' : i.status === 'limit' ? (ideal ? 'good' : 'serious')
+    : capacityParts.includes(i.part) && i.load > 0.9 ? 'warning' : 'good';
 
 /** "Which part is holding this back?": load on every part for one use, with the bottleneck marked. */
 function LimitsCard({ build, evaluation, resolution }: { build: Build; evaluation: BuildEvaluation; resolution: Resolution }) {
@@ -224,6 +226,7 @@ function LimitsCard({ build, evaluation, resolution }: { build: Build; evaluatio
               <span className="limit-part">{i.part}</span>
               <span className="limit-track"><span className={`limit-fill limit-fill--${t}`} style={{ width: `${Math.min(100, Math.max(3, i.load * 100))}%` }} /></span>
               <span className="limit-label">{i.label}</span>
+              {i.hint && <span className="limit-hint">{i.hint}</span>}
             </li>
           );
         })}

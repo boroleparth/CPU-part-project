@@ -127,11 +127,109 @@ export function minCpuIndexForGpu(gpu: Gpu): number {
 export interface FpsPoint {
   resolution: Resolution;
   cpuFps: number;
+  /** GPU frame-rate ceiling including time lost waiting on memory (VRAM spill, paging). */
   gpuFps: number;
+  /** What the GPU could do with enough memory: the ceiling it would be at 100% busy. */
+  gpuCapacityFps: number;
   fps: number;
+  /** Estimated 1% low FPS: the frame rate of the slowest 1% of frames (stutter). */
+  low1: number;
   limitedBy: 'cpu' | 'gpu';
   /** How much of the faster part's capability is unused, 0–1. */
   bottleneck: number;
+  /** How busy the CPU's main (game) thread is, 0–1. */
+  mainThread: number;
+  /** What Task Manager would show for the whole CPU, 0–1 (averages all threads). */
+  cpuTotal: number;
+  /** How busy the GPU is, 0–1: lower when it waits on the CPU or on memory. */
+  gpuBusy: number;
+  /** Why the GPU waits even though it is the limit, if it does. */
+  stall?: 'vram' | 'ram';
+  memory: MemoryUse;
+}
+
+// ---------------------------------------------------------------------------
+// Memory pressure: what actually fills RAM while a game runs
+// ---------------------------------------------------------------------------
+
+/** Windows 11 with drivers and services, typical idle use. */
+export const WINDOWS_RAM_GB = 3.5;
+/** Browser, Discord, game launcher, antivirus: what usually runs alongside a game. */
+export const BACKGROUND_RAM_GB = 2.5;
+/** OBS and a browser with chat, while streaming. */
+const STREAMING_RAM_GB = 2;
+
+export interface MemoryUse {
+  /** System RAM installed (GB). */
+  ramGb: number;
+  windowsGb: number;
+  backgroundGb: number;
+  gameGb: number;
+  /** Graphics data that doesn't fit in VRAM and spills into system RAM (or iGPU memory carved from RAM). */
+  spillGb: number;
+  /** Total RAM in use. */
+  usedGb: number;
+  /** usedGb / ramGb; above ~0.9 Windows starts paging to the drive. */
+  pressure: number;
+  vramGb: number;
+  vramNeedGb: number;
+  /** True for integrated graphics, which use system RAM as graphics memory. */
+  shared: boolean;
+}
+
+export function memoryUse(build: Build, w: FpsModel, res: Resolution): MemoryUse {
+  const ramGb = build.ram?.totalGb ?? 16;
+  const vramGb = graphicsMemoryGb(build);
+  const vramNeedGb = w.vramNeed[res];
+  const shared = !build.gpu;
+  // A card short on VRAM keeps the overflow in system RAM; integrated graphics keep all of it there.
+  const spillGb = shared ? Math.min(vramNeedGb, vramGb) : Math.max(0, vramNeedGb - vramGb);
+  const backgroundGb = BACKGROUND_RAM_GB + (w.cpuOverhead ? STREAMING_RAM_GB : 0);
+  const usedGb = WINDOWS_RAM_GB + backgroundGb + w.ramUseGb + spillGb;
+  return { ramGb, windowsGb: WINDOWS_RAM_GB, backgroundGb, gameGb: w.ramUseGb, spillGb, usedGb, pressure: usedGb / ramGb, vramGb, vramNeedGb, shared };
+}
+
+/**
+ * Slow-down when RAM overflows and Windows pages to the drive. Mild on average FPS
+ * (the game's hot data stays resident), heavy on 1% lows (see lowRatio).
+ */
+function pagingFactor(m: MemoryUse, build: Build): number {
+  const over = m.usedGb - m.ramGb;
+  if (over <= 0) return 1;
+  const drive = build.storage?.kind === 'HDD' ? 1.6 : 1;
+  return clamp(1 - (0.5 * drive * over) / m.ramGb, 0.6, 1);
+}
+
+/** 1% low / average FPS, from what makes frame times uneven. */
+function lowRatio(build: Build, cpuLoad: number, m: MemoryUse): number {
+  // GPU-bound frames are even; CPU-bound frames spike on draw calls and simulation.
+  const cpuBound = clamp((cpuLoad - 0.8) / 0.2, 0, 1);
+  let r = 0.78 - 0.1 * cpuBound;
+  if (build.cpu?.bigCache) r += 0.04 * cpuBound; // large cache smooths CPU spikes
+  if (build.ram?.sticks === 1) r -= 0.05;
+  if (build.cpu && build.gpu && build.cpu.gamingIndex < minCpuIndexForGpu(build.gpu)) r -= 0.04;
+  // Graphics data fetched over PCIe from system RAM arrives late: hitches.
+  if (!m.shared && m.spillGb > 0) {
+    const short = m.spillGb / m.vramNeedGb;
+    r -= short <= 0.25 ? 0.1 : short <= 0.5 ? 0.18 : 0.28;
+  }
+  // Paging: frames wait for the drive.
+  if (m.pressure > 1) r -= m.pressure > 1.15 ? 0.22 : 0.14;
+  else if (m.pressure > 0.9) r -= 0.05;
+  if (build.storage?.kind === 'HDD') r -= 0.08;
+  else if (build.storage?.kind === 'SATA SSD') r -= 0.02;
+  return clamp(r, 0.3, 0.85);
+}
+
+/**
+ * Task Manager's CPU % for a game: the main thread plus the worker threads it keeps partly busy,
+ * averaged over every logical processor. A CPU-bound game often shows only 30–50% here.
+ */
+export function taskManagerCpu(cpu: Cpu, w: FpsModel, mainThread: number): number {
+  const cores = Math.min(w.threads, cpu.cores);
+  const extra = w.cpuOverhead ? 3 : 0; // software encoding while streaming
+  const busy = mainThread * (1 + 0.65 * (cores - 1)) + 0.3 + extra * Math.min(1, cpu.cores / 8);
+  return clamp(busy / cpu.threads, 0, 1);
 }
 
 export function simulateFps(build: Build, w: FpsModel, res: Resolution): FpsPoint {
@@ -140,15 +238,30 @@ export function simulateFps(build: Build, w: FpsModel, res: Resolution): FpsPoin
   let cpuFps = cpu ? cpu.gamingIndex * w.cpuFpsPerPoint * ram : 0;
   if (cpu && w.cpuOverhead) cpuFps *= streamingCpuFactor(cpu);
 
-  const vram = graphicsMemoryGb(build);
-  let gpuFps = gpuIndexFor(gpu, build, w.gpuMetric) * w.gpuFpsPerPoint * w.resolutionScale[res];
-  gpuFps *= vramFactor(vram, w.vramNeed[res]) * pcieFactor(build);
+  const memory = memoryUse(build, w, res);
+  const paging = pagingFactor(memory, build);
+  cpuFps *= paging;
+  const gpuCapacityFps = gpuIndexFor(gpu, build, w.gpuMetric) * w.gpuFpsPerPoint * w.resolutionScale[res] * pcieFactor(build);
+  // Too little VRAM, or RAM paging, makes the GPU wait for data: same chip, fewer frames.
+  const vf = vramFactor(memory.vramGb, memory.vramNeedGb);
+  const gpuFps = gpuCapacityFps * vf * paging;
 
   const fps = softMin(cpuFps, gpuFps);
   const limitedBy = cpuFps < gpuFps ? 'cpu' : 'gpu';
   const lo = Math.min(cpuFps, gpuFps);
   const hi = Math.max(cpuFps, gpuFps);
-  return { resolution: res, cpuFps, gpuFps, fps, limitedBy, bottleneck: hi > 0 ? 1 - lo / hi : 0 };
+  const mainThread = cpuFps > 0 ? clamp(fps / cpuFps, 0, 1) : 0;
+  const stall: FpsPoint['stall'] = gpu && vf < 1 ? 'vram' : paging < 0.99 ? 'ram' : undefined;
+  return {
+    resolution: res, cpuFps, gpuFps, gpuCapacityFps, fps, limitedBy,
+    bottleneck: hi > 0 ? 1 - lo / hi : 0,
+    low1: fps * lowRatio(build, mainThread, memory),
+    mainThread,
+    cpuTotal: cpu ? taskManagerCpu(cpu, w, mainThread) : 0,
+    gpuBusy: gpuCapacityFps > 0 ? clamp(fps / gpuCapacityFps, 0, 1) : 0,
+    stall,
+    memory,
+  };
 }
 
 /**
@@ -386,6 +499,10 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
   if (build.storage?.kind === 'HDD') notes.push('Modern games on a hard drive load slowly and can stutter while streaming assets. Use an SSD.');
   if (build.cpu && build.gpu && build.cpu.gamingIndex < minCpuIndexForGpu(build.gpu) && judged.limitedBy === 'gpu') {
     notes.push(`The ${build.cpu.name} is a low tier for a ${build.gpu.name}. Average FPS looks fine here, but expect weaker 1% lows (stutter) in CPU-heavy scenes and future games.`);
+  }
+  if (build.gpu && judged.low1 < judged.fps * 0.6) {
+    const why = judged.memory.pressure > 1 ? 'RAM is full, so Windows swaps to the drive' : judged.stall === 'vram' ? 'graphics data spills out of VRAM' : 'frame times are uneven';
+    notes.push(`Expect stutter: 1% lows around ${Math.round(judged.low1)} FPS against a ${Math.round(judged.fps)} FPS average, because ${why}.`);
   }
   if (w.cpuOverhead && build.cpu && build.cpu.cores < 8) notes.push(`${build.cpu.cores} cores is tight for gaming and streaming at once. 8+ cores or GPU encoding (NVENC/AMF) helps.`);
 

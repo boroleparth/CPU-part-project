@@ -27,6 +27,10 @@ export interface FpsModel {
   ramNeedGb: number;
   /** Extra CPU load (e.g. software encoding) applied to the CPU ceiling. */
   cpuOverhead?: boolean;
+  /** RAM the game itself uses at this preset (GB), on top of Windows and background apps. */
+  ramUseGb: number;
+  /** How many CPU cores the game keeps busy (main thread = 1, the rest partly). */
+  threads: number;
 }
 
 /**
@@ -62,28 +66,28 @@ export const workloads: Workload[] = [
     // resolution scaling is their average.
     cpuFpsPerPoint: 2.8, gpuFpsPerPoint: 3.65,
     resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.39 },
-    gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32,
+    gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32, ramUseGb: 9, threads: 7,
   },
   {
     id: 'esports', kind: 'gaming', name: 'Competitive / esports', short: 'Esports',
     description: 'High-refresh shooters and MOBAs (Valorant, CS2, Fortnite performance mode).',
     cpuFpsPerPoint: 6.0, gpuFpsPerPoint: 9.0,
     resolutionScale: { '1080p': 1, '1440p': 0.78, '4K': 0.5 },
-    gpuMetric: 'raster', vramNeed: { '1080p': 6, '1440p': 8, '4K': 10 }, ramNeedGb: 16,
+    gpuMetric: 'raster', vramNeed: { '1080p': 6, '1440p': 8, '4K': 10 }, ramNeedGb: 16, ramUseGb: 4.5, threads: 3,
   },
   {
     id: 'raytracing', kind: 'gaming', name: 'Ray-traced gaming', short: 'Ray tracing',
     description: 'Games with ray tracing / path tracing enabled, without frame generation.',
     cpuFpsPerPoint: 1.7, gpuFpsPerPoint: 1.6,
     resolutionScale: { '1080p': 1, '1440p': 0.64, '4K': 0.34 },
-    gpuMetric: 'rt', vramNeed: { '1080p': 10, '1440p': 12, '4K': 16 }, ramNeedGb: 32,
+    gpuMetric: 'rt', vramNeed: { '1080p': 10, '1440p': 12, '4K': 16 }, ramNeedGb: 32, ramUseGb: 10, threads: 7,
   },
   {
     id: 'streaming', kind: 'gaming', name: 'Gaming + streaming', short: 'Streaming',
     description: 'Playing AAA games while streaming/recording with OBS and a browser open.',
     cpuFpsPerPoint: 2.8, gpuFpsPerPoint: 3.45,
     resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.39 },
-    gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32, cpuOverhead: true,
+    gpuMetric: 'raster', vramNeed: gamingVram, ramNeedGb: 32, cpuOverhead: true, ramUseGb: 9, threads: 7,
   },
   {
     id: 'video', kind: 'throughput', name: 'Video editing', short: 'Video',

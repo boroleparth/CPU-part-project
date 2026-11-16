@@ -244,6 +244,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .game-title { font-weight: 500; min-width: 0; }
 .game-fps { justify-self: end; text-align: right; color: var(--text-3); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .game-fps b { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--text); }
+.game-low { display: block; font-size: 0.75rem; color: var(--text-3); }
+.game-low--bad { color: var(--critical); font-weight: 600; }
 .chip { justify-self: end; font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
 .chip--good { background: var(--good-soft); color: var(--good); }
 .chip--warning { background: var(--warning-soft); color: var(--text); }
@@ -486,9 +488,11 @@ button { -webkit-tap-highlight-color: transparent; }
 .limit-fill--serious { background: var(--serious); }
 .limit-fill--critical { background: var(--critical); }
 .limit-label { font-size: 0.85rem; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.limit-hint { grid-column: 2 / -1; margin-top: -8px; font-size: 0.78rem; color: var(--text-3); line-height: 1.4; }
 @media (max-width: 560px) {
   .limit-row { grid-template-columns: 84px minmax(0, 1fr); row-gap: 4px; }
   .limit-label { grid-column: 2; }
+  .limit-hint { margin-top: 0; }
 }
 
 /* ---------- Compare ---------- */
