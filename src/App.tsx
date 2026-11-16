@@ -15,6 +15,7 @@ import { DevicePage, MonitorPage, PartsPage, PurposePage } from './pages/Setup';
 import { LinkPage } from './pages/Link';
 import type { ListingResult } from './engine/listing';
 import { REFRESH_RATES } from './engine/games';
+import { readBookmarkletHash } from './bookmarklet';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
@@ -26,8 +27,18 @@ const pageNames: Record<PageId, string> = { link: 'Check a link', device: 'Deskt
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
 const onlyMain = (b: Build): Build => ({ cpu: b.cpu, gpu: b.gpu, ram: b.ram, storage: b.storage });
 
-function initial(): { state: AppState; page: PageId } {
+function initial(): { state: AppState; page: PageId; linkText?: string } {
   try {
+    // Opened by the "Check in PC Harmony" bookmark button: go straight to Check a link.
+    const linkText = readBookmarkletHash(window.location.hash);
+    if (linkText) {
+      try {
+        window.history.replaceState(null, '', window.location.pathname);
+      } catch {
+        /* ignore */
+      }
+      return { state: { ...defaultState(), build: {}, workloads: [] }, page: 'link', linkText };
+    }
     const decoded = decodeState(window.location.hash);
     if (decoded) {
       // Fill any parts the link doesn't include, so a partial link still opens a complete build.
@@ -240,6 +251,7 @@ export default function App() {
         {page === 'device' && <DevicePage device={device} onPick={pickDevice} onLink={() => go('link')} />}
         {page === 'link' && (
           <LinkPage
+            initialText={boot.linkText}
             device={device}
             build={build}
             workloads={workloads}

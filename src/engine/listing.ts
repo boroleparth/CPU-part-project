@@ -36,6 +36,8 @@ export interface ListingResult {
   refreshHz?: number;
   /** Product title words, for display. */
   title?: string;
+  /** The words the reader looked at (link words + pasted text, normalised), for "What we read". */
+  read: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -165,6 +167,7 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
 
 function findVram(t: string): number | undefined {
   const m =
+    t.match(/\b(?:dedicated graphic(?:s)? memory capacity|graphic(?:s)? memory|graphics card ram size|graphics ram|video memory|vram)\s*(\d{1,2})\s*gb\b/) ??
     t.match(/\b(\d{1,2})\s*gb\s*(?:gddr\d\w*|graphics|vram|dedicated|video)\b/) ??
     t.match(/\b(?:rtx|gtx|rx|arc)\s*[ab]?\d{3,4}\s*(?:ti|super|xt|gre)?\s*(?:laptop\s*(?:gpu)?\s*)?(\d{1,2})\s*gb\b(?!\s*(?:ram|memory|ddr|lpddr|ssd))/) ??
     t.match(/\b(\d{1,2})\s*gb\s*(?:nvidia|geforce|rtx|gtx|amd radeon|radeon)\b/);
@@ -206,6 +209,12 @@ function findTgp(t: string): number | undefined {
 }
 
 function findStorage(t: string, cpu?: Cpu): { match: PartMatch<Storage>; rest: string } {
+  // Spec-table rows: "SSD Capacity: 512 GB", "Hard Disk Size: 1 TB" (+ "Hard Disk Description: SSD").
+  const row = t.match(/\b(ssd capacity|ssd size|ssd|hard disk size|hard drive size|storage capacity|storage|total storage)\s*(\d+(?:\.\d)?)\s*(gb|tb)\b/);
+  if (row && !/\b(\d+(?:\.\d)?)\s*(gb|tb)\s*((?:(?:pcie|nvme|m\.?2|gen\s*\d|sata|pci e)\s*)*)(ssd|hdd|emmc)\b/.test(t)) {
+    const isHdd = /\b(hdd|hard disk description hdd|7200 rpm|5400 rpm)\b/.test(t) && !/\b(ssd|nvme)\b/.test(t);
+    t = t.replace(row[0], ` ${row[2]} ${row[3]} ${isHdd ? 'hdd' : 'ssd'} `);
+  }
   const m = t.match(/\b(\d+(?:\.\d)?)\s*(gb|tb)\s*((?:(?:pcie|nvme|m\.?2|gen\s*\d|sata|pci e)\s*)*)(ssd|hdd|emmc)\b/);
   if (!m) return { match: { status: 'missing' }, rest: t };
   const gb = m[2] === 'tb' ? Number(m[1]) * 1000 : Number(m[1]);
@@ -229,9 +238,9 @@ function findRam(t: string, cpu?: Cpu): PartMatch<RamKit> {
   const speedM = t.match(/\b(\d{4})\s*(?:mhz|mt\s*s|mts)\b/) ?? (typeM ? t.slice(t.indexOf(typeM[0])).match(/^(?:lp)?ddr\s*[45]x?\s*(\d{4})\b/) : null);
   if (total === undefined) {
     const m =
-      t.match(/\b(\d{1,3})\s*gb\s*(?:(?:lp)?ddr\s*[45]x?\s*(?:\d{4}\s*(?:mhz|mt\s*s)?\s*)?)?(?:ram|memory)\b/) ??
-      t.match(/\b(?:ram|memory)\s*(?:of\s*)?(\d{1,3})\s*gb\b/) ??
-      t.match(/\b(\d{1,3})\s*gb\s*(?:lp)?ddr\s*[45]/) ??
+      t.match(/\b(?:ram|memory|ram memory|installed ram|ram capacity)(?:\s+(?:installed|size|capacity|memory))*\s*(?:of\s*)?(4|8|12|16|24|32|48|64|96|128)\s*gb\b/) ??
+      t.match(/\b(4|8|12|16|24|32|48|64|96|128)\s*gb\s*(?:(?:lp)?ddr\s*[45]x?\s*(?:\d{4}\s*(?:mhz|mt\s*s)?\s*)?)?(?:ram|memory)\b/) ??
+      t.match(/\b(4|8|12|16|24|32|48|64|96|128)\s*gb\s*(?:lp)?ddr\s*[45]/) ??
       // Flipkart / Croma slugs: "16 gb 512 gb ssd" (storage already removed): a lone RAM-sized number.
       t.match(/\b(4|8|12|16|24|32|48|64|96|128)\s*gb\b/);
     if (m) total = Number(m[1]);
@@ -287,14 +296,18 @@ export function parseListing(input: string, forceDevice?: Device): ListingResult
   // Remove graphics memory and storage before reading RAM, so "6 GB graphics" or "512 GB SSD" isn't taken as RAM.
   const noVram = t
     .replace(/\b\d{1,2}\s*gb\s*(?:gddr\d\w*|graphics|vram|dedicated|video)\b/g, ' ')
+    .replace(/\b(?:dedicated graphic(?:s)? memory capacity|graphic(?:s)? memory|graphics card ram size|graphics ram|video memory|vram)\s*\d{1,2}\s*gb\b/g, ' ')
     .replace(/\b((?:rtx|gtx|rx|arc)\s*[ab]?\d{3,4}\s*(?:ti|super|xt|gre)?\s*(?:laptop\s*(?:gpu)?\s*)?)\d{1,2}\s*gb\b(?!\s*(?:ram|memory|ddr|lpddr|ssd))/g, '$1')
     .replace(/\b\d{1,2}\s*gb\s*(nvidia|geforce|rtx|gtx|amd radeon|radeon)\b/g, '$1');
-  const { match: storage, rest } = findStorage(noVram, refCpu);
+  const { match: storage, rest: afterStorage } = findStorage(noVram, refCpu);
+  // How much memory the laptop *could* take is not how much it has.
+  const rest = afterStorage.replace(/\b(expandable memory|expandable ram|maximum memory supported|max(?:imum)? memory|memory upgradable|upgradable)\s*(?:up\s*to|upto)?\s*\d{1,3}\s*gb\b/g, ' ');
   const ram = findRam(rest, refCpu);
   const screen = findScreen(t);
   return {
     input, url, store, needsText: (short || !!url) && cpu.status === 'missing' && gpu.status === 'missing',
     device, cpu, gpu, ram, storage, ...screen,
     title: url ? normalise(text).slice(0, 140) : undefined,
+    read: t.length > 1500 ? `${t.slice(0, 1500)}…` : t,
   };
 }

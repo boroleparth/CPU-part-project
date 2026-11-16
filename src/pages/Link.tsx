@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { bookmarkletHref } from '../bookmarklet';
 import { PowerPicker } from '../components/PowerPicker';
 import { SlotIcon } from '../components/Icons';
 import { REFRESH_RATES } from '../engine/games';
@@ -37,6 +38,8 @@ function statusOf(m: PartMatch<AnyPart> | undefined, current: AnyPart | undefine
 }
 
 export interface LinkPageProps {
+  /** Text handed over by the bookmark button: recognised straight away. */
+  initialText?: string;
   device: Device;
   build: Build;
   workloads: WorkloadId[];
@@ -54,8 +57,9 @@ export interface LinkPageProps {
 
 /** "Check a link": paste a store link or the product text, check what was recognised, analyse. */
 export function LinkPage(props: LinkPageProps) {
-  const { device, build, workloads, resolution, refreshHz, onRecognise, onOpen, onPick, onPower, onToggleWorkload, onResolution, onRefresh, onAnalyse } = props;
-  const [input, setInput] = useState('');
+  const { initialText, device, build, workloads, resolution, refreshHz, onRecognise, onOpen, onPick, onPower, onToggleWorkload, onResolution, onRefresh, onAnalyse } = props;
+  const [input, setInput] = useState(initialText ?? '');
+  const bookmark = useRef<HTMLAnchorElement>(null);
   const [result, setResult] = useState<ListingResult | null>(null);
   /** The user confirmed there is no separate graphics card (when the listing didn't say). */
   const [noGpu, setNoGpu] = useState(false);
@@ -67,6 +71,13 @@ export function LinkPage(props: LinkPageProps) {
     setNoGpu(false);
     onRecognise(r);
   };
+
+  useEffect(() => {
+    if (initialText) recognise(initialText);
+    // React blocks javascript: links in JSX, so the bookmark's address is set on the element directly.
+    bookmark.current?.setAttribute('href', bookmarkletHref(window.location.origin + window.location.pathname));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const unresolved = result?.cpu.status === 'choose' && !build.cpu;
   // Graphics the listing didn't mention must be chosen (or confirmed absent), not silently treated as none.
@@ -102,6 +113,19 @@ export function LinkPage(props: LinkPageProps) {
         </div>
         <p className="fineprint">Nothing is downloaded from the store: the specs are read from the link itself or from the text you paste.</p>
       </form>
+
+      <details className="bookmark-box">
+        <summary><b>Link missing details?</b> Read the whole product page with one click</summary>
+        <div className="bookmark-body">
+          <p>Store links often leave out the exact processor or graphics; the product page's spec section has them. Add this button to your bookmarks once:</p>
+          <p className="bookmark-row">
+            <a ref={bookmark} className="btn btn--ghost bookmark-btn" href="#" onClick={(e) => e.preventDefault()} draggable>Check in PC Harmony</a>
+            <span>Drag it to your bookmarks bar (Ctrl+Shift+B / ⌘+Shift+B shows the bar).</span>
+          </p>
+          <p>Then open any laptop or PC on Amazon, Flipkart, Croma or a brand site and click the bookmark: it reads the title and spec table from the page you're on, in your own browser, and opens this page with everything filled in.</p>
+          <p className="fineprint">On a phone: open the product page, select and copy the "Specifications" section, and paste it in the box above.</p>
+        </div>
+      </details>
 
       {result && (
         <section className="link-result" aria-label="What we found">
@@ -157,6 +181,11 @@ export function LinkPage(props: LinkPageProps) {
                   );
                 })}
               </ul>
+
+              <details className="read-box">
+                <summary>What we read</summary>
+                <p>{result.read}</p>
+              </details>
 
               <div className="link-section">
                 <h2 className="section-label">Screen</h2>

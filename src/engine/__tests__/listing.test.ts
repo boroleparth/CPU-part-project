@@ -63,6 +63,55 @@ describe('reading store links', () => {
   });
 });
 
+describe('reading copied product pages (title + spec table)', () => {
+  it('finds the exact processor in a Flipkart spec table when the title only says "i7 13th Gen"', () => {
+    const r = parseListing(`HP Victus Intel Core i7 13th Gen - (16 GB/512 GB SSD/Windows 11 Home/6 GB Graphics/NVIDIA GeForce RTX 4050) 15-fa1351TX Gaming Laptop
+Processor Brand: Intel
+Processor Name: Core i7
+Processor Generation: 13th Gen
+Processor Variant: 13620H
+SSD Capacity: 512 GB
+RAM: 16 GB
+RAM Type: DDR4
+RAM Frequency: 3200 MHz
+Expandable Memory: Upto 32 GB
+Graphic Processor: NVIDIA GeForce RTX 4050
+Dedicated Graphic Memory Capacity: 6 GB
+Screen Resolution: 1920 x 1080 Pixel
+Refresh Rate: 144 Hz`);
+    expect(r.cpu.part?.id).toBe('i7-13620h');
+    expect(r.gpu.part?.family).toBe('RTX 4050 Laptop');
+    expect(r.ram.part).toMatchObject({ totalGb: 16, type: 'DDR4', speed: 3200 });
+    expect(r.storage.part?.capacityGb).toBe(512);
+    expect(r.resolution).toBe('1080p');
+    expect(r.refreshHz).toBe(144);
+  });
+
+  it('reads an Amazon technical-details table and feature bullets', () => {
+    const r = parseListing(`Lenovo LOQ 2024, Intel Core i7 13th Gen, NVIDIA RTX 4060-8GB, 16GB RAM, 1TB SSD, FHD 144Hz, 15.6"/39.6cm, Windows 11, Gaming Laptop
+Hard Disk Size: 1 TB
+CPU Model: Core i7
+RAM Memory Installed Size: 16 GB
+Maximum Memory Supported: 32 GB
+Memory Technology: DDR5
+Hard Disk Description: SSD
+Graphics Coprocessor: NVIDIA GeForce RTX 4060
+Graphics Card Ram Size: 8 GB
+• Processor: 13th Gen Intel Core i7-13650HX (14C, 6P+8E) up to 4.9GHz
+• Memory: 16GB (1x16GB) DDR5 4800MHz`);
+    expect(r.cpu.part?.id).toBe('i7-13650hx');
+    expect(r.gpu.part?.family).toBe('RTX 4060 Laptop');
+    expect(r.ram.part).toMatchObject({ totalGb: 16, sticks: 1, type: 'DDR5' });
+    expect(r.storage.part?.capacityGb).toBe(1000);
+  });
+
+  it('reads storage given only as a spec row', () => {
+    const r = parseListing('Intel Core i5-13420H, RTX 4050, RAM: 8 GB, Hard Disk Size: 512 GB, Hard Disk Description: SSD');
+    expect(r.storage.part?.capacityGb).toBe(512);
+    expect(r.ram.part?.totalGb).toBe(8);
+  });
+});
+
 describe('reading pasted product text', () => {
   it('reads an Amazon title, taking "4GB" as graphics memory, not RAM', () => {
     const r = parseListing('ASUS TUF Gaming F15, 15.6"(39.62 cm) FHD 144Hz, Intel Core i7-11800H 11th Gen, 4GB NVIDIA GeForce RTX 3050 Ti, Gaming Laptop (16GB RAM/512GB SSD/Windows 11/Graphite Black/2.3 Kg) FX506HE');
