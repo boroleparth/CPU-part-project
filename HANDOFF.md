@@ -41,7 +41,7 @@ for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers,
 **Laptops:** 53 Intel laptop CPUs (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U,
 200V, 200H/HX) and 26 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop), each in 2–5 power versions
 (`src/data/laptops.ts`); plus SO-DIMM / LPDDR5X memory and 256/512 GB drives.
-**276 tests**, all passing.
+**273 tests**, all passing.
 
 ## Key architectural decisions
 
