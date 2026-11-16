@@ -161,9 +161,16 @@ describe('reading pasted product text', () => {
   });
 
   it('says clearly when a processor is not covered yet', () => {
-    const r = parseListing('HP 15s, AMD Ryzen 5 7520U, 8GB LPDDR5, 512GB SSD');
+    const r = parseListing('Dell Inspiron 14, Intel Core i7-1260P, 16GB, 512GB SSD');
     expect(r.cpu.status).toBe('unsupported');
     expect(r.cpu.note).toMatch(/not in our database/i);
+  });
+
+  it('reads a budget AMD laptop with soldered memory', () => {
+    const r = parseListing('HP 15s, AMD Ryzen 5 7520U, 8GB LPDDR5, 512GB SSD');
+    expect(r.cpu.part?.id).toBe('r5-7520u');
+    expect(r.device).toBe('laptop');
+    expect(r.ram.part).toMatchObject({ totalGb: 8, laptopOnly: true });
   });
 
   it('rejects a desktop processor when the user says it is a laptop', () => {
@@ -221,5 +228,49 @@ describe('real store links', () => {
     expect(r.ram.part).toMatchObject({ totalGb: 16, type: 'DDR4' });
     expect(r.storage.part?.capacityGb).toBe(512);
     expect(r.refreshHz).toBe(144);
+  });
+});
+
+/** Real AMD laptop links (Nov 2026). */
+describe('real AMD laptop links', () => {
+  it('Flipkart "Ryzen 7 Octa Core 7735HS" with the graphics power in the link', () => {
+    const r = parseListing('https://www.flipkart.com/asus-tuf-gaming-a15-90whr-battery-amd-ryzen-7-octa-core-7735hs-16-gb-512-gb-ssd-windows-11-home-6-graphics-nvidia-geforce-rtx-4050-144-hz-140-tgp-fa577nu-lp082w-laptop/p/itm645a18a9de60f');
+    expect(r.cpu.part?.id).toBe('r7-7735hs');
+    expect(r.gpu.part?.id).toBe('rtx4050m-140');
+    expect(r.gpu.assumed).toBeFalsy();
+    expect(r.ram.part?.totalGb).toBe(16);
+    expect(r.storage.part?.capacityGb).toBe(512);
+    expect(r.refreshHz).toBe(144);
+  });
+
+  it('Flipkart "140-w" written after the graphics chip', () => {
+    const r = parseListing('https://www.flipkart.com/asus-tuf-gaming-a15-2023-90whr-battery-ryzen-7-octa-core-7735hs-16-gb-512-gb-ssd-windows-11-home-6-graphics-nvidia-geforce-rtx-4050-144-hz-140-w-fa577nu-lp082w-laptop/p/itm645a18a9de60f');
+    expect(r.gpu.part?.id).toBe('rtx4050m-140');
+  });
+
+  it('Flipkart Ryzen 7 7435HS with an RTX 3050 4GB', () => {
+    const r = parseListing('https://www.flipkart.com/asus-tuf-gaming-a15-amd-ryzen-7-octa-core-7435hs-16-gb-512-gb-ssd-windows-11-home-4-graphics-nvidia-geforce-rtx-3050-fa566ncr-hn054ws-laptop/p/itm365438ed8ee1c');
+    expect(r.cpu.part?.id).toBe('r7-7435hs');
+    expect(r.gpu.part?.family).toBe('RTX 3050 Laptop');
+  });
+
+  it('Amazon links with "Ryzen Hexa 7535HS" or only "7535HS"', () => {
+    expect(parseListing('https://www.amazon.in/acer-Nitro-Ryzen-Hexa-7535HS/dp/B0DNRSYS1R').cpu.part?.id).toBe('r5-7535hs');
+    expect(parseListing('https://www.amazon.in/MSI-7535HS-Windows-GeForce-B7UC-102IN/dp/B097PN27HL').cpu.part?.id).toBe('r5-7535hs');
+  });
+
+  it('Amazon title with an RTX 3050 6GB (a different chip from the 4 GB one) and a 60 W RTX 3050', () => {
+    const six = parseListing('Lenovo IdeaPad Gaming 3 AMD Ryzen 5 7535HS 15.6" (39.62cm) FHD IPS 120Hz Gaming Laptop (16GB/512GB SSD/Win11/Office/NVIDIA RTX 3050 6GB/Backlit KB/Alexa/3 Month Game Pass/Onyx Grey/2.32Kg), 82SB00M6IN');
+    expect(six.cpu.part?.id).toBe('r5-7535hs');
+    expect(six.gpu.part?.family).toBe('RTX 3050 6GB Laptop');
+    expect(six.refreshHz).toBe(120);
+    const four = parseListing('ASUS TUF Gaming A15, AMD Ryzen 5 7535HS Gaming Laptop(NVIDIA RTX 3050-4GB/60W TGP/16GB RAM/512GB SSD/FHD/15.6"/144Hz/RGB KB/48WHr/Windows 11/Office 2021/Graphite Black/2.30 Kg) FA566NC-HN083WS');
+    expect(four.gpu.part?.id).toBe('rtx3050m-60');
+    expect(four.ram.part?.totalGb).toBe(16);
+  });
+
+  it('Ryzen AI and Dragon Range names', () => {
+    expect(parseListing('ASUS Zenbook S 16, AMD Ryzen AI 9 HX 370, 32GB LPDDR5X').cpu.part?.id).toBe('rai9-hx370');
+    expect(parseListing('Lenovo Legion Pro 5, Ryzen 9 7945HX, RTX 4070 8GB').cpu.part?.id).toBe('r9-7945hx');
   });
 });

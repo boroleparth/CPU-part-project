@@ -75,20 +75,32 @@ export function partSummary(slot: PartSlot, part: AnyPart): string {
 
 /** Generation / series a CPU or GPU belongs to, for grouping in lists (newest first). */
 const cpuSeries: [string, string][] = [
-  // Laptops (newest first)
+  // Laptops, Intel and AMD interleaved by release (newest first)
+  ['Fire Range', 'Ryzen 9055 HX'],
   ['Arrow Lake-HX', 'Core Ultra 200HX'],
   ['Arrow Lake-H', 'Core Ultra 200H'],
+  ['Strix Point', 'Ryzen AI 300'],
+  ['Krackan Point', 'Ryzen AI 300'],
   ['Lunar Lake', 'Core Ultra 200V'],
-  ['Meteor Lake', 'Core Ultra 100'],
+  ['Hawk Point', 'Ryzen 8040'],
   ['Raptor Lake Refresh-HX', 'Core 14th gen HX'],
+  ['Meteor Lake', 'Core Ultra 100'],
+  ['Dragon Range', 'Ryzen 7045 HX'],
+  ['Phoenix', 'Ryzen 7040'],
   ['Raptor Lake-HX', 'Core 13th gen HX'],
   ['Raptor Lake-H', 'Core 13th gen H / Core 5 · 7'],
   ['Raptor Lake-U', 'Core 13th gen U'],
+  ['Rembrandt', 'Ryzen 6000 / 7035'],
+  ['Mendocino', 'Ryzen 7020 U'],
   ['Alder Lake-HX', 'Core 12th gen HX'],
   ['Alder Lake-H', 'Core 12th gen H'],
   ['Alder Lake-U', 'Core 12th gen U'],
+  ['Barcelo', 'Ryzen 5000 / 7030 U'],
+  ['Cezanne', 'Ryzen 5000 H'],
   ['Tiger Lake-H', 'Core 11th gen H'],
   ['Tiger Lake-U', 'Core 11th gen U'],
+  ['Lucienne', 'Ryzen 5000 U (Zen 2)'],
+  ['Renoir', 'Ryzen 4000'],
   ['Comet Lake-H', 'Core 10th gen H'],
   // Desktops
   ['Zen 5', 'Ryzen 9000'],

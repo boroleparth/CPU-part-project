@@ -43,10 +43,11 @@ parts work well together, so no part bottlenecks the others.
 **Data:** 192 desktop CPUs (Ryzen 1000–9000, Intel 8th–14th gen, Core Ultra 200S, including X3D, F, KF and
 APU variants), 98 GPUs (GT 1030 / GTX 10 through RTX 50, RX 400 through RX 9000, Arc A/B), motherboard classes
 for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers, PSUs and cases.
-**Laptops:** 53 Intel laptop CPUs (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U,
-200V, 200H/HX) and 26 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop), each in 2–5 power versions
-(`src/data/laptops.ts`); plus SO-DIMM / LPDDR5X memory and 256/512 GB drives.
-**288 tests**, all passing.
+**Laptops:** 93 laptop CPUs: 54 Intel (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U, 200V,
+200H/HX) and 39 AMD Ryzen (4000 to Ryzen AI 300 and 9955HX, including 7035HS / 7435HS / 7520U budget chips),
+and 28 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop, plus RTX 2050 and RTX 3050 6GB), each in 2–5 power
+versions (`src/data/laptops.ts`); plus SO-DIMM / LPDDR5(X) memory and 256/512 GB drives.
+**295 tests**, all passing.
 
 ## Key architectural decisions
 
@@ -150,11 +151,12 @@ npm test
    automated fetching; save the pages from a browser, then add parsers in `scripts/benchmarks-lib.ts`).
 3. **Prices (INR):** enables "B costs ₹X more for Y% more FPS", value-based suggestions, and a budget mode
    for the auto-builder that already exists in `builder.ts`.
-4. **Laptops (Intel + NVIDIA done, GPUs calibrated):** laptop GPU speeds come from Notebookcheck (median of
+4. **Laptops (Intel + AMD CPUs, NVIDIA GPUs; GPUs calibrated):** laptop GPU speeds come from Notebookcheck (median of
    10–67 tested laptops per chip, ~45,000 measured rows; `npm run bench:laptops`). The power formula
    `(W / W_ref)^0.4` predicts their fastest 10% of laptops within a few percent. next are AMD Ryzen laptop CPUs (and Radeon / Arc laptop graphics), and
    sourcing laptop CPUs: they are already in the import script, so re-running `npm run bench:import` on the
    saved PassMark pages replaces the estimates. Laptop GPUs stay estimated (scores vary by power).
+   Not covered yet: Radeon laptop graphics (RX 6500M / 6800S / 7600S, rare in India), Intel P-series.
    Possible later: laptop model presets ("ASUS TUF F15 2021") that fill all four specs at once.
 5. **Game profiles (refitted to Notebookcheck):** CS2, Call of Duty, Cyberpunk, RDR2 and Baldur's Gate 3 are
    fitted to measured FPS at 1080p (15–163 laptops and desktops each, `scripts/fit-game-profiles.ts`), and the

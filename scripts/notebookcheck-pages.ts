@@ -23,6 +23,8 @@ export const nbcPages: NbcPage[] = [
   { id: 'rtx2070sm', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-2070-Super-Mobile-GPU-Benchmarks-and-Specs.452604.0.html` },
   { id: 'rtx2080m', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-2080-Laptop-Graphics-Card.384931.0.html` },
   { id: 'rtx2080sm', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-2080-Super-Mobile-GPU-Benchmarks-and-Specs.452534.0.html` },
+  { id: 'rtx2050m', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-2050-Mobile-GPU-Benchmarks-and-Specs.586930.0.html` },
+  { id: 'rtx3050m6', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-3050-6GB-Laptop-GPU-GPU-Benchmarks-and-Specs.692276.0.html` },
   { id: 'rtx3050m', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-3050-Laptop-GPU-Benchmarks-and-Specs.513790.0.html` },
   { id: 'rtx3050tim', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-3050-Ti-Laptop-GPU-Benchmarks-and-Specs.527430.0.html` },
   { id: 'rtx3060m', kind: 'laptop', url: `${nbc}NVIDIA-GeForce-RTX-3060-Laptop-GPU-Graphics-Card.497453.0.html` },

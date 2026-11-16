@@ -26,7 +26,8 @@ describe('laptop data', () => {
   });
 
   it('marks every laptop part, and every GPU family has exactly one typical power version', () => {
-    expect(laptopCpus.every((c) => c.laptop && c.socket === 'BGA' && c.brand === 'Intel')).toBe(true);
+    expect(laptopCpus.every((c) => c.laptop && c.socket === 'BGA')).toBe(true);
+    expect(laptopCpus.filter((c) => c.brand === 'AMD').length).toBeGreaterThanOrEqual(39);
     expect(laptopGpus.every((g) => g.laptop && g.brand === 'NVIDIA')).toBe(true);
     const families = new Set(laptopGpus.map((g) => g.family));
     for (const f of families) expect(laptopGpus.filter((g) => g.family === f && g.typical).length, f).toBe(1);

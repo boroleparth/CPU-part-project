@@ -67,6 +67,22 @@
       "rows": 754,
       "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2080-Super-Mobile-GPU-Benchmarks-and-Specs.452534.0.html"
     },
+    "rtx2050m": {
+      "typical": 7.2,
+      "top": 8.1,
+      "low": 6.2,
+      "laptops": 11,
+      "rows": 1086,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-2050-Mobile-GPU-Benchmarks-and-Specs.586930.0.html"
+    },
+    "rtx3050m6": {
+      "typical": 11.9,
+      "top": 13.1,
+      "low": 10.1,
+      "laptops": 4,
+      "rows": 312,
+      "url": "https://www.notebookcheck.net/NVIDIA-GeForce-RTX-3050-6GB-Laptop-GPU-GPU-Benchmarks-and-Specs.692276.0.html"
+    },
     "rtx3050m": {
       "typical": 10.3,
       "top": 11.7,

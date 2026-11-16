@@ -1,4 +1,4 @@
-// Laptop processors and graphics (Intel and NVIDIA for now).
+// Laptop processors (Intel and AMD) and graphics (NVIDIA for now).
 //
 // All values are estimates ("Estimated" in the UI) on the same scales as the desktop parts:
 // multiIndex = PassMark CPU Mark / 70,111 (Ryzen 9 9950X3D) x 100,
@@ -19,11 +19,16 @@ const round = (v: number) => (v >= 10 ? Math.round(v) : Math.round(v * 10) / 10)
  * Class: laptop power limits, smaller caches and slower memory; HX chips are desktop
  * silicon with more power, U / V chips run at 15-30 W.
  */
-const archGaming: Record<string, number> = { comet: 0.91, tiger: 0.86, alder: 0.89, raptor: 0.94, meteor: 0.8, lunar: 0.82, arrow: 0.8 };
+const archGaming: Record<string, number> = {
+  comet: 0.91, tiger: 0.86, alder: 0.89, raptor: 0.94, meteor: 0.8, lunar: 0.82, arrow: 0.8,
+  // AMD, from the desktop Ryzen chips of each design (gaming / single-core).
+  zen2: 0.86, zen3: 0.88, zen4: 0.9, zen5: 0.89,
+};
 const classGaming = { U: 0.78, V: 0.85, H: 0.88, HX: 0.94 } as const;
 type LaptopClass = keyof typeof classGaming;
 
 interface Gen {
+  brand?: 'AMD';
   generation: string;
   arch: keyof typeof archGaming;
   memTypes: MemType[];
@@ -46,6 +51,19 @@ const gens = {
   lunar: { generation: 'Lunar Lake', arch: 'lunar', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 8533 }, pcieGen: 4 },
   arrowH: { generation: 'Arrow Lake-H', arch: 'arrow', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 8400 }, pcieGen: 4 },
   arrowHX: { generation: 'Arrow Lake-HX', arch: 'arrow', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 6400 }, pcieGen: 5 },
+  // AMD Ryzen mobile
+  renoir: { brand: 'AMD', generation: 'Renoir', arch: 'zen2', memTypes: ['DDR4'], maxMemSpeed: { DDR4: 3200 }, pcieGen: 3 },
+  lucienne: { brand: 'AMD', generation: 'Lucienne', arch: 'zen2', memTypes: ['DDR4'], maxMemSpeed: { DDR4: 3200 }, pcieGen: 3 },
+  mendocino: { brand: 'AMD', generation: 'Mendocino', arch: 'zen2', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5500 }, pcieGen: 3 },
+  cezanne: { brand: 'AMD', generation: 'Cezanne', arch: 'zen3', memTypes: ['DDR4'], maxMemSpeed: { DDR4: 3200 }, pcieGen: 3 },
+  barcelo: { brand: 'AMD', generation: 'Barcelo', arch: 'zen3', memTypes: ['DDR4'], maxMemSpeed: { DDR4: 3200 }, pcieGen: 3 },
+  rembrandt: { brand: 'AMD', generation: 'Rembrandt', arch: 'zen3', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 4800 }, pcieGen: 4 },
+  phoenix: { brand: 'AMD', generation: 'Phoenix', arch: 'zen4', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5600 }, pcieGen: 4 },
+  hawk: { brand: 'AMD', generation: 'Hawk Point', arch: 'zen4', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5600 }, pcieGen: 4 },
+  dragon: { brand: 'AMD', generation: 'Dragon Range', arch: 'zen4', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5200 }, pcieGen: 5 },
+  strix: { brand: 'AMD', generation: 'Strix Point', arch: 'zen5', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5600 }, pcieGen: 4 },
+  krackan: { brand: 'AMD', generation: 'Krackan Point', arch: 'zen5', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5600 }, pcieGen: 4 },
+  fire: { brand: 'AMD', generation: 'Fire Range', arch: 'zen5', memTypes: ['DDR5'], maxMemSpeed: { DDR5: 5600 }, pcieGen: 5 },
 } satisfies Record<string, Gen>;
 
 /** Typical sustained CPU power in a laptop of each class, watts. */
@@ -117,13 +135,59 @@ const rows: Row[] = [
   ['cu9-285h', 'Core Ultra 9 285H', 'arrowH', 'H', 16, 16, 31000, 4250, 6.5],
   ['cu7-255hx', 'Core Ultra 7 255HX', 'arrowHX', 'HX', 20, 20, 45000, 4350, 2.5],
   ['cu9-275hx', 'Core Ultra 9 275HX', 'arrowHX', 'HX', 24, 24, 55000, 4500, 2.5],
+  // AMD Ryzen 4000 / 5000 U (Renoir, Lucienne: Zen 2)
+  ['r5-4600h', 'Ryzen 5 4600H', 'renoir', 'H', 6, 12, 14400, 2550, 2.3],
+  ['r7-4800h', 'Ryzen 7 4800H', 'renoir', 'H', 8, 16, 18800, 2650, 2.6],
+  ['r5-4500u', 'Ryzen 5 4500U', 'renoir', 'U', 6, 6, 10900, 2350, 2.3],
+  ['r7-4700u', 'Ryzen 7 4700U', 'renoir', 'U', 8, 8, 13300, 2450, 2.6],
+  ['r5-5500u', 'Ryzen 5 5500U', 'lucienne', 'U', 6, 12, 13000, 2550, 2.4],
+  ['r7-5700u', 'Ryzen 7 5700U', 'lucienne', 'U', 8, 16, 16200, 2600, 2.8],
+  ['r5-7520u', 'Ryzen 5 7520U', 'mendocino', 'U', 4, 8, 9500, 2450, 1.5],
+  // Ryzen 5000 H / 5000-7000 U (Cezanne, Barcelo: Zen 3)
+  ['r5-5600h', 'Ryzen 5 5600H', 'cezanne', 'H', 6, 12, 17200, 3050, 2.6],
+  ['r7-5800h', 'Ryzen 7 5800H', 'cezanne', 'H', 8, 16, 21000, 3150, 2.9],
+  ['r9-5900hx', 'Ryzen 9 5900HX', 'cezanne', 'H', 8, 16, 22500, 3300, 3],
+  ['r5-5625u', 'Ryzen 5 5625U', 'barcelo', 'U', 6, 12, 15100, 3000, 2.5],
+  ['r7-5825u', 'Ryzen 7 5825U', 'barcelo', 'U', 8, 16, 18500, 3050, 3],
+  ['r3-7330u', 'Ryzen 3 7330U', 'barcelo', 'U', 4, 8, 9700, 2900, 2.3],
+  ['r5-7430u', 'Ryzen 5 7430U', 'barcelo', 'U', 6, 12, 14500, 2950, 2.5],
+  ['r5-7530u', 'Ryzen 5 7530U', 'barcelo', 'U', 6, 12, 15500, 3050, 2.5],
+  ['r7-7730u', 'Ryzen 7 7730U', 'barcelo', 'U', 8, 16, 18800, 3100, 3],
+  // Ryzen 6000 / 7035 (Rembrandt: Zen 3+, DDR5)
+  ['r5-6600h', 'Ryzen 5 6600H', 'rembrandt', 'H', 6, 12, 20000, 3350, 4.5],
+  ['r7-6800h', 'Ryzen 7 6800H', 'rembrandt', 'H', 8, 16, 23500, 3450, 7],
+  ['r9-6900hx', 'Ryzen 9 6900HX', 'rembrandt', 'H', 8, 16, 25000, 3550, 7],
+  ['r5-7235hs', 'Ryzen 5 7235HS', 'rembrandt', 'H', 4, 8, 13500, 3250, 1.5],
+  ['r5-7535hs', 'Ryzen 5 7535HS', 'rembrandt', 'H', 6, 12, 20500, 3350, 4.5],
+  ['r7-7735hs', 'Ryzen 7 7735HS', 'rembrandt', 'H', 8, 16, 24000, 3450, 7],
+  // 8-core Zen 3+ without the Radeon 680M (only a basic display engine).
+  ['r7-7435hs', 'Ryzen 7 7435HS', 'rembrandt', 'H', 8, 16, 23000, 3400, 0.5],
+  // Ryzen 7040 / 8040 (Phoenix, Hawk Point: Zen 4)
+  ['r5-7640hs', 'Ryzen 5 7640HS', 'phoenix', 'H', 6, 12, 24500, 3750, 7],
+  ['r7-7840hs', 'Ryzen 7 7840HS', 'phoenix', 'H', 8, 16, 29000, 3850, 9],
+  ['r9-7940hs', 'Ryzen 9 7940HS', 'phoenix', 'H', 8, 16, 30500, 3950, 9],
+  ['r7-7840u', 'Ryzen 7 7840U', 'phoenix', 'U', 8, 16, 24500, 3750, 8],
+  ['r5-8645hs', 'Ryzen 5 8645HS', 'hawk', 'H', 6, 12, 24500, 3750, 7],
+  ['r7-8840hs', 'Ryzen 7 8840HS', 'hawk', 'H', 8, 16, 27000, 3850, 9],
+  ['r7-8845hs', 'Ryzen 7 8845HS', 'hawk', 'H', 8, 16, 29500, 3900, 9],
+  ['r7-8840u', 'Ryzen 7 8840U', 'hawk', 'U', 8, 16, 25000, 3800, 8],
+  // Ryzen 7045 HX (Dragon Range: desktop Zen 4 silicon)
+  ['r7-7745hx', 'Ryzen 7 7745HX', 'dragon', 'HX', 8, 16, 33000, 4050, 1.5],
+  ['r9-7845hx', 'Ryzen 9 7845HX', 'dragon', 'HX', 12, 24, 46000, 4050, 1.5],
+  ['r9-7945hx', 'Ryzen 9 7945HX', 'dragon', 'HX', 16, 32, 55000, 4100, 1.5],
+  // Ryzen AI 300 (Strix / Krackan Point: Zen 5) and 9055 HX (Fire Range)
+  ['rai5-340', 'Ryzen AI 5 340', 'krackan', 'H', 6, 12, 22000, 4050, 6],
+  ['rai7-350', 'Ryzen AI 7 350', 'krackan', 'H', 8, 16, 28000, 4200, 8],
+  ['rai9-365', 'Ryzen AI 9 365', 'strix', 'H', 10, 20, 32000, 4250, 10],
+  ['rai9-hx370', 'Ryzen AI 9 HX 370', 'strix', 'H', 12, 24, 35000, 4300, 11],
+  ['r9-9955hx', 'Ryzen 9 9955HX', 'fire', 'HX', 16, 32, 62000, 4600, 1.5],
 ];
 
 export const laptopCpus: Cpu[] = rows.map(([id, name, genKey, cls, cores, threads, multiRaw, singleRaw, igpu]) => {
   const g = gens[genKey] as Gen;
   const singleIndex = round((singleRaw / SINGLE_TOP) * 100);
   return {
-    id, name, brand: 'Intel', socket: 'BGA', laptop: true,
+    id, name, brand: g.brand ?? 'Intel', socket: 'BGA', laptop: true,
     cores, threads,
     gamingIndex: Math.round(singleIndex * archGaming[g.arch] * classGaming[cls]),
     multiIndex: round((multiRaw / MULTI_TOP) * 100),
@@ -161,7 +225,9 @@ const gpuRows: GpuRow[] = [
   ['rtx2070sm', 'RTX 2070 Super', 19, 0.75, 8, 448, 3, 16, [80, 115], 115],
   ['rtx2080m', 'RTX 2080', 20.8, 0.75, 8, 448, 3, 16, [80, 150], 150],
   ['rtx2080sm', 'RTX 2080 Super', 22, 0.75, 8, 448, 3, 16, [80, 150], 150],
+  ['rtx2050m', 'RTX 2050', 8, 0.89, 4, 112, 4, 8, [30, 45], 45],
   ['rtx3050m', 'RTX 3050', 12, 0.89, 4, 192, 4, 8, [35, 60, 80], 60],
+  ['rtx3050m6', 'RTX 3050 6GB', 13, 0.89, 6, 168, 4, 8, [35, 60, 75, 95], 75],
   ['rtx3050tim', 'RTX 3050 Ti', 12.8, 0.89, 4, 192, 4, 8, [35, 60, 80], 60],
   ['rtx3060m', 'RTX 3060', 19, 0.89, 6, 336, 4, 16, [60, 80, 95, 115, 130], 95],
   ['rtx3070m', 'RTX 3070', 26.6, 0.89, 8, 448, 4, 16, [80, 115, 150], 115],

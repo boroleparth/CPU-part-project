@@ -148,6 +148,7 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
     [/\b(?:core\s*)?ultra\s*([579])\s*(\d{3})\s*(hx|h|u|v|k|kf|f)?\b/, (m) => `coreultra${m[1]}${m[2]}${m[3] ?? ''}`],
     [/\b(?:core\s*)?i([3579])\s*(\d{4,5})\s*(g\d|hx|hk|hs|kf|ks|h|u|p|k|f|t)?\b/, (m) => `corei${m[1]}${m[2]}${m[3] ?? ''}`],
     [/\bcore\s*([357])\s*(\d{3})\s*(hx|h|u)\b/, (m) => `core${m[1]}${m[2]}${m[3]}`],
+    [/\bryzen\s*ai\s*([579])\s*(hx\s*)?(\d{3})\b/, (m) => `ryzenai${m[1]}${m[2] ? 'hx' : ''}${m[3]}`],
     [/\bryzen\s*([3579])\s*(?:pro\s*)?(\d{4})\s*(x3d|xt|x|g|ge|f|hx|hs|h|u)?\b/, (m) => `ryzen${m[1]}${m[2]}${m[3] ?? ''}`],
   ];
   for (const [re, toKey] of patterns) {
@@ -157,7 +158,20 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
     const cpu = cpuByKey.get(k);
     if (cpu) return { status: 'found', part: cpu, text: m[0] };
     const laptopish = /(hx|hk|hs|h|u|p|v|g\d)$/.test(k);
-    return { status: 'unsupported', text: m[0], note: laptopish ? 'This laptop processor is not in our database yet (AMD Ryzen and some Intel P / G-series chips are coming).' : 'This processor is not in our database yet.' };
+    return { status: 'unsupported', text: m[0], note: laptopish ? 'This laptop processor is not in our database yet (Intel P-series and some older chips are not covered).' : 'This processor is not in our database yet.' };
+  }
+  // "ryzen 7 octa core 7735hs" (Flipkart): tier and model number apart.
+  const ryzenTier = t.match(/\bryzen\s*([3579])\b/);
+  const ryzenModel = t.match(/\b([4-9]\d{3})\s*(hx|hs|h|u)\b/);
+  if (ryzenTier && ryzenModel) {
+    const cpu = cpuByKey.get(`ryzen${ryzenTier[1]}${ryzenModel[1]}${ryzenModel[2]}`);
+    if (cpu) return { status: 'found', part: cpu, text: `ryzen ${ryzenTier[1]} ${ryzenModel[0]}` };
+  }
+  // "Ryzen Hexa 7535HS", or just "7535HS": a Ryzen laptop model number is unique without the tier.
+  // (Intel's four-digit laptop models start with 1, so [4-9]xxx with HS / HX / H / U is AMD.)
+  if (ryzenModel && (/\bryzen\b|\bamd\b/.test(t) || /^(hs|hx)$/.test(ryzenModel[2]))) {
+    const cpu = ['3', '5', '7', '9'].map((tier) => cpuByKey.get(`ryzen${tier}${ryzenModel[1]}${ryzenModel[2]}`)).find(Boolean);
+    if (cpu) return { status: 'found', part: cpu, text: ryzenModel[0] };
   }
   // "core i7 11th gen 11800h": tier and model number apart.
   const tierM = t.match(/\bi([3579])\b/);
@@ -185,7 +199,7 @@ function findCpu(t: string, device?: Device): PartMatch<Cpu> {
     if (candidates.length) return { status: 'choose', candidates, text: vague[0], note: `"${vague[0]}" could be several processors. Check the spec sheet for the exact model.` };
     return { status: 'unsupported', text: vague[0] };
   }
-  if (/\b(ryzen|athlon)\b/.test(t)) return { status: 'unsupported', text: 'AMD Ryzen', note: 'AMD Ryzen laptops are not in our database yet.' };
+  if (/\b(ryzen|athlon)\b/.test(t)) return { status: 'unsupported', text: t.match(/\b(?:ryzen|athlon)[a-z0-9 ]{0,20}/)![0].trim(), note: 'Which Ryzen? The exact model (e.g. Ryzen 7 7735HS) is not in the listing, or this one is not in our database yet.' };
   if (/\b(apple|m[1-4] (pro|max|chip)|snapdragon|celeron|pentium|mediatek)\b/.test(t)) return { status: 'unsupported', text: t.match(/\b(apple|m[1-4] (pro|max|chip)|snapdragon|celeron|pentium|mediatek)\b/)![0], note: 'This kind of processor is not covered.' };
   return { status: 'missing' };
 }
@@ -210,9 +224,11 @@ function findGpu(t: string, device: Device | undefined, vram: number | undefined
   const chip = `${brand} ${m[2].toUpperCase()}${m[3] ? ` ${m[3] === 'ti' ? 'Ti' : m[3] === 'super' ? 'Super' : m[3].toUpperCase()}` : ''}`;
   const laptop = device !== 'desktop';
   if (laptop) {
-    const typical = laptopGpus.find((g) => g.typical && g.family === `${chip} Laptop`);
+    // The RTX 3050 6GB Laptop is a different, faster chip than the 4 GB one.
+    const family = chip === 'RTX 3050' && (vram === 6 || /\b3050\s*6\s*gb\b/.test(t)) ? 'RTX 3050 6GB Laptop' : `${chip} Laptop`;
+    const typical = laptopGpus.find((g) => g.typical && g.family === family);
     if (typical) {
-      const tgp = findTgp(t);
+      const tgp = findTgp(t, m.index ?? -1);
       if (tgp === undefined) return { status: 'found', part: typical, text: m[0], assumed: true, note: `Graphics power not listed: assumed ${typical.tgp} W, the most common. Check "Max graphics power" (TGP).` };
       const versions = powerVersions(typical);
       const nearest = versions.reduce((a, b) => (Math.abs(b.tgp! - tgp) < Math.abs(a.tgp! - tgp) ? b : a));
@@ -229,9 +245,14 @@ function findGpu(t: string, device: Device | undefined, vram: number | undefined
   return { status: 'choose', candidates: variants, text: m[0], note: 'This card comes with different memory sizes.' };
 }
 
-function findTgp(t: string): number | undefined {
-  const m = t.match(/\b(\d{2,3})\s*w(?:att)?s?\s*(?:max\.?\s*)?(?:tgp|tdp graphics|graphics power|gpu power)\b/) ?? t.match(/\b(?:tgp|max(?:imum)? graphics power)\s*(?:of|up to|upto)?\s*(\d{2,3})\s*w\b/);
-  return m ? Number(m[1]) : undefined;
+function findTgp(t: string, gpuAt = -1): number | undefined {
+  const m =
+    t.match(/\b(\d{2,3})\s*(?:w(?:att)?s?\s*)?(?:max\.?\s*)?(?:tgp|tdp graphics|graphics power|gpu power)\b/) ??
+    t.match(/\b(?:tgp|max(?:imum)? graphics power)\s*(?:of|up to|upto)?\s*(\d{2,3})\s*w\b/) ??
+    // Flipkart slugs: "rtx 4050 144 hz 140 w": a wattage soon after the graphics chip (not the charger's "180 w adapter").
+    (gpuAt >= 0 ? t.slice(gpuAt, gpuAt + 60).match(/\b(\d{2,3})\s*w\b(?!\s*(?:adapter|charger|power adapter))/) : null);
+  const w = m ? Number(m[1]) : undefined;
+  return w !== undefined && w >= 25 && w <= 200 ? w : undefined;
 }
 
 function findStorage(t: string, cpu?: Cpu): { match: PartMatch<Storage>; rest: string } {
