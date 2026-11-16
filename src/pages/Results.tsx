@@ -5,7 +5,9 @@ import { slotsFor } from '../data';
 import { simulateGames } from '../engine/games';
 import type { Suggestion } from '../engine/recommend';
 import { componentLabelShort, type BuildEvaluation, type Tone, type WorkloadResult } from '../engine/simulation';
-import type { Build, Device, Gpu, Issue, PartSlot, Resolution } from '../engine/types';
+import type { Build, Device, GameSettings, Gpu, Issue, PartSlot, Resolution } from '../engine/types';
+import { SettingsControls } from '../components/SettingsControls';
+import { settingsLabel } from '../engine/settings';
 import { ScoreRing, SourceLine, TierBadge, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
 import { PowerPicker } from '../components/PowerPicker';
@@ -111,8 +113,8 @@ function VerdictCard({ build, evaluation, issues, resolution, laptop }: { build:
   );
 }
 
-function GamesCard({ build, resolution, refreshHz }: { build: Build; resolution: Resolution; refreshHz: number }) {
-  const results = simulateGames(build, games, resolution, refreshHz);
+function GamesCard({ build, resolution, refreshHz, settings, onSettings }: { build: Build; resolution: Resolution; refreshHz: number; settings: GameSettings; onSettings: (s: GameSettings) => void }) {
+  const results = simulateGames(build, games, resolution, refreshHz, settings);
   const groups = [
     { title: 'Competitive', list: results.filter((r) => r.game.kind === 'competitive') },
     { title: 'Story & open world', list: results.filter((r) => r.game.kind === 'story') },
@@ -121,15 +123,16 @@ function GamesCard({ build, resolution, refreshHz }: { build: Build; resolution:
     <section className="panel panel--games" aria-labelledby="games-title">
       <div className="panel-head">
         <h2 id="games-title">Your games</h2>
-        <span className="panel-meta">{resolution} · {refreshHz} Hz · standard settings</span>
+        <span className="panel-meta">{resolution} · {refreshHz} Hz · {settingsLabel(settings, build.gpu)}</span>
       </div>
+      <SettingsControls settings={settings} gpu={build.gpu} onChange={onSettings} />
       <div className="game-cols">
         {groups.map((g) => (
           <div key={g.title} className="game-group">
             <h3 className="group-title">{g.title}</h3>
             <ul className="game-list">
               {g.list.map((r) => (
-                <li key={r.game.id} className="game-row" title={r.verdict}>
+                <li key={r.game.id} className="game-row" title={r.game.noUpscaling && settings.upscaling !== 'off' ? `${r.verdict}. This game has no DLSS / FSR, so upscaling doesn't apply.` : r.verdict}>
                   <span className="game-title">{r.game.name}</span>
                   <span className="game-fps"><b>{Math.round(r.fps)}</b> FPS<span className={`game-low${r.stutter ? ' game-low--bad' : ''}`} title="1% low: the frame rate of the slowest 1% of frames. Far below the average means stutter.">1% low {Math.round(r.low1)}</span></span>
                   <span className={`chip chip--${r.tone}`}>{r.short}</span>
@@ -273,6 +276,8 @@ export interface DashboardProps {
   suggestions: Suggestion[];
   resolution: Resolution;
   refreshHz: number;
+  settings: GameSettings;
+  onSettings: (s: GameSettings) => void;
   gaming: boolean;
   chosen: PartSlot[];
   device: Device;
@@ -287,7 +292,7 @@ export interface DashboardProps {
 
 /** Everything after "Check my build", on one page. */
 export function Dashboard(props: DashboardProps) {
-  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, device, listing, copied, onOpen, onPower, onApply, onCopy, onCompare } = props;
+  const { build, evaluation, issues, suggestions, resolution, refreshHz, settings, onSettings, gaming, chosen, device, listing, copied, onOpen, onPower, onApply, onCopy, onCompare } = props;
   const laptop = device === 'laptop';
   return (
     <div className="dashboard">
@@ -309,7 +314,7 @@ export function Dashboard(props: DashboardProps) {
         <LimitsCard build={build} evaluation={evaluation} resolution={resolution} />
         <SuggestionsCard suggestions={suggestions} score={issues.some((i) => i.severity === 'error') ? 0 : evaluation.overall} onApply={onApply} />
         <Analysis evaluation={evaluation} resolution={resolution} />
-        {gaming && build.cpu && <GamesCard build={build} resolution={resolution} refreshHz={refreshHz} />}
+        {gaming && build.cpu && <GamesCard build={build} resolution={resolution} refreshHz={refreshHz} settings={settings} onSettings={onSettings} />}
       </div>
     </div>
   );

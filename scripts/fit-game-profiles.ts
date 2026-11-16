@@ -12,6 +12,7 @@ import { gunzipSync } from 'node:zlib';
 import { cpus, gpus, laptopCpus, laptopGpus } from '../src/data';
 import { games } from '../src/data/games';
 import { completeBuild } from '../src/engine/builder';
+import { fittedSettings } from '../src/engine/settings';
 import { simulateFps, softMin } from '../src/engine/simulation';
 import type { Build } from '../src/engine/types';
 import { median, nbcGames, parseNotebookcheckGpuPage } from './notebookcheck-lib';
@@ -43,7 +44,7 @@ for (const p of nbcPages) {
       const cpu = (p.kind === 'laptop' ? laptopCpu : desktopCpu).get(cpuName(x.cpu));
       if (!cpu) continue;
       const b: Build = completeBuild({ cpu, gpu });
-      const s = simulateFps(b, game, '1080p');
+      const s = simulateFps(b, game, '1080p', fittedSettings(game));
       points.set(gid, [...(points.get(gid) ?? []), { cpuFps: s.cpuFps, gpuFps: s.gpuFps, measured: x.fps, kind: p.kind }]);
     }
   }

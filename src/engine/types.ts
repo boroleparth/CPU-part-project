@@ -189,3 +189,13 @@ export interface Issue {
   slots: PartSlot[];
   message: string;
 }
+
+/** In-game graphics preset. */
+export type Preset = 'low' | 'medium' | 'high' | 'ultra';
+/** Upscaling mode (DLSS on NVIDIA RTX, FSR / XeSS elsewhere): renders at a lower resolution and scales up. */
+export type Upscaling = 'off' | 'quality' | 'balanced' | 'performance';
+
+export interface GameSettings {
+  preset: Preset;
+  upscaling: Upscaling;
+}

@@ -1,5 +1,6 @@
 import { catalog, isLaptopBuild, slotOrder } from './data';
-import type { Build, Device, PartSlot, Resolution, WorkloadId } from './engine/types';
+import type { Build, Device, GameSettings, PartSlot, Preset, Resolution, Upscaling, WorkloadId } from './engine/types';
+import { DEFAULT_SETTINGS, PRESETS, UPSCALING } from './engine/settings';
 import { workloads } from './engine/workloads';
 import { REFRESH_RATES } from './engine/games';
 import { storeOf } from './engine/listing';
@@ -12,6 +13,8 @@ export interface AppState {
   resolution: Resolution;
   /** Monitor refresh rate in Hz. */
   refreshHz: number;
+  /** In-game preset and upscaling (gaming uses). */
+  settings: GameSettings;
   /** Parts the person picked themselves; the rest were matched automatically. */
   chosen: PartSlot[];
   /** Second build for side-by-side comparison, when comparing. */
@@ -33,7 +36,7 @@ export const exampleBuild = (): Build => ({
   case: catalog.case.find((p) => p.id === 'case-mid'),
 });
 
-export const defaultState = (): AppState => ({ device: 'desktop', build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144, chosen: [] });
+export const defaultState = (): AppState => ({ device: 'desktop', build: exampleBuild(), workloads: ['aaa'], resolution: '1440p', refreshHz: 144, settings: DEFAULT_SETTINGS, chosen: [] });
 
 const encodeBuild = (b: Build) =>
   slotOrder
@@ -57,6 +60,8 @@ export function encodeState(s: AppState): string {
   const params = new URLSearchParams({ b: encodeBuild(s.build), w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz), c: s.chosen.join(',') });
   if (s.compare) params.set('x', encodeBuild(s.compare));
   if (s.device === 'laptop') params.set('d', 'laptop');
+  if (s.settings.preset !== DEFAULT_SETTINGS.preset) params.set('q', s.settings.preset);
+  if (s.settings.upscaling !== DEFAULT_SETTINGS.upscaling) params.set('up', s.settings.upscaling);
   if (s.listing) params.set('src', s.listing.url);
   return params.toString();
 }
@@ -75,7 +80,10 @@ export function decodeState(hash: string): AppState | undefined {
   const chosen = (params.get('c') ?? '').split(',').filter((x): x is PartSlot => slotOrder.includes(x as PartSlot) && !!build[x as PartSlot]);
   // Older links have no device: a laptop part means it's a laptop.
   const device: Device = params.get('d') === 'laptop' || isLaptopBuild(build) ? 'laptop' : 'desktop';
+  const q = params.get('q') as Preset;
+  const up = params.get('up') as Upscaling;
+  const settings: GameSettings = { preset: PRESETS.includes(q) ? q : DEFAULT_SETTINGS.preset, upscaling: UPSCALING.includes(up) ? up : DEFAULT_SETTINGS.upscaling };
   const src = params.get('src');
   const listing = src && /^https?:\/\//i.test(src) ? { url: src, store: storeOf(src) } : undefined;
-  return { device, listing, build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen, compare };
+  return { device, listing, build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, settings, chosen, compare };
 }

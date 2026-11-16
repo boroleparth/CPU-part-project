@@ -7,11 +7,12 @@ import { checkCompatibility } from './engine/compatibility';
 import { simulateGames } from './engine/games';
 import { suggest } from './engine/recommend';
 import { evaluateBuild } from './engine/simulation';
-import type { Build, Device, Gpu, PartSlot, WorkloadId } from './engine/types';
+import { settingsLabel } from './engine/settings';
+import type { Build, Device, GameSettings, Gpu, PartSlot, WorkloadId } from './engine/types';
 import { workloadById } from './engine/workloads';
 import { Dashboard } from './pages/Results';
 import { ComparePage } from './pages/Compare';
-import { DevicePage, MonitorPage, PartsPage, PurposePage } from './pages/Setup';
+import { DevicePage, MonitorPage, PartsPage, PurposePage, SettingsPage } from './pages/Setup';
 import { LinkPage } from './pages/Link';
 import type { ListingResult } from './engine/listing';
 import { REFRESH_RATES } from './engine/games';
@@ -19,9 +20,9 @@ import { readBookmarkletHash } from './bookmarklet';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
-type PageId = 'link' | 'device' | 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
+type PageId = 'link' | 'device' | 'purpose' | 'monitor' | 'settings' | 'parts' | 'dashboard' | 'compare';
 const resultPages: PageId[] = ['dashboard', 'compare'];
-const pageNames: Record<PageId, string> = { link: 'Check a link', device: 'Desktop or laptop', purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
+const pageNames: Record<PageId, string> = { link: 'Check a link', device: 'Desktop or laptop', purpose: 'Purpose', monitor: 'Monitor', settings: 'Game settings', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
@@ -62,19 +63,20 @@ export default function App() {
   /** Which build the part browser edits: the main one (A) or the comparison (B). */
   const [browseSide, setBrowseSide] = useState<'a' | 'b'>('a');
   const [copied, setCopied] = useState<'' | 'link' | 'list'>('');
-  const { device, build, workloads, resolution, refreshHz } = state;
+  const { device, build, workloads, resolution, refreshHz, settings } = state;
+  const setSettings = (x: GameSettings) => setState((s) => ({ ...s, settings: x }));
   const gaming = workloads.some((id) => workloadById[id].kind === 'gaming');
 
   const pages = useMemo<PageId[]>(
-    () => (['device', 'purpose', gaming && 'monitor', 'parts', 'dashboard'] as (PageId | false)[]).filter(Boolean) as PageId[],
+    () => (['device', 'purpose', gaming && 'monitor', gaming && 'settings', 'parts', 'dashboard'] as (PageId | false)[]).filter(Boolean) as PageId[],
     [gaming],
   );
   const index = Math.max(0, pages.indexOf(page));
   const isResult = resultPages.includes(page);
 
   const issues = useMemo(() => checkCompatibility(build), [build]);
-  const evaluation = useMemo(() => evaluateBuild(build, workloads, resolution), [build, workloads, resolution]);
-  const suggestions = useMemo(() => (isResult ? suggest(build, evaluation.results, resolution) : []), [isResult, build, evaluation, resolution]);
+  const evaluation = useMemo(() => evaluateBuild(build, workloads, resolution, settings), [build, workloads, resolution, settings]);
+  const suggestions = useMemo(() => (isResult ? suggest(build, evaluation.results, resolution, settings) : []), [isResult, build, evaluation, resolution, settings]);
 
   // Result pages live in the URL, so copying the address shares the exact build.
   useEffect(() => {
@@ -173,8 +175,8 @@ export default function App() {
       lines.push(`${slotLabels[slot]}: ${part ? `${part.name} (${partSummary(slot, part)})` : slot === 'gpu' ? 'Integrated graphics' : '—'}`);
     }
     if (gaming && build.cpu) {
-      lines.push('', `Games at ${resolution}, ${refreshHz} Hz:`);
-      for (const g of simulateGames(build, games, resolution, refreshHz)) lines.push(`• ${g.game.name}: ~${Math.round(g.fps)} FPS`);
+      lines.push('', `Games at ${resolution}, ${refreshHz} Hz, ${settingsLabel(settings, build.gpu)}:`);
+      for (const g of simulateGames(build, games, resolution, refreshHz, settings)) lines.push(`• ${g.game.name}: ~${Math.round(g.fps)} FPS`);
     }
     lines.push('', window.location.href);
     return lines.join('\n');
@@ -277,6 +279,7 @@ export default function App() {
             onRefresh={(hz) => setState((s) => ({ ...s, refreshHz: hz }))}
           />
         )}
+        {page === 'settings' && <SettingsPage settings={settings} onChange={setSettings} />}
         {page === 'parts' && <PartsPage device={device} build={build} onOpen={(slot) => openBrowser('a', slot)} onPower={(g) => pickPower('a', g)} />}
         {page === 'dashboard' && (
           <Dashboard
@@ -286,6 +289,8 @@ export default function App() {
             suggestions={suggestions}
             resolution={resolution}
             refreshHz={refreshHz}
+            settings={settings}
+            onSettings={setSettings}
             gaming={gaming}
             chosen={state.chosen}
             device={device}
@@ -305,6 +310,8 @@ export default function App() {
             workloads={workloads}
             resolution={resolution}
             refreshHz={refreshHz}
+            settings={settings}
+            onSettings={setSettings}
             device={device}
             onOpen={openBrowser}
             onPower={pickPower}
@@ -329,6 +336,7 @@ export default function App() {
           build={browserBuild}
           workloads={workloads}
           resolution={resolution}
+          settings={settings}
           onPick={(part) => {
             if (browseSide === 'b' && page === 'compare') pickCompare(browsing, part);
             else pick(browsing, part);

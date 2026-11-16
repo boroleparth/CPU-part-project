@@ -169,6 +169,10 @@ button { -webkit-tap-highlight-color: transparent; }
 .pill-btn { padding: 10px 18px; border-radius: 999px; border: 1.5px solid var(--border-strong); background: var(--surface); cursor: pointer; font-weight: 500; font-variant-numeric: tabular-nums; }
 .pill-btn:hover { border-color: var(--accent); }
 .pill-btn--on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.pill-hint { font-weight: 400; opacity: 0.7; font-size: 0.85em; margin-left: 4px; }
+.sub-question { font-family: var(--font-body); font-size: 1rem; font-weight: 600; color: var(--text-2); margin: 8px 0 -8px; }
+.page-note { font-size: 0.85rem; color: var(--text-3); }
+.settings-controls { display: flex; flex-wrap: wrap; gap: 8px; }
 .pills--small { gap: 6px; }
 .pills--small .pill-btn { padding: 6px 12px; font-size: 0.86rem; }
 

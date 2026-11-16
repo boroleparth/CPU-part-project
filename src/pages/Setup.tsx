@@ -1,6 +1,7 @@
 import { REFRESH_RATES } from '../engine/games';
 import { RESOLUTIONS } from '../engine/simulation';
-import type { Build, Device, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import { PRESETS, presetNames, UPSCALING, upscalingNames } from '../engine/settings';
+import type { Build, Device, GameSettings, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
 import { SlotIcon } from '../components/Icons';
 import { PowerPicker } from '../components/PowerPicker';
 import { partSummary } from '../ui';
@@ -107,6 +108,35 @@ export function MonitorPage(props: { device: Device; resolution: Resolution; ref
           </button>
         ))}
       </div>
+    </>
+  );
+}
+
+const presetHints = { low: 'Most FPS', medium: 'Balanced', high: 'Standard', ultra: 'Best looks' } as const;
+const upscalingHints = { off: 'Native', quality: 'Sharpest', balanced: 'Middle', performance: 'Most FPS' } as const;
+
+export function SettingsPage({ settings, onChange }: { settings: GameSettings; onChange: (s: GameSettings) => void }) {
+  return (
+    <>
+      <h1 className="page-title">How you set up your games</h1>
+      <p className="page-sub">The graphics preset you play at.</p>
+      <div className="tiles tiles--4">
+        {PRESETS.map((p) => (
+          <button key={p} type="button" className={`tile tile--tall${p === settings.preset ? ' tile--on' : ''}`} aria-pressed={p === settings.preset} onClick={() => onChange({ ...settings, preset: p })}>
+            <span className="tile-big">{presetNames[p]}</span>
+            <span className="tile-small">{presetHints[p]}</span>
+          </button>
+        ))}
+      </div>
+      <h2 className="sub-question">Upscaling: DLSS, FSR or XeSS</h2>
+      <div className="pills" role="group" aria-label="Upscaling">
+        {UPSCALING.map((u) => (
+          <button key={u} type="button" className={`pill-btn${u === settings.upscaling ? ' pill-btn--on' : ''}`} aria-pressed={u === settings.upscaling} onClick={() => onChange({ ...settings, upscaling: u })}>
+            {upscalingNames[u]} <span className="pill-hint">{upscalingHints[u]}</span>
+          </button>
+        ))}
+      </div>
+      <p className="page-note">DLSS on NVIDIA RTX cards, FSR or XeSS on others. Frame generation isn't counted.</p>
     </>
   );
 }

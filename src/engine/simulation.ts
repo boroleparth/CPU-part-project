@@ -1,5 +1,6 @@
 import { effectiveRamSpeed } from './compatibility';
-import type { Build, Cpu, Gpu, Resolution, StorageKind, WorkloadId } from './types';
+import { applySettings, DEFAULT_SETTINGS, isDefaultSettings, settingsLabel } from './settings';
+import type { Build, Cpu, GameSettings, Gpu, Resolution, StorageKind, WorkloadId } from './types';
 import { type Component, type FpsModel, type GamingWorkload, type ThroughputWorkload, workloadById } from './workloads';
 
 export type { FpsModel };
@@ -232,7 +233,8 @@ export function taskManagerCpu(cpu: Cpu, w: FpsModel, mainThread: number): numbe
   return clamp(busy / cpu.threads, 0, 1);
 }
 
-export function simulateFps(build: Build, w: FpsModel, res: Resolution): FpsPoint {
+export function simulateFps(build: Build, model: FpsModel, res: Resolution, settings: GameSettings = DEFAULT_SETTINGS): FpsPoint {
+  const w = applySettings(model, settings);
   const { cpu, gpu } = build;
   const ram = ramFactor(build, w.ramNeedGb).factor;
   let cpuFps = cpu ? cpu.gamingIndex * w.cpuFpsPerPoint * ram : 0;
@@ -488,7 +490,9 @@ export function toneFor(score: number): Tone {
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 
-function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): WorkloadResult {
+function evaluateGaming(build: Build, workload: GamingWorkload, res: Resolution, settings: GameSettings): WorkloadResult {
+  // The workload at the chosen preset / upscaling: frame-rate factors and VRAM / RAM needs all move.
+  const w = applySettings(workload, settings) as GamingWorkload;
   const fps = RESOLUTIONS.map((r) => simulateFps(build, w, r));
   const judged = fps.find((p) => p.resolution === res)!;
   const notes = [...ramFactor(build, w.ramNeedGb).notes];
@@ -509,7 +513,7 @@ function evaluateGaming(build: Build, w: GamingWorkload, res: Resolution): Workl
   if (!build.cpu || (!build.gpu && !build.cpu.hasIgpu)) {
     return { workload: w.id, score: 0, tone: 'critical', headline: 'Pick a CPU and GPU', detail: 'The frame-rate model needs both a processor and graphics.', fps, judged, notes };
   }
-  const fpsTxt = `~${Math.round(judged.fps)} FPS at ${res}`;
+  const fpsTxt = `~${Math.round(judged.fps)} FPS at ${res}${isDefaultSettings(settings) ? '' : ` (${settingsLabel(settings, build.gpu)})`}`;
   if (!build.gpu) {
     // The CPU's built-in graphics: technically "GPU-limited", but the real answer is "add a graphics card".
     const score = Math.min(gamingBalanceScore(judged), 15);
@@ -606,9 +610,9 @@ export function componentLabelShort(c: Component): string {
   return { cpuSingle: 'CPU', cpuMulti: 'CPU', gpu: 'GPU', gpuBandwidth: 'GPU', ram: 'RAM', storage: 'Storage' }[c];
 }
 
-export function evaluateWorkload(build: Build, id: WorkloadId, res: Resolution): WorkloadResult {
+export function evaluateWorkload(build: Build, id: WorkloadId, res: Resolution, settings: GameSettings = DEFAULT_SETTINGS): WorkloadResult {
   const w = workloadById[id];
-  return w.kind === 'gaming' ? evaluateGaming(build, w, res) : evaluateThroughput(build, w);
+  return w.kind === 'gaming' ? evaluateGaming(build, w, res, settings) : evaluateThroughput(build, w);
 }
 
 export interface BuildEvaluation {
@@ -617,8 +621,8 @@ export interface BuildEvaluation {
   tone: Tone;
 }
 
-export function evaluateBuild(build: Build, ids: WorkloadId[], res: Resolution): BuildEvaluation {
-  const results = ids.map((id) => evaluateWorkload(build, id, res));
+export function evaluateBuild(build: Build, ids: WorkloadId[], res: Resolution, settings: GameSettings = DEFAULT_SETTINGS): BuildEvaluation {
+  const results = ids.map((id) => evaluateWorkload(build, id, res, settings));
   // Weighted toward the worst workload so one bad fit is not hidden by averages.
   const scores = results.map((r) => r.score);
   const overall = scores.length ? 0.6 * (scores.reduce((a, b) => a + b, 0) / scores.length) + 0.4 * Math.min(...scores) : 0;

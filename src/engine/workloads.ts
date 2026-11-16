@@ -1,4 +1,4 @@
-import type { Resolution, WorkloadId } from './types';
+import type { Preset, Resolution, WorkloadId } from './types';
 
 export type Component = 'cpuSingle' | 'cpuMulti' | 'gpu' | 'gpuBandwidth' | 'ram' | 'storage';
 
@@ -31,6 +31,10 @@ export interface FpsModel {
   ramUseGb: number;
   /** How many CPU cores the game keeps busy (main thread = 1, the rest partly). */
   threads: number;
+  /** The preset the factors above are fitted at (default High). */
+  basePreset?: Preset;
+  /** The game has no DLSS / FSR option. */
+  noUpscaling?: boolean;
 }
 
 /**

@@ -22,9 +22,10 @@ balanced (no part holding the others back), how fast it is in 10 popular games, 
 | Laptop checker | Done: 93 laptop CPUs (54 Intel, 39 AMD Ryzen), 28 NVIDIA laptop GPUs in 2–5 power versions each |
 | Check a link | Done: store links (Flipkart, Croma, Amazon, Reliance Digital, Vijay Sales, brand sites) or pasted specs; "Check in PC Harmony" bookmark reads the whole product page |
 | Benchmarks | Desktop CPU multi/single: PassMark (sourced). GPU local AI: llama.cpp (sourced). Laptop GPUs: Notebookcheck (calibrated). Desktop gaming/raster/RT and all laptop CPUs: estimates |
+| Game settings | Preset (Low–Ultra) and upscaling (DLSS / FSR / XeSS: Quality, Balanced, Performance) as a question and as switches on the dashboard and compare; in the share link (`q=`, `up=`) |
 | Real-world signals | RAM in use (Windows + apps + game + VRAM overflow), GPU % busy (drops when waiting on VRAM / paging), CPU main thread vs Task Manager %, 1% lows with stutter warning |
 | Accuracy | Laptop GPUs 12.2% average error vs ~8,000 real measurements (noise floor ~10%). 5 games refitted to measured FPS (measured ÷ model 0.87–1.04) |
-| Tests | 307 passing (`npm test`) |
+| Tests | 317 passing (`npm test`) |
 | Deployed | Yes, `main` = live site |
 
 **Open decisions for the user**
@@ -43,7 +44,7 @@ In priority order. "Needs" says what has to come from the user or outside this r
 |---|---|---|---|---|
 | 1 | **Source laptop CPUs from PassMark:** run `npm run bench:import` on the PassMark pages saved on the home computer (`data/sources/2026-11-15/`) | All 93 laptop CPUs (incl. the new AMD ones) are still estimates; they are already in the import list | Small | The home computer (pages are git-ignored, so only there) |
 | 2 | **Real failing links → tests:** collect store links that misread, add each to `listing.test.ts`, extend `seriesHints` in `src/engine/listing.ts` (HP OMEN 16-wd0, Victus 16, ASUS TUF FX507, ROG Strix G16, Legion 5i …) | Croma / Amazon listings often only say "i5 13th Gen"; the model-code table resolves them | Small per link | Links from the user; "What we read" box shows what the reader saw |
-| 3 | **Accuracy parameters 3, 4, 5:** settings preset + DLSS question, laptop cooling / chassis / age, MUX switch | Large FPS effects the model doesn't see yet | Medium | – |
+| 3 | **Accuracy parameters 4, 5:** laptop cooling / chassis / age, MUX switch | Large FPS effects the model doesn't see yet | Medium | – |
 | 4 | **Desktop GPU corrections:** apply the Notebookcheck cross-check (desktop RTX 5070 ~8% low; RTX 3070 / 4090 ~9–11% high), and source desktop gaming / raster / RT (Tom's Hardware GPU hierarchy is reachable from the cloud session; TechPowerUp needs browser screenshots) | Desktop gaming indices are still estimates | Medium | Screenshots only if TechPowerUp is used |
 | 5 | **Remaining game profiles:** Valorant, Apex, Marvel Rivals (≤9 Notebookcheck measurements), Fortnite (none) | Still estimates; Apex looks ~35% low, Valorant ~25% high | Small | More measured data |
 | 6 | **User's own laptop as reference tests** (accuracy parameter 7): MSI Afterburner numbers from the ASUS TUF F15 2021 | First real measured laptop reference | Small | Game, settings, avg FPS, GPU %, CPU %, RAM / VRAM used, power mode |
@@ -56,7 +57,7 @@ In priority order. "Needs" says what has to come from the user or outside this r
 1. ✅ Memory pressure: Windows (~4 GB) + background apps + game RAM, and VRAM overflow into RAM → GPU shows
    60–80% busy instead of 100%, lower FPS, stutter.
 2. ✅ 1% lows (stutter) next to average FPS.
-3. Game settings preset (Low–Ultra) and upscaling (DLSS / FSR) as a question.
+3. ✅ Game settings preset (Low–Ultra) and upscaling (DLSS / FSR) as a question.
 4. Laptop shared power and cooling budget; thin vs thick chassis; age (thermal throttling).
 5. MUX switch / Advanced Optimus (5–15% FPS without one).
 6. ✅ CPU main-thread load instead of "total CPU %" (Task Manager averages all threads).
@@ -65,6 +66,25 @@ In priority order. "Needs" says what has to come from the user or outside this r
 ---
 
 ## Session log
+
+### 16 Nov 2026: game settings and upscaling
+
+Accuracy parameter 3. New `src/engine/settings.ts`; `GameSettings` (preset + upscaling) is passed to
+`simulateFps`, `evaluateWorkload` / `evaluateBuild`, `simulateGame(s)`, `compareBuilds` and `suggest` (all default
+to High, no upscaling: the calibrated state, so earlier results and the accuracy report are unchanged).
+- **Preset** (relative to High): GPU frame rate Low 1.8×, Medium 1.4×, Ultra 0.8×; CPU 1.12× / 1.06× / 0.94×;
+  VRAM need ×0.6 / ×0.75 / ×1.2; game RAM −1.5 / −0.75 / +1 GB. Games fitted at another preset carry
+  `basePreset` (Baldur's Gate 3: Ultra); the fitting and accuracy scripts compare at `fittedSettings(game)`.
+- **Upscaling**: GPU frame-rate gain Quality 1.25 / 1.38 / 1.5× at 1080p / 1440p / 4K, Balanced up to 1.68×,
+  Performance up to 1.9×, scaled per game by how much its frame rate follows pixel count (heavy games gain
+  most, Valorant-like games little); VRAM −0.5 to −1 GB. Valorant and Elden Ring have none (`noUpscaling`).
+  The name follows the card: DLSS (NVIDIA RTX), XeSS (Intel), FSR (others). Frame generation isn't counted.
+- **UI**: new "Game settings" step after the monitor (gaming only); Low / Medium / High / Ultra and
+  Off / Quality / Balanced / Performance switches on "Your games" and on Compare; headlines and the copied
+  parts list name non-default settings; VRAM suggestions use the chosen preset's need.
+- Checks: RTX 4070 Super, Cyberpunk 1440p High → DLSS Quality 104 → 143 FPS (1.38×); 4K DLSS Performance ~2×.
+  The user's TUF at 1080p Medium no longer falls short on VRAM (6 GB needed of 6).
+- Tests: `src/engine/__tests__/settings.test.ts` (10 tests).
 
 ### 16 Nov 2026: memory pressure, 1% lows, CPU main thread
 
@@ -150,6 +170,7 @@ Accuracy parameters 1, 2 and 6 from the user's real-world feedback. New model pi
 
 1. **Questions, one page each:** desktop or laptop → purpose (AAA games, esports, ray tracing, streaming,
    video editing, 3D rendering, local AI, everyday) → screen resolution and refresh rate (gaming only) →
+   graphics preset and upscaling (gaming only) →
    CPU, GPU, RAM, storage. Desktops: motherboard, cooler, PSU and case are matched automatically
    ("Auto-picked"). Laptops: graphics power picker; missing RAM / storage are "Assumed".
 2. **Check a link:** paste a store link or product text, or use the bookmark on a product page; review the
@@ -218,6 +239,7 @@ Accuracy parameters 1, 2 and 6 from the user's real-world feedback. New model pi
 | `src/engine/limits.ts` | "What's limiting performance" |
 | `src/engine/recommend.ts` | Suggestions (desktop and laptop wording, power versions, second stick) |
 | `src/engine/builder.ts` | `completeBuild` (desktop and laptop), part pickers, auto-builder (not in UI) |
+| `src/engine/settings.ts` | Graphics preset and upscaling: `applySettings`, upscaler names, labels |
 | `src/engine/compare.ts` | Build-vs-build comparison |
 | `src/engine/listing.ts` | Recognise parts from store links / pasted text; `seriesHints` model-code table |
 | `src/bookmarklet.ts` | "Check in PC Harmony" bookmark code and hash reader |

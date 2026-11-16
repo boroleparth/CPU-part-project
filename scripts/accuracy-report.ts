@@ -17,6 +17,7 @@ import { gunzipSync } from 'node:zlib';
 import { gpus, laptopCpus, laptopGpus } from '../src/data';
 import { games } from '../src/data/games';
 import { completeBuild } from '../src/engine/builder';
+import { fittedSettings } from '../src/engine/settings';
 import { simulateGame } from '../src/engine/games';
 import {
   fitRaster, median, nbcGames, parseNotebookcheckGpuPage, relativeErrors, rowMedians, summarise, type ChipError, type NbcRow,
@@ -106,7 +107,7 @@ for (const [gid, m] of Object.entries(nbcGames)) {
     for (const x of row.results) {
       const cpu = matchCpu(x.cpu);
       if (!cpu) continue;
-      ratios.push(x.fps / simulateGame(completeBuild({ cpu, gpu }), game, '1080p', 144).fps);
+      ratios.push(x.fps / simulateGame(completeBuild({ cpu, gpu }), game, '1080p', 144, fittedSettings(game)).fps);
     }
   }
   if (ratios.length) console.log(`| ${game.name} | ${m.preset} | ${ratios.length} | ${median(ratios).toFixed(2)}× |`);

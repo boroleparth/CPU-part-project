@@ -5,7 +5,7 @@ export interface Game extends FpsModel {
   name: string;
   /** Which kind of game, used for grouping. */
   kind: 'competitive' | 'story';
-  /** The settings preset the estimate assumes. */
+  /** The preset the factors are fitted at, as the game names it. */
   preset: string;
   /** Engine frame cap at default settings, if any. */
   fpsCap?: number;
@@ -30,7 +30,7 @@ export const games: Game[] = [
     note: 'Very CPU-heavy at high frame rates; large-cache CPUs shine.',
   },
   {
-    id: 'valorant', name: 'Valorant', kind: 'competitive', preset: 'High',
+    id: 'valorant', name: 'Valorant', kind: 'competitive', preset: 'High', noUpscaling: true,
     cpuFpsPerPoint: 8, gpuFpsPerPoint: 16, resolutionScale: { '1080p': 1, '1440p': 0.84, '4K': 0.6 },
     gpuMetric: 'raster', vramNeed: vram(4, 6, 6), ramNeedGb: 16, ramUseGb: 3, threads: 3,
     note: 'Light on the GPU; frame rate is almost entirely set by the CPU.',
@@ -67,13 +67,13 @@ export const games: Game[] = [
     gpuMetric: 'raster', vramNeed: vram(6, 8, 10), ramNeedGb: 16, ramUseGb: 7, threads: 7,
   },
   {
-    id: 'bg3', name: "Baldur's Gate 3", kind: 'story', preset: 'Ultra',
+    id: 'bg3', name: "Baldur's Gate 3", kind: 'story', preset: 'Ultra', basePreset: 'ultra',
     cpuFpsPerPoint: 2.65, gpuFpsPerPoint: 4.1, resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.38 },
     gpuMetric: 'raster', vramNeed: vram(8, 8, 10), ramNeedGb: 16, ramUseGb: 8, threads: 6,
     note: 'Busy late-game city areas (Act 3) are limited by the CPU and run well below this.',
   },
   {
-    id: 'eldenring', name: 'Elden Ring', kind: 'story', preset: 'High',
+    id: 'eldenring', name: 'Elden Ring', kind: 'story', preset: 'High', noUpscaling: true,
     cpuFpsPerPoint: 1.8, gpuFpsPerPoint: 3.4, resolutionScale: { '1080p': 1, '1440p': 0.7, '4K': 0.4 },
     gpuMetric: 'raster', vramNeed: vram(6, 8, 10), ramNeedGb: 16, ramUseGb: 6, threads: 4, fpsCap: 60,
     note: 'Locked to 60 FPS, so a high-refresh monitor makes no difference here.',

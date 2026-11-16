@@ -3,7 +3,8 @@ import { checkCompatibility, estimatePowerDraw, recommendedPsuWatts } from './co
 import { simulateGames, type GameResult } from './games';
 import { limitReport } from './limits';
 import { evaluateBuild, type BuildEvaluation } from './simulation';
-import type { Build, Resolution, WorkloadId } from './types';
+import { DEFAULT_SETTINGS } from './settings';
+import type { Build, GameSettings, Resolution, WorkloadId } from './types';
 import { workloadById } from './workloads';
 
 export type Side = 'a' | 'b';
@@ -36,8 +37,8 @@ export interface Comparison {
   lines: string[];
 }
 
-function summarize(build: Build, workloads: WorkloadId[], res: Resolution, hz: number, gaming: boolean): SideSummary {
-  const evaluation = evaluateBuild(build, workloads, res);
+function summarize(build: Build, workloads: WorkloadId[], res: Resolution, hz: number, gaming: boolean, settings: GameSettings): SideSummary {
+  const evaluation = evaluateBuild(build, workloads, res, settings);
   const bottlenecks: Record<string, string | null> = {};
   for (const r of evaluation.results) {
     const rep = limitReport(build, r, res);
@@ -48,7 +49,7 @@ function summarize(build: Build, workloads: WorkloadId[], res: Resolution, hz: n
     evaluation,
     harmful,
     errors: checkCompatibility(build).filter((i) => i.severity === 'error').length,
-    games: gaming && build.cpu ? simulateGames(build, games, res, hz) : [],
+    games: gaming && build.cpu ? simulateGames(build, games, res, hz, settings) : [],
     power: estimatePowerDraw(build),
     psuNeeded: recommendedPsuWatts(build),
     bottlenecks,
@@ -57,10 +58,10 @@ function summarize(build: Build, workloads: WorkloadId[], res: Resolution, hz: n
 
 const pct = (x: number) => `${Math.round(Math.abs(x) * 100)}%`;
 
-export function compareBuilds(a: Build, b: Build, workloads: WorkloadId[], res: Resolution, hz: number): Comparison {
+export function compareBuilds(a: Build, b: Build, workloads: WorkloadId[], res: Resolution, hz: number, settings: GameSettings = DEFAULT_SETTINGS): Comparison {
   const gaming = workloads.some((id) => workloadById[id].kind === 'gaming');
-  const A = summarize(a, workloads, res, hz, gaming);
-  const B = summarize(b, workloads, res, hz, gaming);
+  const A = summarize(a, workloads, res, hz, gaming, settings);
+  const B = summarize(b, workloads, res, hz, gaming, settings);
 
   let fpsRatio: number | undefined;
   if (A.games.length && B.games.length) {

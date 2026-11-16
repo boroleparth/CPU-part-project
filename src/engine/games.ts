@@ -1,6 +1,7 @@
 import type { Game } from '../data/games';
 import { simulateFps, type Tone } from './simulation';
-import type { Build, Resolution } from './types';
+import { DEFAULT_SETTINGS } from './settings';
+import type { Build, GameSettings, Resolution } from './types';
 
 export const REFRESH_RATES = [60, 75, 120, 144, 165, 240, 360] as const;
 
@@ -22,8 +23,8 @@ export interface GameResult {
 }
 
 /** Estimated frame rates for one game, and how they compare with the monitor's refresh rate. */
-export function simulateGame(build: Build, game: Game, res: Resolution, refreshHz: number): GameResult {
-  const p = simulateFps(build, game, res);
+export function simulateGame(build: Build, game: Game, res: Resolution, refreshHz: number, settings: GameSettings = DEFAULT_SETTINGS): GameResult {
+  const p = simulateFps(build, game, res, settings);
   let fps = p.fps;
   let limitedBy: GameResult['limitedBy'] = p.limitedBy;
   // From the frame-rate model: CPU-bound frames, VRAM spill and RAM paging make dips worse.
@@ -46,6 +47,6 @@ export function refreshVerdict(fps: number, hz: number, cap?: number): { tone: T
   return { tone: 'critical', verdict: 'Too slow at this preset; lower settings or resolution', short: 'Too slow' };
 }
 
-export function simulateGames(build: Build, list: Game[], res: Resolution, refreshHz: number): GameResult[] {
-  return list.map((g) => simulateGame(build, g, res, refreshHz));
+export function simulateGames(build: Build, list: Game[], res: Resolution, refreshHz: number, settings: GameSettings = DEFAULT_SETTINGS): GameResult[] {
+  return list.map((g) => simulateGame(build, g, res, refreshHz, settings));
 }

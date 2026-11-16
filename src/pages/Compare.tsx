@@ -1,7 +1,8 @@
 import { ScoreRing, toneText } from '../components/Badges';
 import { SlotIcon } from '../components/Icons';
 import { compareBuilds, type Side } from '../engine/compare';
-import type { Build, Device, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import type { Build, Device, GameSettings, Gpu, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import { SettingsControls } from '../components/SettingsControls';
 import { PowerPicker } from '../components/PowerPicker';
 import { partSummary } from '../ui';
 import { purposeLabels } from './Setup';
@@ -19,6 +20,8 @@ interface Props {
   workloads: WorkloadId[];
   resolution: Resolution;
   refreshHz: number;
+  settings: GameSettings;
+  onSettings: (s: GameSettings) => void;
   device: Device;
   onOpen: (side: Side, slot: PartSlot) => void;
   onPower: (side: Side, g: Gpu) => void;
@@ -39,10 +42,11 @@ function Cell({ side, win, children }: { side: Side; win: Side | null; children:
   return <td className={win === side ? 'cmp-win' : undefined}>{children}</td>;
 }
 
-export function ComparePage({ a, b, workloads, resolution, refreshHz, device, onOpen, onPower, onSwap, onUseB }: Props) {
+export function ComparePage({ a, b, workloads, resolution, refreshHz, settings, onSettings, device, onOpen, onPower, onSwap, onUseB }: Props) {
   const laptop = device === 'laptop';
   const noun = laptop ? 'Laptop' : 'Build';
-  const c = compareBuilds(a, b, workloads, resolution, refreshHz);
+  const c = compareBuilds(a, b, workloads, resolution, refreshHz, settings);
+  const gaming = workloads.some((w) => ['aaa', 'esports', 'raytracing', 'streaming'].includes(w));
   const sides: [Side, Build][] = [['a', a], ['b', b]];
 
   return (
@@ -50,7 +54,8 @@ export function ComparePage({ a, b, workloads, resolution, refreshHz, device, on
       <div className="cmp-top">
         <div>
           <h1 className="page-title">{laptop ? 'Compare laptops' : 'Compare builds'}</h1>
-          <p className="page-sub cmp-sub">{workloads.map((w) => purposeLabels[w]).join(' · ')}{workloads.some((w) => ['aaa', 'esports', 'raytracing', 'streaming'].includes(w)) ? ` · ${resolution} · ${refreshHz} Hz` : ''}</p>
+          <p className="page-sub cmp-sub">{workloads.map((w) => purposeLabels[w]).join(' · ')}{gaming ? ` · ${resolution} · ${refreshHz} Hz` : ''}</p>
+          {gaming && <SettingsControls settings={settings} gpu={a.gpu} onChange={onSettings} />}
         </div>
         <div className="cmp-actions">
           <button type="button" className="btn btn--ghost btn--small" onClick={onSwap}>Swap A ⇄ B</button>

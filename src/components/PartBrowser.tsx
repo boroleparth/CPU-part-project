@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { catalog, partFits } from '../data';
 import { checkCompatibility } from '../engine/compatibility';
 import { evaluateBuild, toneFor } from '../engine/simulation';
-import type { Build, Device, PartSlot, Resolution, WorkloadId } from '../engine/types';
+import type { Build, Device, GameSettings, PartSlot, Resolution, WorkloadId } from '../engine/types';
 import { benchLine, brandNames, brandOf, partSummary, seriesOf, seriesRank, strengthOf, type AnyPart, type BrandKey } from '../ui';
 import { isLegacyCpu, isLegacyGpu } from '../data';
 import type { Cpu, Gpu } from '../engine/types';
@@ -29,11 +29,12 @@ interface Props {
   build: Build;
   workloads: WorkloadId[];
   resolution: Resolution;
+  settings: GameSettings;
   onPick: (part: AnyPart | undefined) => void;
   onClose: () => void;
 }
 
-export function PartBrowser({ device, slot, build, workloads, resolution, onPick, onClose }: Props) {
+export function PartBrowser({ device, slot, build, workloads, resolution, settings, onPick, onClose }: Props) {
   const [query, setQuery] = useState('');
   const grouped = slot === 'cpu' || slot === 'gpu';
   const [sort, setSort] = useState<SortKey>(grouped ? 'gen' : 'fit');
@@ -65,10 +66,10 @@ export function PartBrowser({ device, slot, build, workloads, resolution, onPick
       .map((part) => {
         const trial: Build = { ...build, [slot]: part };
         const fits = !checkCompatibility(trial).some((i) => i.severity === 'error' && i.slots.includes(slot));
-        return { part, fits, fit: fits ? evaluateBuild(trial, workloads, resolution).overall : 0, strength: strengthOf(slot, part), brand: brandOf(slot, part), series: seriesOf(slot, part) ?? '' };
+        return { part, fits, fit: fits ? evaluateBuild(trial, workloads, resolution, settings).overall : 0, strength: strengthOf(slot, part), brand: brandOf(slot, part), series: seriesOf(slot, part) ?? '' };
       })
       .filter((r) => r.fits || r.part === current);
-  }, [device, slot, build, workloads, resolution, current]);
+  }, [device, slot, build, workloads, resolution, settings, current]);
 
   const brands = [...new Set(rows.map((r) => r.brand).filter(Boolean))] as BrandKey[];
   const visible = useMemo(() => {
