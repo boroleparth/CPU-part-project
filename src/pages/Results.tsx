@@ -273,6 +273,7 @@ export interface DashboardProps {
   gaming: boolean;
   chosen: PartSlot[];
   device: Device;
+  listing?: { url: string; store?: string };
   copied: '' | 'link' | 'list';
   onOpen: (slot: PartSlot) => void;
   onPower: (g: Gpu) => void;
@@ -283,11 +284,16 @@ export interface DashboardProps {
 
 /** Everything after "Check my build", on one page. */
 export function Dashboard(props: DashboardProps) {
-  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, device, copied, onOpen, onPower, onApply, onCopy, onCompare } = props;
+  const { build, evaluation, issues, suggestions, resolution, refreshHz, gaming, chosen, device, listing, copied, onOpen, onPower, onApply, onCopy, onCompare } = props;
   const laptop = device === 'laptop';
   return (
     <div className="dashboard">
       <div className="dash-side">
+        {listing && (
+          <a className="listing-chip" href={listing.url} target="_blank" rel="noopener noreferrer nofollow">
+            <span>Checked from {listing.store ?? 'a store link'}</span><span aria-hidden="true">Open listing ↗</span>
+          </a>
+        )}
         <VerdictCard build={build} evaluation={evaluation} issues={issues} resolution={resolution} laptop={laptop} />
         <BuildCard build={build} issues={issues} chosen={chosen} gaming={gaming} device={device} onOpen={onOpen} onPower={onPower} />
         <div className="share">

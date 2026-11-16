@@ -2,6 +2,7 @@ import { catalog, isLaptopBuild, slotOrder } from './data';
 import type { Build, Device, PartSlot, Resolution, WorkloadId } from './engine/types';
 import { workloads } from './engine/workloads';
 import { REFRESH_RATES } from './engine/games';
+import { storeOf } from './engine/listing';
 
 export interface AppState {
   /** Checking a desktop PC or a laptop. */
@@ -15,6 +16,8 @@ export interface AppState {
   chosen: PartSlot[];
   /** Second build for side-by-side comparison, when comparing. */
   compare?: Build;
+  /** The store listing the build was read from (Check a link). */
+  listing?: { url: string; store?: string };
 }
 
 const validWorkloads = new Set(workloads.map((w) => w.id));
@@ -54,6 +57,7 @@ export function encodeState(s: AppState): string {
   const params = new URLSearchParams({ b: encodeBuild(s.build), w: s.workloads.join(','), r: s.resolution, hz: String(s.refreshHz), c: s.chosen.join(',') });
   if (s.compare) params.set('x', encodeBuild(s.compare));
   if (s.device === 'laptop') params.set('d', 'laptop');
+  if (s.listing) params.set('src', s.listing.url);
   return params.toString();
 }
 
@@ -71,5 +75,7 @@ export function decodeState(hash: string): AppState | undefined {
   const chosen = (params.get('c') ?? '').split(',').filter((x): x is PartSlot => slotOrder.includes(x as PartSlot) && !!build[x as PartSlot]);
   // Older links have no device: a laptop part means it's a laptop.
   const device: Device = params.get('d') === 'laptop' || isLaptopBuild(build) ? 'laptop' : 'desktop';
-  return { device, build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen, compare };
+  const src = params.get('src');
+  const listing = src && /^https?:\/\//i.test(src) ? { url: src, store: storeOf(src) } : undefined;
+  return { device, listing, build, workloads: w.length ? w : ['aaa'], resolution, refreshHz: REFRESH_RATES.includes(hz as never) ? hz : 144, chosen, compare };
 }

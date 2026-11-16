@@ -16,6 +16,11 @@ parts work well together, so no part bottlenecks the others.
    there is no motherboard/cooler/PSU/case, and missing RAM/storage are "Assumed" (2×8 GB at the CPU's rated
    speed, 512 GB NVMe). Suggestions become "Choose a laptop with …", "Look for the 130 W version",
    "Add a second memory stick" or "Choose the 32 GB version" (soldered LPDDR5X).
+   **Check a link** (top bar, or the card on the first page): paste a store link (Amazon, Flipkart, Croma,
+   Reliance Digital, Vijay Sales, brand sites) or the product title / spec list; the parts are recognised from
+   the link's own words or the pasted text (`src/engine/listing.ts`; nothing is fetched, a static site can't
+   read other shops' pages). Each part shows Found / partly assumed / Pick one / Not in our database, stays
+   editable, and the results page links back to the listing (`src=` in the share link).
 2. **Results dashboard** (one wide page):
    - verdict: score ring, headline, CPU/GPU match, peak power, PSU needed, compatibility;
    - **What's limiting performance**: how busy each part is, with the bottleneck marked;
@@ -32,7 +37,7 @@ for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers,
 **Laptops:** 53 Intel laptop CPUs (10th–14th gen H/HX/U, Core 5/7 200-series H, Core Ultra 100 H/U,
 200V, 200H/HX) and 26 NVIDIA laptop GPUs (GTX 1650 to RTX 5090 Laptop), each in 2–5 power versions
 (`src/data/laptops.ts`); plus SO-DIMM / LPDDR5X memory and 256/512 GB drives.
-**253 tests**, all passing.
+**268 tests**, all passing.
 
 ## Key architectural decisions
 
@@ -102,6 +107,8 @@ for AM4, AM5, LGA1151, LGA1200, LGA1700 and LGA1851, plus RAM, storage, coolers,
 | `src/engine/builder.ts` | `completeBuild`, part pickers, auto-builder (not in UI) |
 | `src/engine/compare.ts` | Build-vs-build comparison and winner |
 | `src/engine/__tests__/` | Vitest suites for all of the above |
+| `src/engine/listing.ts` | Recognise parts from a store link or pasted product text |
+| `src/pages/Link.tsx` | "Check a link" page |
 | `src/pages/Setup.tsx` | Purpose, monitor and parts question pages |
 | `src/pages/Results.tsx` | Results dashboard |
 | `src/pages/Compare.tsx` | Side-by-side comparison page |

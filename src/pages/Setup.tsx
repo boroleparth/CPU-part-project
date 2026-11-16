@@ -36,7 +36,7 @@ const deviceText: Record<Device, { name: string; hint: string }> = {
   laptop: { name: 'Laptop', hint: 'Check a model' },
 };
 
-export function DevicePage({ device, onPick }: { device: Device; onPick: (d: Device) => void }) {
+export function DevicePage({ device, onPick, onLink }: { device: Device; onPick: (d: Device) => void; onLink: () => void }) {
   return (
     <>
       <h1 className="page-title">What are you checking?</h1>
@@ -52,6 +52,10 @@ export function DevicePage({ device, onPick }: { device: Device; onPick: (d: Dev
           </button>
         ))}
       </div>
+      <button type="button" className="link-cta" onClick={onLink}>
+        <span><b>Have a store link?</b> Paste an Amazon, Flipkart, Croma… link or the product specs and we'll read the parts for you.</span>
+        <span aria-hidden="true">→</span>
+      </button>
     </>
   );
 }

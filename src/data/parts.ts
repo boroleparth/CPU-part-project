@@ -60,6 +60,8 @@ export const ramKits: RamKit[] = [
   { id: 'ddr5-2x48-6400', name: 'DDR5 96GB (2×48) 6400 CL32', type: 'DDR5', sticks: 2, totalGb: 96, speed: 6400, cl: 32 },
   { id: 'ddr5-2x32-5600', name: 'DDR5 64GB (2×32) 5600', type: 'DDR5', sticks: 2, totalGb: 64, speed: 5600, cl: 46 },
   // Soldered laptop memory: always dual-channel (or wider), can't be upgraded later.
+  { id: 'lpddr5-8-6400', name: 'LPDDR5 8GB 6400 (soldered)', type: 'DDR5', sticks: 2, totalGb: 8, speed: 6400, cl: 60, laptopOnly: true },
+  { id: 'lpddr5-16-6400', name: 'LPDDR5 16GB 6400 (soldered)', type: 'DDR5', sticks: 2, totalGb: 16, speed: 6400, cl: 60, laptopOnly: true },
   { id: 'lpddr5x-16-7467', name: 'LPDDR5X 16GB 7467 (soldered)', type: 'DDR5', sticks: 2, totalGb: 16, speed: 7467, cl: 60, laptopOnly: true },
   { id: 'lpddr5x-32-7467', name: 'LPDDR5X 32GB 7467 (soldered)', type: 'DDR5', sticks: 2, totalGb: 32, speed: 7467, cl: 60, laptopOnly: true },
   { id: 'lpddr5x-16-8533', name: 'LPDDR5X 16GB 8533 (soldered)', type: 'DDR5', sticks: 2, totalGb: 16, speed: 8533, cl: 60, laptopOnly: true },

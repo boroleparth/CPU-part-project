@@ -12,12 +12,15 @@ import { workloadById } from './engine/workloads';
 import { Dashboard } from './pages/Results';
 import { ComparePage } from './pages/Compare';
 import { DevicePage, MonitorPage, PartsPage, PurposePage } from './pages/Setup';
+import { LinkPage } from './pages/Link';
+import type { ListingResult } from './engine/listing';
+import { REFRESH_RATES } from './engine/games';
 import { decodeState, defaultState, encodeState, type AppState } from './state';
 import { partSummary } from './ui';
 
-type PageId = 'device' | 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
+type PageId = 'link' | 'device' | 'purpose' | 'monitor' | 'parts' | 'dashboard' | 'compare';
 const resultPages: PageId[] = ['dashboard', 'compare'];
-const pageNames: Record<PageId, string> = { device: 'Desktop or laptop', purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
+const pageNames: Record<PageId, string> = { link: 'Check a link', device: 'Desktop or laptop', purpose: 'Purpose', monitor: 'Monitor', parts: 'Parts', dashboard: 'Results', compare: 'Compare' };
 
 /** The four parts people choose; the rest are matched to them automatically. */
 const mainSlots: PartSlot[] = ['cpu', 'gpu', 'ram', 'storage'];
@@ -86,10 +89,33 @@ export default function App() {
   /** Desktop and laptop parts don't mix, so switching clears the chosen parts. */
   const pickDevice = (d: Device) =>
     setState((s) => (s.device === d ? s : {
-      ...s, device: d, build: {}, chosen: [], compare: undefined,
+      ...s, device: d, build: {}, chosen: [], compare: undefined, listing: undefined,
       // Most laptop screens are Full HD; desktops default to a 1440p monitor.
       resolution: d === 'laptop' ? '1080p' : '1440p',
     }));
+
+  /** Fill the build from a recognised store listing or pasted text. */
+  const fromListing = (r: ListingResult) =>
+    setState((s) => {
+      const build: Build = {};
+      if (r.cpu.part) build.cpu = r.cpu.part;
+      if (r.gpu.part) build.gpu = r.gpu.part;
+      if (r.ram.part) build.ram = r.ram.part;
+      if (r.storage.part) build.storage = r.storage.part;
+      const device = r.device ?? s.device;
+      const hz = r.refreshHz ? [...REFRESH_RATES].reduce((a, b) => (Math.abs(b - r.refreshHz!) < Math.abs(a - r.refreshHz!) ? b : a)) : s.refreshHz;
+      return {
+        ...s,
+        device,
+        build,
+        chosen: (Object.keys(build) as PartSlot[]),
+        compare: undefined,
+        listing: r.url ? { url: r.url, store: r.store } : undefined,
+        resolution: r.resolution ?? (device === 'laptop' ? '1080p' : s.resolution),
+        refreshHz: hz,
+        workloads: s.workloads.length ? s.workloads : build.gpu ? ['aaa', 'esports'] : ['office'],
+      };
+    });
 
   /** Another power version of the same laptop graphics chip. */
   const pickPower = (side: 'a' | 'b', g: Gpu) =>
@@ -178,8 +204,19 @@ export default function App() {
           <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" className="logo-bg" /><path d="M9 20.5c2.2-5.5 4.4-8 7-8s4.8 2.5 7 8" className="logo-wave" /><circle cx="16" cy="12.5" r="2.2" className="logo-dot" /></svg>
           <span>PC Harmony</span>
         </button>
+        {!isResult && page !== 'link' && (
+          <span className="top-actions">
+            <button type="button" className="link-btn" onClick={() => go('link')}>Check a link</button>
+          </span>
+        )}
+        {page === 'link' && (
+          <span className="top-actions">
+            <button type="button" className="link-btn" onClick={() => go('device')}>Choose parts instead</button>
+          </span>
+        )}
         {isResult && (
           <span className="top-actions">
+            <button type="button" className="link-btn hide-sm" onClick={() => go('link')}>Check a link</button>
             {page === 'dashboard' && <button type="button" className="btn btn--ghost btn--small" onClick={openCompare}>{device === 'laptop' ? 'Compare with another laptop' : 'Compare with another build'}</button>}
             {page === 'compare' && <button type="button" className="link-btn" onClick={closeCompare}>← Back to results</button>}
             <button type="button" className={`link-btn${page === 'compare' ? ' hide-sm' : ''}`} onClick={() => go('device')}>Edit answers</button>
@@ -188,7 +225,7 @@ export default function App() {
         )}
       </header>
 
-      {!isResult && (
+      {!isResult && page !== 'link' && (
         <>
           <nav className="progress" aria-label={`Step ${index + 1} of ${pages.length}: ${pageNames[page]}`}>
             {pages.map((p, i) => (
@@ -200,7 +237,24 @@ export default function App() {
       )}
 
       <main className="page" key={page}>
-        {page === 'device' && <DevicePage device={device} onPick={pickDevice} />}
+        {page === 'device' && <DevicePage device={device} onPick={pickDevice} onLink={() => go('link')} />}
+        {page === 'link' && (
+          <LinkPage
+            device={device}
+            build={build}
+            workloads={workloads}
+            resolution={resolution}
+            refreshHz={refreshHz}
+            onRecognise={fromListing}
+            onOpen={(slot) => openBrowser('a', slot)}
+            onPick={(slot, part) => pick(slot, part)}
+            onPower={(g) => pickPower('a', g)}
+            onToggleWorkload={toggleWorkload}
+            onResolution={(r) => setState((s) => ({ ...s, resolution: r }))}
+            onRefresh={(hz) => setState((s) => ({ ...s, refreshHz: hz }))}
+            onAnalyse={() => go('dashboard')}
+          />
+        )}
         {page === 'purpose' && <PurposePage selected={workloads} onToggle={toggleWorkload} />}
         {page === 'monitor' && (
           <MonitorPage
@@ -223,6 +277,7 @@ export default function App() {
             gaming={gaming}
             chosen={state.chosen}
             device={device}
+            listing={state.listing}
             copied={copied}
             onOpen={(slot) => openBrowser('a', slot)}
             onPower={(g) => pickPower('a', g)}
@@ -250,7 +305,7 @@ export default function App() {
         )}
       </main>
 
-      {!isResult && <div className="page-nav">
+      {!isResult && page !== 'link' && <div className="page-nav">
         {index > 0 ? <button type="button" className="btn btn--ghost" onClick={back}>Back</button> : <span />}
         {nextLabel && <button type="button" className="btn btn--big" disabled={!canNext} onClick={next}>{nextLabel}</button>}
       </div>}
